@@ -1,0 +1,569 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}الرسائل - شورجي{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 dark:bg-slate-900">
+    <!-- Navigation Header -->
+    <nav class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl border-b border-white/20 dark:border-slate-700/20 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="h-10 w-10 bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500 rounded-2xl flex items-center justify-center mr-3 shadow-2xl">
+                            <i class="fas fa-shield-alt text-white text-lg"></i>
+                        </div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500 bg-clip-text text-transparent">شورجي</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <a href="/home" class="bg-white/10 dark:bg-slate-800/10 hover:bg-white/20 dark:hover:bg-slate-800/20 text-slate-700 dark:text-slate-300 px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20">
+                        <i class="fas fa-home ml-2"></i>الرئيسية
+                    </a>
+                    <a href="/profile" class="bg-white/10 dark:bg-slate-800/10 hover:bg-white/20 dark:hover:bg-slate-800/20 text-slate-700 dark:text-slate-300 px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20">
+                        <i class="fas fa-user ml-2"></i>الملف الشخصي
+                    </a>
+                    <button onclick="logout()" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl">
+                        <i class="fas fa-sign-out-alt ml-2"></i>تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages Container -->
+    <div class="flex">
+    <!-- Left Sidebar - Conversations List -->
+    <div class="w-80 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col">
+        <!-- Header -->
+        <div class="p-6 border-b border-gray-200 dark:border-slate-700">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">الرسائل</h1>
+                <button onclick="startNewChat()" class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors">
+                    <i class="fas fa-plus text-sm"></i>
+                </button>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="relative">
+                <input type="text" id="searchInput" placeholder="البحث في المحادثات..." 
+                       class="w-full pl-10 pr-4 py-3 bg-gray-100 dark:bg-slate-700 border-0 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+        </div>
+
+        <!-- Conversations List -->
+        <div class="flex-1 overflow-y-auto" id="conversationsList">
+            {% if conversations|length > 0 %}
+                {% for conversation in conversations %}
+                <div class="conversation-item p-4 border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer transition-colors" 
+                     data-user-id="{{ conversation.otherUserId }}" 
+                     onclick="selectConversation({{ conversation.otherUserId }}, '{{ conversation.otherUserName|e('js') }}')">
+                    <div class="flex items-center space-x-3">
+                        <!-- Profile Picture -->
+                        <div class="relative">
+                            <div class="h-12 w-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden">
+                                <img src="/api/profile/image/{{ conversation.otherUserId }}/profile" 
+                                     alt="{{ conversation.otherUserName }}" 
+                                     class="w-full h-full object-cover"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <i class="fas fa-user text-white text-lg" style="display: none;"></i>
+                            </div>
+                            <!-- Online Status -->
+                            <div class="absolute -bottom-1 -right-1 h-4 w-4 bg-green-500 border-2 border-white dark:border-slate-800 rounded-full"></div>
+                        </div>
+                        
+                        <!-- Conversation Info -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ conversation.otherUserName }}</h3>
+                                <span class="text-xs text-gray-500 dark:text-slate-400">{{ conversation.lastMessageSentAt|date('H:i') }}</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-slate-300 truncate mt-1">{{ conversation.lastMessageContent }}</p>
+                        </div>
+                        
+                        <!-- Unread Badge -->
+                        {% if conversation.unreadCount > 0 %}
+                        <div class="bg-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                            {{ conversation.unreadCount }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="p-8 text-center text-gray-500 dark:text-slate-400">
+                    <i class="fas fa-comments text-4xl mb-4"></i>
+                    <p>لا توجد محادثات بعد</p>
+                    <p class="text-sm mt-2">ابدأ محادثة جديدة مع أصدقائك</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="flex-1 flex flex-col">
+        <!-- Chat Header -->
+        <div id="chatHeader" class="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 p-4 hidden">
+            <div class="flex items-center space-x-3">
+                <div class="h-10 w-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden">
+                    <img id="chatUserImage" src="" alt="" class="w-full h-full object-cover" style="display: none;">
+                    <i class="fas fa-user text-white" id="chatUserIcon"></i>
+                </div>
+                <div>
+                    <h2 id="chatUserName" class="text-lg font-semibold text-gray-900 dark:text-white"></h2>
+                    <p class="text-sm text-green-500">متصل الآن</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="messagesArea" class="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-slate-900">
+            <div id="noChatSelected" class="flex items-center justify-center h-full text-center">
+                <div>
+                    <i class="fas fa-comments text-6xl text-gray-300 dark:text-slate-600 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-500 dark:text-slate-400 mb-2">اختر محادثة</h3>
+                    <p class="text-gray-400 dark:text-slate-500">اختر محادثة من القائمة لبدء المحادثة</p>
+                </div>
+            </div>
+            
+            <div id="messagesContainer" class="space-y-4 hidden">
+                <!-- Messages will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Message Input -->
+        <div id="messageInput" class="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 p-4 hidden">
+            <div class="flex items-center space-x-3">
+                <button class="p-2 text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
+                    <i class="fas fa-paperclip text-lg"></i>
+                </button>
+                <div class="flex-1 relative">
+                    <input type="text" id="messageText" placeholder="اكتب رسالة..." 
+                           class="w-full px-4 py-3 bg-gray-100 dark:bg-slate-700 border-0 rounded-full text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button class="p-2 text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
+                    <i class="fas fa-smile text-lg"></i>
+                </button>
+                <button onclick="sendMessage()" class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors">
+                    <i class="fas fa-paper-plane text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- New Chat Modal -->
+<div id="newChatModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 w-96 max-w-full mx-4">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">بدء محادثة جديدة</h3>
+            <button onclick="closeNewChatModal()" class="text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="space-y-3">
+            {% for user in allUsers %}
+            <div class="flex items-center space-x-3 p-3 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer transition-colors" 
+                 onclick="startChatWithUser({{ user.id }}, '{{ user.getFullName()|e('js') }}')">
+                <div class="h-10 w-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden">
+                    <img src="/api/profile/image/{{ user.id }}/profile" 
+                         alt="{{ user.getFullName() }}" 
+                         class="w-full h-full object-cover"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <i class="fas fa-user text-white" style="display: none;"></i>
+                </div>
+                <div>
+                    <h4 class="font-medium text-gray-900 dark:text-white">{{ user.getFullName() }}</h4>
+                    <p class="text-sm text-gray-500 dark:text-slate-400">{{ user.email }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+let currentChatUserId = null;
+let currentChatUserName = '';
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize search functionality
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const conversations = document.querySelectorAll('.conversation-item');
+        
+        conversations.forEach(conversation => {
+            const userName = conversation.querySelector('h3').textContent.toLowerCase();
+            const lastMessage = conversation.querySelector('p').textContent.toLowerCase();
+            
+            if (userName.includes(searchTerm) || lastMessage.includes(searchTerm)) {
+                conversation.style.display = 'block';
+            } else {
+                conversation.style.display = 'none';
+            }
+        });
+    });
+    
+    // Load conversations periodically
+    setInterval(loadConversations, 30000);
+});
+
+function selectConversation(userId, userName) {
+    currentChatUserId = userId;
+    currentChatUserName = userName;
+    
+    // Update UI
+    document.getElementById('chatHeader').classList.remove('hidden');
+    document.getElementById('messagesArea').classList.remove('hidden');
+    document.getElementById('messageInput').classList.remove('hidden');
+    document.getElementById('noChatSelected').classList.add('hidden');
+    document.getElementById('messagesContainer').classList.remove('hidden');
+    
+    // Update chat header
+    document.getElementById('chatUserName').textContent = userName;
+    
+    // Update user image
+    const userImage = document.getElementById('chatUserImage');
+    const userIcon = document.getElementById('chatUserIcon');
+    userImage.src = `/api/profile/image/${userId}/profile`;
+    userImage.style.display = 'block';
+    userIcon.style.display = 'none';
+    
+    // Load messages
+    loadMessages(userId);
+    
+    // Mark conversation as active
+    document.querySelectorAll('.conversation-item').forEach(item => {
+        item.classList.remove('bg-blue-50', 'dark:bg-blue-900/20');
+    });
+    event.currentTarget.classList.add('bg-blue-50', 'dark:bg-blue-900/20');
+}
+
+async function loadMessages(userId) {
+    try {
+        const response = await apiCall(`/api/conversation/${userId}`);
+        displayMessages(response.messages);
+        
+        // Mark messages as read
+        await apiCall(`/api/conversation/${userId}/mark-read`, { method: 'POST' });
+        
+    } catch (error) {
+        console.error('Failed to load messages:', error);
+        showToast('فشل في تحميل الرسائل', 'error');
+    }
+}
+
+function displayMessages(messages) {
+    const container = document.getElementById('messagesContainer');
+    container.innerHTML = '';
+    
+    let lastDate = null;
+    
+    messages.forEach((message, index) => {
+        const messageDate = new Date(message.createdAt || message.sentAt);
+        const currentDate = messageDate.toDateString();
+        
+        // Add date separator if this is a new day
+        if (lastDate !== currentDate) {
+            const dateSeparator = document.createElement('div');
+            dateSeparator.className = 'flex justify-center my-4';
+            dateSeparator.innerHTML = `
+                <div class="bg-gray-200 dark:bg-slate-700 text-gray-600 dark:text-slate-400 text-xs px-3 py-1 rounded-full">
+                    ${formatMessageDate(message.createdAt || message.sentAt)}
+                </div>
+            `;
+            container.appendChild(dateSeparator);
+            lastDate = currentDate;
+        }
+        
+        const messageDiv = document.createElement('div');
+        const isOwnMessage = message.senderId === {{ currentUser ? currentUser.id : 'null' }};
+        
+        messageDiv.className = `flex ${isOwnMessage ? 'justify-end' : 'justify-start'} mb-2`;
+        messageDiv.innerHTML = `
+            <div class="flex items-end space-x-2 max-w-xs lg:max-w-md">
+                ${!isOwnMessage ? `
+                    <div class="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <img src="/api/profile/image/${message.senderId}/profile" 
+                             alt="" 
+                             class="w-full h-full object-cover"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <i class="fas fa-user text-white text-xs" style="display: none;"></i>
+                    </div>
+                ` : ''}
+                <div class="flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}">
+                    <div class="px-4 py-2 rounded-2xl ${isOwnMessage ? 
+                        'bg-blue-500 text-white rounded-br-md' : 
+                        'bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-bl-md border border-gray-200 dark:border-slate-600'
+                    }">
+                        <p class="text-sm">${message.content}</p>
+                    </div>
+                    <div class="flex items-center space-x-1 mt-1">
+                        <span class="text-xs text-gray-500 dark:text-slate-400">${formatMessageTime(message.createdAt || message.sentAt)}</span>
+                        <span class="text-xs text-gray-400 dark:text-slate-500">•</span>
+                        <span class="text-xs text-gray-400 dark:text-slate-500">${formatFullDate(message.createdAt || message.sentAt)}</span>
+                    </div>
+                </div>
+                ${isOwnMessage ? `
+                    <div class="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <img src="/api/profile/image/{{ currentUser ? currentUser.id : '' }}/profile" 
+                             alt="" 
+                             class="w-full h-full object-cover"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <i class="fas fa-user text-white text-xs" style="display: none;"></i>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        
+        container.appendChild(messageDiv);
+    });
+    
+    // Scroll to bottom
+    container.scrollTop = container.scrollHeight;
+}
+
+async function sendMessage() {
+    const messageInput = document.getElementById('messageText');
+    const content = messageInput.value.trim();
+    
+    if (!content || !currentChatUserId) return;
+    
+    try {
+        const response = await apiCall('/api/send-message', {
+            method: 'POST',
+            body: JSON.stringify({
+                receiverId: currentChatUserId,
+                content: content
+            })
+        });
+        
+        // Clear input
+        messageInput.value = '';
+        
+        // Reload messages
+        await loadMessages(currentChatUserId);
+        
+        // Show success
+        showToast('تم إرسال الرسالة', 'success');
+        
+    } catch (error) {
+        console.error('Failed to send message:', error);
+        showToast('فشل في إرسال الرسالة', 'error');
+    }
+}
+
+function startNewChat() {
+    document.getElementById('newChatModal').classList.remove('hidden');
+}
+
+function closeNewChatModal() {
+    document.getElementById('newChatModal').classList.add('hidden');
+}
+
+function startChatWithUser(userId, userName) {
+    closeNewChatModal();
+    selectConversation(userId, userName);
+}
+
+async function loadConversations() {
+    try {
+        const response = await apiCall('/api/conversations');
+        // Update conversations list if needed
+        // This could be enhanced to update the UI dynamically
+    } catch (error) {
+        console.error('Failed to load conversations:', error);
+    }
+}
+
+function formatMessageTime(timestamp) {
+    if (!timestamp) return '--:--';
+    
+    // Try different date formats
+    let time = new Date(timestamp);
+    
+    // If the first attempt fails, try parsing as ISO string
+    if (isNaN(time.getTime())) {
+        time = new Date(timestamp.replace(' ', 'T'));
+    }
+    
+    // If still invalid, try parsing manually
+    if (isNaN(time.getTime())) {
+        const parts = timestamp.split(' ');
+        if (parts.length >= 2) {
+            const datePart = parts[0];
+            const timePart = parts[1];
+            time = new Date(datePart + 'T' + timePart);
+        }
+    }
+    
+    if (isNaN(time.getTime())) {
+        return '--:--';
+    }
+    
+    const hours = time.getHours();
+    const minutes = time.getMinutes();
+    const ampm = hours >= 12 ? 'م' : 'ص';
+    const displayHours = hours % 12 || 12;
+    const displayMinutes = minutes.toString().padStart(2, '0');
+    
+    return `${displayHours}:${displayMinutes} ${ampm}`;
+}
+
+function formatMessageDate(timestamp) {
+    if (!timestamp) return 'تاريخ غير صحيح';
+    
+    const now = new Date();
+    let time = new Date(timestamp);
+    
+    // Try different date formats
+    if (isNaN(time.getTime())) {
+        time = new Date(timestamp.replace(' ', 'T'));
+    }
+    
+    if (isNaN(time.getTime())) {
+        const parts = timestamp.split(' ');
+        if (parts.length >= 2) {
+            const datePart = parts[0];
+            const timePart = parts[1];
+            time = new Date(datePart + 'T' + timePart);
+        }
+    }
+    
+    if (isNaN(time.getTime())) {
+        return 'تاريخ غير صحيح';
+    }
+    
+    const diff = now - time;
+    
+    // If it's today
+    if (diff < 86400000 && time.toDateString() === now.toDateString()) {
+        return 'اليوم';
+    }
+    
+    // If it's yesterday
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (time.toDateString() === yesterday.toDateString()) {
+        return 'أمس';
+    }
+    
+    // If it's this week
+    const weekAgo = new Date(now);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    if (time > weekAgo) {
+        const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        return days[time.getDay()];
+    }
+    
+    // Otherwise show the full date
+    return time.toLocaleDateString('ar-SA', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+function formatMessageDateShort(timestamp) {
+    if (!timestamp) return '';
+    
+    const now = new Date();
+    let time = new Date(timestamp);
+    
+    // Try different date formats
+    if (isNaN(time.getTime())) {
+        time = new Date(timestamp.replace(' ', 'T'));
+    }
+    
+    if (isNaN(time.getTime())) {
+        const parts = timestamp.split(' ');
+        if (parts.length >= 2) {
+            const datePart = parts[0];
+            const timePart = parts[1];
+            time = new Date(datePart + 'T' + timePart);
+        }
+    }
+    
+    if (isNaN(time.getTime())) {
+        return '';
+    }
+    
+    const diff = now - time;
+    
+    // If it's today, don't show date
+    if (diff < 86400000 && time.toDateString() === now.toDateString()) {
+        return '';
+    }
+    
+    // If it's yesterday
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (time.toDateString() === yesterday.toDateString()) {
+        return 'أمس';
+    }
+    
+    // If it's this week
+    const weekAgo = new Date(now);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    if (time > weekAgo) {
+        const days = ['أحد', 'اثن', 'ثلث', 'أرب', 'خمس', 'جمع', 'سبت'];
+        return days[time.getDay()];
+    }
+    
+    // Otherwise show short date
+    return time.toLocaleDateString('ar-SA', {
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+function formatFullDate(timestamp) {
+    if (!timestamp) return '';
+    
+    let time = new Date(timestamp);
+    
+    // Try different date formats
+    if (isNaN(time.getTime())) {
+        time = new Date(timestamp.replace(' ', 'T'));
+    }
+    
+    if (isNaN(time.getTime())) {
+        const parts = timestamp.split(' ');
+        if (parts.length >= 2) {
+            const datePart = parts[0];
+            const timePart = parts[1];
+            time = new Date(datePart + 'T' + timePart);
+        }
+    }
+    
+    if (isNaN(time.getTime())) {
+        return '';
+    }
+    
+    // Format: Day, Month Day, Year
+    const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    
+    const dayName = days[time.getDay()];
+    const day = time.getDate();
+    const month = months[time.getMonth()];
+    const year = time.getFullYear();
+    
+    return `${dayName}، ${day} ${month} ${year}`;
+}
+
+// Handle Enter key in message input
+document.addEventListener('DOMContentLoaded', function() {
+    const messageInput = document.getElementById('messageText');
+    messageInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,353 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}الملف الشخصي - شورجي{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
+    <!-- Navigation -->
+    <nav class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl border-b border-white/20 dark:border-slate-700/20 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="h-12 w-12 bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500 rounded-2xl flex items-center justify-center mr-4 shadow-2xl">
+                            <i class="fas fa-shield-alt text-white text-xl"></i>
+                        </div>
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500 bg-clip-text text-transparent">شورجي</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/home" class="bg-white/10 dark:bg-slate-800/10 hover:bg-white/20 dark:hover:bg-slate-800/20 text-slate-700 dark:text-slate-300 px-8 py-3 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20">
+                        <i class="fas fa-home ml-2"></i>الرئيسية
+                    </a>
+                    <button onclick="logout()" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-8 py-3 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl">
+                        <i class="fas fa-sign-out-alt ml-2"></i>تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Cover Image with Profile Picture -->
+        <div class="relative mb-8">
+            <div class="h-64 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-700 dark:from-cyan-600 dark:via-blue-700 dark:to-purple-800 rounded-3xl overflow-hidden shadow-2xl" id="coverImageContainer">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                
+                <!-- Floating Elements -->
+                <div class="absolute top-8 right-8 w-16 h-16 bg-white/10 rounded-full blur-xl"></div>
+                <div class="absolute bottom-8 left-8 w-24 h-24 bg-cyan-400/20 rounded-full blur-2xl"></div>
+                
+                <!-- Profile Picture Inside Cover -->
+                <div class="absolute bottom-6 right-6">
+                    <div class="h-32 w-32 bg-gradient-to-br from-white to-gray-100 dark:from-slate-800 dark:to-slate-700 rounded-3xl shadow-2xl border-4 border-white dark:border-slate-600 overflow-hidden backdrop-blur-sm" id="profileImageContainer">
+                        <img id="profileImage" src="/api/profile/image/{{ user.id }}/profile" 
+                             alt="صورة الملف الشخصي" 
+                             class="w-full h-full object-cover"
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjY0IiBjeT0iNDgiIHI9IjE4IiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0yNCA5NkM0MCA4MCA2OCA3MiA2NCA3MkM2MCA3MiA4OCA4MCAxMDQgOTZIMjRaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo='">
+                    </div>
+                    <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white dark:border-slate-600 shadow-lg flex items-center justify-center">
+                        <i class="fas fa-check text-white text-xs"></i>
+                    </div>
+                </div>
+                
+                <!-- Edit Button -->
+                <a href="/edit-profile" class="absolute top-6 right-6 bg-white/20 dark:bg-slate-800/20 backdrop-blur-md hover:bg-white/30 dark:hover:bg-slate-800/30 text-white p-4 rounded-2xl transition-all duration-300 transform hover:scale-110 border border-white/30 dark:border-slate-700/30 shadow-xl">
+                    <i class="fas fa-edit text-xl"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="mb-12">
+            <div class="text-center lg:text-right">
+                
+                <!-- User Info -->
+                <div class="flex-1 text-center lg:text-right">
+                    <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-slate-800 to-slate-600 dark:from-white dark:to-cyan-200 bg-clip-text text-transparent" id="userFullName">{{ user.getFullName() }}</h1>
+                    <p class="text-slate-600 dark:text-slate-300 mb-4 text-lg" id="userEmail">{{ user.email }}</p>
+                    
+                    <!-- Bio Display -->
+                    {% if user.bio %}
+                        <p class="text-slate-700 dark:text-slate-200 mb-6 text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">{{ user.bio }}</p>
+                    {% endif %}
+                    
+                    <div class="flex items-center justify-center lg:justify-start space-x-4 mb-6">
+                        <span class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md px-4 py-2 rounded-2xl text-sm font-medium border border-white/30 dark:border-slate-700/30 shadow-lg">
+                            <i class="fas fa-check-circle ml-2 text-green-500"></i>
+                            {{ user.isVerified ? 'مؤكد' : 'غير مؤكد' }}
+                        </span>
+                        <span class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md px-4 py-2 rounded-2xl text-sm font-medium border border-white/30 dark:border-slate-700/30 shadow-lg">
+                            <i class="fas fa-calendar ml-2 text-blue-500"></i>
+                            عضو منذ {{ user.id ? 'الآن' : 'غير محدد' }}
+                        </span>
+                    </div>
+                    
+                    <!-- Social Stats -->
+                    <div class="flex items-center justify-center lg:justify-start space-x-8 mb-8">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-slate-800 dark:text-white" id="followersCount">0</div>
+                            <div class="text-sm text-slate-600 dark:text-slate-300 font-medium">متابع</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-slate-800 dark:text-white" id="followingCount">0</div>
+                            <div class="text-sm text-slate-600 dark:text-slate-300 font-medium">متابع</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Action Buttons -->
+                    <div class="flex justify-center lg:justify-start space-x-6">
+                        <button onclick="toggleFollow({{ user.id }})" 
+                                id="followBtn"
+                                class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
+                            <i class="fas fa-user-plus ml-3 text-lg"></i>
+                            <span id="followText">متابعة</span>
+                        </button>
+                        <button onclick="viewAllMessages()" 
+                                class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
+                            <i class="fas fa-comment ml-3 text-lg"></i>الرسائل
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Profile Information -->
+            <div class="lg:col-span-2">
+                <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
+                    <h2 class="text-3xl font-bold text-slate-800 dark:text-white mb-8">
+                        <i class="fas fa-user-edit ml-3 text-cyan-500"></i>معلومات الملف الشخصي
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <div class="flex items-center text-sm font-semibold text-slate-600 dark:text-cyan-200 mb-3">
+                                    <i class="fas fa-user ml-2 text-cyan-500"></i>الاسم الأول
+                                </div>
+                                <div class="text-xl text-slate-800 dark:text-white font-semibold">
+                                    {{ user.firstName ?? 'غير محدد' }}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex items-center text-sm font-semibold text-slate-600 dark:text-cyan-200 mb-3">
+                                    <i class="fas fa-user ml-2 text-cyan-500"></i>الاسم الأخير
+                                </div>
+                                <div class="text-xl text-slate-800 dark:text-white font-semibold">
+                                    {{ user.lastName ?? 'غير محدد' }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <div class="flex items-center text-sm font-semibold text-slate-600 dark:text-cyan-200 mb-3">
+                                    <i class="fas fa-envelope ml-2 text-cyan-500"></i>البريد الإلكتروني
+                                </div>
+                                <div class="text-xl text-slate-800 dark:text-white font-semibold">
+                                    {{ user.email }}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex items-center text-sm font-semibold text-slate-600 dark:text-cyan-200 mb-3">
+                                    <i class="fas fa-calendar ml-2 text-cyan-500"></i>العمر
+                                </div>
+                                <div class="text-xl text-slate-800 dark:text-white font-semibold">
+                                    {{ user.age ? user.age ~ ' سنة' : 'غير محدد' }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center text-sm font-semibold text-slate-600 dark:text-cyan-200 mb-3">
+                                <i class="fas fa-phone ml-2 text-cyan-500"></i>رقم الهاتف
+                            </div>
+                            <div class="text-xl text-slate-800 dark:text-white font-semibold">
+                                {{ user.phoneNumber ?? 'غير محدد' }}
+                            </div>
+                        </div>
+
+                        {% if user.bio %}
+                        <div>
+                            <div class="flex items-center text-sm font-semibold text-slate-600 dark:text-cyan-200 mb-3">
+                                <i class="fas fa-user-edit ml-2 text-cyan-500"></i>نبذة شخصية
+                            </div>
+                            <div class="text-lg text-slate-700 dark:text-slate-200 leading-relaxed bg-slate-50 dark:bg-slate-700/50 p-6 rounded-2xl backdrop-blur-sm border border-slate-200 dark:border-slate-600">
+                                {{ user.bio }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="flex justify-end space-x-6 mt-8">
+                            <a href="/edit-profile" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
+                                <i class="fas fa-edit ml-3 text-lg"></i>تعديل الملف الشخصي
+                            </a>
+                            <a href="/users" class="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
+                                <i class="fas fa-users ml-3 text-lg"></i>المستخدمين
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-8">
+                <!-- Account Status -->
+                <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">
+                        <i class="fas fa-info-circle ml-3 text-purple-500"></i>حالة الحساب
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl backdrop-blur-sm border border-slate-200 dark:border-slate-600">
+                            <span class="text-slate-600 dark:text-cyan-200 font-medium">البريد الإلكتروني:</span>
+                            <span class="font-semibold {{ user.isVerified ? 'text-green-500' : 'text-red-500' }}">
+                                {{ user.isVerified ? 'مؤكد' : 'غير مؤكد' }}
+                            </span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl backdrop-blur-sm border border-slate-200 dark:border-slate-600">
+                            <span class="text-slate-600 dark:text-cyan-200 font-medium">مصادقة جوجل:</span>
+                            <span class="font-semibold {{ user.googleId ? 'text-green-500' : 'text-slate-400' }}">
+                                {{ user.googleId ? 'متصلة' : 'غير متصلة' }}
+                            </span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl backdrop-blur-sm border border-slate-200 dark:border-slate-600">
+                            <span class="text-slate-600 dark:text-cyan-200 font-medium">مصادقة فيسبوك:</span>
+                            <span class="font-semibold {{ user.facebookId ? 'text-green-500' : 'text-slate-400' }}">
+                                {{ user.facebookId ? 'متصلة' : 'غير متصلة' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden file inputs -->
+<input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="handleImageUpload('profile')">
+<input type="file" id="coverImageInput" accept="image/*" style="display: none;" onchange="handleImageUpload('cover')">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load follow status when page loads
+    loadFollowStatus();
+});
+
+function uploadProfileImage() {
+    document.getElementById('profileImageInput').click();
+}
+
+function uploadCoverImage() {
+    document.getElementById('coverImageInput').click();
+}
+
+async function handleImageUpload(type) {
+    const input = document.getElementById(type + 'ImageInput');
+    const file = input.files[0];
+    
+    if (!file) {
+        return;
+    }
+    
+    showLoading();
+    
+    try {
+        const base64 = await fileToBase64(file);
+        
+        const data = {
+            type: type,
+            image: base64
+        };
+        
+        const response = await apiCall('/api/profile/upload-image', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+        
+        showToast('تم رفع الصورة بنجاح!', 'success');
+        
+        // Update image display
+        const imageElement = document.getElementById(type + 'Image');
+        if (imageElement) {
+            imageElement.src = base64;
+        }
+        
+    } catch (error) {
+        showToast('فشل في رفع الصورة: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+// Load follow status and stats
+async function loadFollowStatus() {
+    try {
+        const response = await apiCall('/api/follow-status/{{ user.id }}');
+        document.getElementById('followersCount').textContent = response.followersCount;
+        document.getElementById('followingCount').textContent = response.followingCount;
+        
+        // Update follow button state
+        const followBtn = document.getElementById('followBtn');
+        const followText = document.getElementById('followText');
+        
+        if (response.isFollowing) {
+            followText.textContent = 'إلغاء المتابعة';
+            followBtn.className = followBtn.className.replace('from-cyan-500 to-blue-600', 'from-red-500 to-red-600').replace('hover:from-cyan-600 hover:to-blue-700', 'hover:from-red-600 hover:to-red-700');
+        }
+    } catch (error) {
+        console.error('Failed to load follow status:', error);
+    }
+}
+
+// Follow/Unfollow functionality
+async function toggleFollow(userId) {
+    const followBtn = document.getElementById('followBtn');
+    const followText = document.getElementById('followText');
+    
+    try {
+        // Check current follow status
+        const statusResponse = await apiCall(`/api/follow-status/${userId}`);
+        const isFollowing = statusResponse.isFollowing;
+        
+        let response;
+        if (isFollowing) {
+            response = await apiCall(`/api/unfollow/${userId}`, { method: 'POST' });
+            followText.textContent = 'متابعة';
+            followBtn.className = followBtn.className.replace('from-red-500 to-red-600', 'from-cyan-500 to-blue-600').replace('hover:from-red-600 hover:to-red-700', 'hover:from-cyan-600 hover:to-blue-700');
+        } else {
+            response = await apiCall(`/api/follow/${userId}`, { method: 'POST' });
+            followText.textContent = 'إلغاء المتابعة';
+            followBtn.className = followBtn.className.replace('from-cyan-500 to-blue-600', 'from-red-500 to-red-600').replace('hover:from-cyan-600 hover:to-blue-700', 'hover:from-red-600 hover:to-red-700');
+        }
+        
+        // Update stats
+        document.getElementById('followersCount').textContent = response.followersCount;
+        showToast(response.message, 'success');
+        
+    } catch (error) {
+        showToast(error.message || 'حدث خطأ أثناء المتابعة', 'error');
+    }
+}
+
+// View all messages functionality
+function viewAllMessages() {
+    window.location.href = '/messages';
+}
+
+</script>
+{% endblock %}

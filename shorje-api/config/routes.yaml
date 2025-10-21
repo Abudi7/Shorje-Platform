@@ -1,0 +1,59 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+
+api_login_check:
+    path: /api/login
+    methods: [POST]
+
+# Auth pages
+app_login:
+    path: /login
+    controller: App\Controller\PageController::login
+
+app_register:
+    path: /register
+    controller: App\Controller\PageController::register
+
+app_forgot_password:
+    path: /forgot-password
+    controller: App\Controller\PageController::forgotPassword
+
+app_reset_password:
+    path: /reset-password
+    controller: App\Controller\PageController::resetPassword
+
+app_dashboard:
+    path: /dashboard
+    controller: App\Controller\HomeController::home
+
+app_home:
+    path: /home
+    controller: App\Controller\HomeController::home
+
+app_profile:
+    path: /profile
+    controller: App\Controller\ProfileController::profile
+
+app_edit_profile:
+    path: /edit-profile
+    controller: App\Controller\ProfileController::editProfile
+
+app_users:
+    path: /users
+    controller: App\Controller\SocialController::users
+
+app_chat:
+    path: /chat/{userId}
+    controller: App\Controller\SocialController::chat
+
+app_messages:
+    path: /messages
+    controller: App\Controller\SocialController::messages
+
+app_logout:
+    path: /logout
+
+# OAuth2 routes are handled by OAuthController with attribute routing

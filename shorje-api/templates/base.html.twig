@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}شورجي - منصة المصادقة الحديثة{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Dark Mode Script -->
+    <script>
+        // Check for saved theme preference or default to 'light'
+        const theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+    </script>
+    
+        <!-- Custom Tailwind Config -->
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: {
+                                50: '#eff6ff',
+                                100: '#dbeafe',
+                                200: '#bfdbfe',
+                                300: '#93c5fd',
+                                400: '#60a5fa',
+                                500: '#3b82f6',
+                                600: '#2563eb',
+                                700: '#1d4ed8',
+                                800: '#1e40af',
+                                900: '#1e3a8a',
+                            },
+                            secondary: {
+                                50: '#f8fafc',
+                                100: '#f1f5f9',
+                                200: '#e2e8f0',
+                                300: '#cbd5e1',
+                                400: '#94a3b8',
+                                500: '#64748b',
+                                600: '#475569',
+                                700: '#334155',
+                                800: '#1e293b',
+                                900: '#0f172a',
+                            }
+                        },
+                        fontFamily: {
+                            'sans': ['Cairo', 'Tajawal', 'Inter', 'system-ui', 'sans-serif'],
+                            'arabic': ['Cairo', 'Tajawal', 'Amiri', 'system-ui', 'sans-serif'],
+                        },
+                        animation: {
+                            'fade-in': 'fadeIn 0.5s ease-in-out',
+                            'slide-up': 'slideUp 0.3s ease-out',
+                            'bounce-gentle': 'bounceGentle 2s infinite',
+                            'float': 'float 3s ease-in-out infinite',
+                            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        },
+                        keyframes: {
+                            fadeIn: {
+                                '0%': { opacity: '0' },
+                                '100%': { opacity: '1' },
+                            },
+                            slideUp: {
+                                '0%': { transform: 'translateY(10px)', opacity: '0' },
+                                '100%': { transform: 'translateY(0)', opacity: '1' },
+                            },
+                            bounceGentle: {
+                                '0%, 100%': { transform: 'translateY(0)' },
+                                '50%': { transform: 'translateY(-5px)' },
+                            },
+                            float: {
+                                '0%, 100%': { transform: 'translateY(0px)' },
+                                '50%': { transform: 'translateY(-10px)' },
+                            }
+                        },
+                        backdropBlur: {
+                            xs: '2px',
+                        }
+                    }
+                }
+            }
+        </script>
+    
+    <!-- Arabic Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Tajawal:wght@200;300;400;500;700;800;900&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .btn-primary {
+            @apply bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl;
+        }
+        
+        .btn-secondary {
+            @apply bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-lg border border-gray-300 transition-all duration-200 transform hover:scale-105 shadow-md hover:shadow-lg;
+        }
+        
+        .input-field {
+            @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm;
+        }
+        
+        .card {
+            @apply bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8;
+        }
+        
+        .floating-animation {
+            animation: bounceGentle 3s ease-in-out infinite;
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+    
+    {% block stylesheets %}{% endblock %}
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 font-arabic transition-colors duration-300">
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" class="fixed top-4 left-4 z-50 bg-white/10 dark:bg-slate-800/10 backdrop-blur-md hover:bg-white/20 dark:hover:bg-slate-800/20 text-slate-700 dark:text-slate-300 p-3 rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/20 transition-all duration-300 transform hover:scale-110">
+        <i id="theme-icon" class="fas fa-moon text-lg"></i>
+    </button>
+    
+    {% block body %}{% endblock %}
+    
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    
+    <!-- Notification Bell (Fixed Position) -->
+    <div id="notification-bell" class="fixed top-4 left-4 z-50 hidden">
+        <div class="relative">
+            <button id="notification-btn" class="bg-white/10 dark:bg-slate-800/10 backdrop-blur-md hover:bg-white/20 dark:hover:bg-slate-800/20 text-slate-700 dark:text-slate-300 p-3 rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/20 transition-all duration-300 transform hover:scale-110">
+                <i class="fas fa-bell text-lg"></i>
+                <span id="notification-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold hidden">0</span>
+            </button>
+            
+            <!-- Notification Dropdown -->
+            <div id="notification-dropdown" class="absolute top-16 left-0 w-80 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/20 backdrop-blur-xl hidden">
+                <div class="p-4 border-b border-slate-200 dark:border-slate-700">
+                    <h3 class="text-lg font-semibold text-slate-800 dark:text-white">الإشعارات</h3>
+                </div>
+                <div id="notification-list" class="max-h-96 overflow-y-auto">
+                    <!-- Notifications will be loaded here -->
+                </div>
+                <div class="p-4 border-t border-slate-200 dark:border-slate-700">
+                    <button onclick="markAllAsRead()" class="w-full text-center text-sm text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors">
+                        تحديد الكل كمقروء
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 flex items-center space-x-3">
+            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+            <span class="text-gray-700">Loading...</span>
+        </div>
+    </div>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        // Toast notification system
+        function showToast(message, type = 'info', duration = 5000) {
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+            
+            toast.className = `${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full`;
+            toast.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('toast-container').appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Auto remove
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+        
+        // Loading overlay
+        function showLoading() {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading-overlay').classList.add('hidden');
+        }
+        
+        // Form validation
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        function validatePassword(password) {
+            return password.length >= 6;
+        }
+        
+        // API helper
+        async function apiCall(url, options = {}) {
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                }
+            };
+            
+            const token = localStorage.getItem('jwt_token');
+            if (token) {
+                defaultOptions.headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            const response = await fetch(url, { ...defaultOptions, ...options });
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'An error occurred');
+            }
+            
+            return data;
+        }
+        
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('jwt_token');
+            if (!token) {
+                window.location.href = '/login';
+                return false;
+            }
+            return true;
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('jwt_token');
+            showToast('Logged out successfully', 'success');
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 1000);
+        }
+        
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = html.classList.contains('dark') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            // Toggle dark class
+            html.classList.toggle('dark');
+            
+            // Update icon
+            themeIcon.className = newTheme === 'dark' ? 'fas fa-sun text-lg' : 'fas fa-moon text-lg';
+            
+            // Save preference
+            localStorage.setItem('theme', newTheme);
+            
+            showToast(`تم التبديل إلى ${newTheme === 'dark' ? 'الوضع الليلي' : 'الوضع النهاري'}`, 'info');
+        }
+        
+        // Notification system
+        let notificationCheckInterval;
+        let lastNotificationCount = 0;
+        
+        // Check for notifications
+        async function checkNotifications() {
+            try {
+                const response = await apiCall('/api/notifications');
+                updateNotificationUI(response);
+                
+                // Show browser notification for new messages
+                if (response.hasNewMessages && response.unreadCount > lastNotificationCount) {
+                    showBrowserNotification(response.notifications[0]);
+                }
+                
+                lastNotificationCount = response.unreadCount;
+            } catch (error) {
+                console.error('Failed to check notifications:', error);
+                // Hide notification bell if not authenticated
+                const notificationBell = document.getElementById('notification-bell');
+                if (notificationBell) {
+                    notificationBell.classList.add('hidden');
+                }
+            }
+        }
+        
+        // Update notification UI
+        function updateNotificationUI(data) {
+            const notificationBell = document.getElementById('notification-bell');
+            const notificationCount = document.getElementById('notification-count');
+            const notificationList = document.getElementById('notification-list');
+            
+            if (!notificationBell) return;
+            
+            // Show/hide notification bell based on authentication
+            // For session-based auth, we'll show the bell if we get data from the API
+            // The API will return 401 if not authenticated, which we handle in the catch block
+            
+            // Update notification count
+            if (data.unreadCount > 0) {
+                notificationCount.textContent = data.unreadCount;
+                notificationCount.classList.remove('hidden');
+            } else {
+                notificationCount.classList.add('hidden');
+            }
+            
+            // Update notification list
+            if (data.notifications && data.notifications.length > 0) {
+                notificationList.innerHTML = data.notifications.map(notification => `
+                    <div class="p-4 border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer transition-colors" onclick="openChat(${notification.senderId})">
+                        <div class="flex items-start space-x-3">
+                            <div class="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-slate-800 dark:text-white">${notification.senderName}</p>
+                                <p class="text-sm text-slate-600 dark:text-slate-300 truncate">${notification.content}</p>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${formatTime(notification.timestamp)}</p>
+                            </div>
+                            ${!notification.isRead ? '<div class="h-2 w-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>' : ''}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                notificationList.innerHTML = `
+                    <div class="p-8 text-center text-slate-500 dark:text-slate-400">
+                        <i class="fas fa-bell-slash text-3xl mb-3"></i>
+                        <p>لا توجد إشعارات جديدة</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Show browser notification
+        function showBrowserNotification(notification) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('رسالة جديدة من ' + notification.senderName, {
+                    body: notification.content,
+                    icon: '/favicon.svg',
+                    tag: 'message-' + notification.id
+                });
+            }
+        }
+        
+        // Request notification permission
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+        
+        // Open chat with user
+        function openChat(userId) {
+            window.location.href = `/chat/${userId}`;
+        }
+        
+        // Mark all notifications as read
+        async function markAllAsRead() {
+            try {
+                // This would require a new API endpoint to mark all as read
+                showToast('تم تحديد جميع الإشعارات كمقروءة', 'success');
+                await checkNotifications(); // Refresh notifications
+            } catch (error) {
+                showToast('فشل في تحديد الإشعارات كمقروءة', 'error');
+            }
+        }
+        
+        // Format time for display
+        function formatTime(timestamp) {
+            const now = new Date();
+            const time = new Date(timestamp);
+            const diff = now - time;
+            
+            if (diff < 60000) return 'الآن';
+            if (diff < 3600000) return Math.floor(diff / 60000) + ' دقيقة';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + ' ساعة';
+            return time.toLocaleDateString('ar-SA');
+        }
+        
+        // Initialize theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            themeIcon.className = currentTheme === 'dark' ? 'fas fa-sun text-lg' : 'fas fa-moon text-lg';
+            
+            // Add click event to theme toggle
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            
+            // Initialize notification system
+            requestNotificationPermission();
+            
+            // Check notifications immediately (only if user is authenticated)
+            checkNotifications();
+            
+            // Set up notification bell click handler
+            const notificationBtn = document.getElementById('notification-btn');
+            const notificationDropdown = document.getElementById('notification-dropdown');
+            
+            if (notificationBtn && notificationDropdown) {
+                notificationBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    notificationDropdown.classList.toggle('hidden');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!notificationBtn.contains(e.target) && !notificationDropdown.contains(e.target)) {
+                        notificationDropdown.classList.add('hidden');
+                    }
+                });
+            }
+            
+            // Start periodic notification checking (every 10 seconds)
+            notificationCheckInterval = setInterval(checkNotifications, 10000);
+        });
+        
+        // Clean up interval when page unloads
+        window.addEventListener('beforeunload', function() {
+            if (notificationCheckInterval) {
+                clearInterval(notificationCheckInterval);
+            }
+        });
+    </script>
+    
+    {% block javascripts %}{% endblock %}
+</body>
+</html>

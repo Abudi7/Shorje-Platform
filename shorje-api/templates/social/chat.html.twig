@@ -1,0 +1,319 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}محادثة مع {{ otherUser.getFullName() }} - شورجي{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 dark:bg-slate-900 flex">
+    <!-- Left Sidebar - Back to Messages -->
+    <div class="w-16 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col items-center py-4">
+        <a href="/messages" class="p-3 text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors" title="العودة للرسائل">
+            <i class="fas fa-arrow-right text-lg"></i>
+        </a>
+        <div class="mt-8 space-y-4">
+            <div class="p-2 bg-blue-500 text-white rounded-lg">
+                <i class="fas fa-comments text-sm"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="flex-1 flex flex-col">
+        <!-- Chat Header -->
+        <div class="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 p-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="h-12 w-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden">
+                        <img src="/api/profile/image/{{ otherUser.id }}/profile" 
+                             alt="{{ otherUser.getFullName() }}" 
+                             class="w-full h-full object-cover"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <i class="fas fa-user text-white text-lg" style="display: none;"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ otherUser.getFullName() }}</h2>
+                        <p class="text-sm text-green-500">متصل الآن</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="p-2 text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
+                        <i class="fas fa-phone text-lg"></i>
+                    </button>
+                    <button class="p-2 text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
+                        <i class="fas fa-video text-lg"></i>
+                    </button>
+                    <button class="p-2 text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
+                        <i class="fas fa-ellipsis-v text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-slate-900" id="messagesContainer">
+            <div class="space-y-4">
+                {% for message in messages %}
+                <div class="flex {{ message.sender.id == user.id ? 'justify-end' : 'justify-start' }}">
+                    <div class="flex items-end space-x-2 max-w-xs lg:max-w-md">
+                        {% if message.sender.id != user.id %}
+                        <div class="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                            <img src="/api/profile/image/{{ message.sender.id }}/profile" 
+                                 alt="{{ message.sender.getFullName() }}" 
+                                 class="w-full h-full object-cover"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <i class="fas fa-user text-white text-xs" style="display: none;"></i>
+                        </div>
+                        {% endif %}
+                        <div class="flex flex-col {{ message.sender.id == user.id ? 'items-end' : 'items-start' }}">
+                            <div class="px-4 py-2 rounded-2xl {{ message.sender.id == user.id ? 
+                                'bg-blue-500 text-white rounded-br-md' : 
+                                'bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-bl-md border border-gray-200 dark:border-slate-600'
+                            }}">
+                                <p class="text-sm">{{ message.content }}</p>
+                            </div>
+                            <div class="flex items-center space-x-1 mt-1">
+                                <span class="text-xs text-gray-500 dark:text-slate-400">{{ message.createdAt|date('H:i') }}</span>
+                                <span class="text-xs text-gray-400 dark:text-slate-500">•</span>
+                                <span class="text-xs text-gray-400 dark:text-slate-500">{{ message.createdAt|date('M d') }}</span>
+                            </div>
+                        </div>
+                        {% if message.sender.id == user.id %}
+                        <div class="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                            <img src="/api/profile/image/{{ user.id }}/profile" 
+                                 alt="{{ user.getFullName() }}" 
+                                 class="w-full h-full object-cover"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <i class="fas fa-user text-white text-xs" style="display: none;"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 p-4">
+            <div class="flex items-center space-x-3">
+                <button class="p-2 text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
+                    <i class="fas fa-paperclip text-lg"></i>
+                </button>
+                <div class="flex-1 relative">
+                    <input type="text" id="messageText" placeholder="اكتب رسالة..." 
+                           class="w-full px-4 py-3 bg-gray-100 dark:bg-slate-700 border-0 rounded-full text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button class="p-2 text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
+                    <i class="fas fa-smile text-lg"></i>
+                </button>
+                <button onclick="sendMessage()" class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-colors">
+                    <i class="fas fa-paper-plane text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Scroll to bottom of messages
+    const messagesContainer = document.getElementById('messagesContainer');
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Handle Enter key in message input
+    const messageInput = document.getElementById('messageText');
+    messageInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+    
+    // Auto-refresh messages every 5 seconds
+    setInterval(loadMessages, 5000);
+});
+
+async function sendMessage() {
+    const messageInput = document.getElementById('messageText');
+    const content = messageInput.value.trim();
+    
+    if (!content) return;
+    
+    try {
+        const response = await apiCall('/api/send-message', {
+            method: 'POST',
+            body: JSON.stringify({
+                receiverId: {{ otherUser.id }},
+                content: content
+            })
+        });
+        
+        // Clear input
+        messageInput.value = '';
+        
+        // Reload messages
+        await loadMessages();
+        
+        // Show success
+        showToast('تم إرسال الرسالة', 'success');
+        
+    } catch (error) {
+        console.error('Failed to send message:', error);
+        showToast('فشل في إرسال الرسالة', 'error');
+    }
+}
+
+async function loadMessages() {
+    try {
+        const response = await apiCall('/api/conversation/{{ otherUser.id }}');
+        displayMessages(response.messages);
+        
+        // Mark messages as read
+        await apiCall('/api/conversation/{{ otherUser.id }}/mark-read', { method: 'POST' });
+        
+    } catch (error) {
+        console.error('Failed to load messages:', error);
+    }
+}
+
+function displayMessages(messages) {
+    const container = document.getElementById('messagesContainer');
+    container.innerHTML = '';
+    
+    messages.forEach(message => {
+        const messageDiv = document.createElement('div');
+        const isOwnMessage = message.senderId === {{ user.id }};
+        
+        messageDiv.className = `flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`;
+        messageDiv.innerHTML = `
+            <div class="flex items-end space-x-2 max-w-xs lg:max-w-md">
+                ${!isOwnMessage ? `
+                    <div class="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <img src="/api/profile/image/${message.senderId}/profile" 
+                             alt="" 
+                             class="w-full h-full object-cover"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <i class="fas fa-user text-white text-xs" style="display: none;"></i>
+                    </div>
+                ` : ''}
+                <div class="flex flex-col ${isOwnMessage ? 'items-end' : 'items-start'}">
+                    <div class="px-4 py-2 rounded-2xl ${isOwnMessage ? 
+                        'bg-blue-500 text-white rounded-br-md' : 
+                        'bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-bl-md border border-gray-200 dark:border-slate-600'
+                    }">
+                        <p class="text-sm">${message.content}</p>
+                    </div>
+                    <div class="flex items-center space-x-1 mt-1">
+                        <span class="text-xs text-gray-500 dark:text-slate-400">${formatMessageTime(message.createdAt || message.sentAt)}</span>
+                        <span class="text-xs text-gray-400 dark:text-slate-500">•</span>
+                        <span class="text-xs text-gray-400 dark:text-slate-500">${formatFullDate(message.createdAt || message.sentAt)}</span>
+                    </div>
+                </div>
+                ${isOwnMessage ? `
+                    <div class="h-8 w-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <img src="/api/profile/image/{{ user.id }}/profile" 
+                             alt="" 
+                             class="w-full h-full object-cover"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <i class="fas fa-user text-white text-xs" style="display: none;"></i>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        
+        container.appendChild(messageDiv);
+    });
+    
+    // Scroll to bottom
+    container.scrollTop = container.scrollHeight;
+}
+
+function formatMessageTime(timestamp) {
+    if (!timestamp) return '--:--';
+    
+    const time = new Date(timestamp);
+    if (isNaN(time.getTime())) {
+        return '--:--';
+    }
+    
+    const hours = time.getHours();
+    const minutes = time.getMinutes();
+    const ampm = hours >= 12 ? 'م' : 'ص';
+    const displayHours = hours % 12 || 12;
+    const displayMinutes = minutes.toString().padStart(2, '0');
+    
+    return `${displayHours}:${displayMinutes} ${ampm}`;
+}
+
+function formatMessageDateShort(timestamp) {
+    if (!timestamp) return '';
+    
+    const now = new Date();
+    const time = new Date(timestamp);
+    
+    if (isNaN(time.getTime())) {
+        return '';
+    }
+    
+    const diff = now - time;
+    
+    // If it's today, don't show date
+    if (diff < 86400000 && time.toDateString() === now.toDateString()) {
+        return '';
+    }
+    
+    // If it's yesterday
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (time.toDateString() === yesterday.toDateString()) {
+        return 'أمس';
+    }
+    
+    // If it's this week
+    const weekAgo = new Date(now);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    if (time > weekAgo) {
+        const days = ['أحد', 'اثن', 'ثلث', 'أرب', 'خمس', 'جمع', 'سبت'];
+        return days[time.getDay()];
+    }
+    
+    // Otherwise show short date
+    return time.toLocaleDateString('ar-SA', {
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+function formatFullDate(timestamp) {
+    if (!timestamp) return '';
+    
+    let time = new Date(timestamp);
+    
+    // Try different date formats
+    if (isNaN(time.getTime())) {
+        time = new Date(timestamp.replace(' ', 'T'));
+    }
+    
+    if (isNaN(time.getTime())) {
+        const parts = timestamp.split(' ');
+        if (parts.length >= 2) {
+            const datePart = parts[0];
+            const timePart = parts[1];
+            time = new Date(datePart + 'T' + timePart);
+        }
+    }
+    
+    if (isNaN(time.getTime())) {
+        return '';
+    }
+    
+    // Format: Day, Month Day, Year
+    const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    
+    const dayName = days[time.getDay()];
+    const day = time.getDate();
+    const month = months[time.getMonth()];
+    const year = time.getFullYear();
+    
+    return `${dayName}، ${day} ${month} ${year}`;
+}
+</script>
+{% endblock %}

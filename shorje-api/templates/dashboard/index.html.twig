@@ -1,0 +1,298 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}لوحة التحكم - شورجي{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50">
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-sm shadow-lg border-b border-white/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="h-8 w-8 bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-shield-alt text-white text-sm"></i>
+                        </div>
+                        <h1 class="text-xl font-bold text-gradient">شورجي</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="h-8 w-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white text-sm"></i>
+                        </div>
+                        <span class="text-gray-700 font-medium" id="userEmail">Welcome!</span>
+                    </div>
+                    <a href="{{ path('app_profile') }}" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105">
+                        <i class="fas fa-user-edit ml-2"></i>الملف الشخصي
+                    </a>
+                    <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105">
+                        <i class="fas fa-sign-out-alt ml-2"></i>تسجيل الخروج
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome to your Dashboard</h2>
+            <p class="text-gray-600">Manage your account and explore our features</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="h-12 w-12 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-check-circle text-white text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Account Status</p>
+                        <p class="text-2xl font-bold text-gray-900">Active</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="h-12 w-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Security Level</p>
+                        <p class="text-2xl font-bold text-gray-900">High</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="h-12 w-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clock text-white text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Last Login</p>
+                        <p class="text-2xl font-bold text-gray-900" id="lastLogin">Now</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- User Info Card -->
+            <div class="card">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-user mr-2"></i>Account Information
+                </h3>
+                <div id="userInfo" class="space-y-3">
+                    <!-- User info will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Actions Card -->
+            <div class="card">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-cogs mr-2"></i>Quick Actions
+                </h3>
+                <div class="space-y-3">
+                    <button onclick="testProtectedRoute()" class="w-full btn-primary text-left">
+                        <i class="fas fa-flask mr-3"></i>
+                        Test Protected Route
+                    </button>
+                    
+                    <button onclick="refreshToken()" class="w-full btn-secondary text-left">
+                        <i class="fas fa-sync-alt mr-3"></i>
+                        Refresh Token
+                    </button>
+                    
+                    <button onclick="changePassword()" class="w-full btn-secondary text-left">
+                        <i class="fas fa-key mr-3"></i>
+                        Change Password
+                    </button>
+                    
+                    <button onclick="viewProfile()" class="w-full btn-secondary text-left">
+                        <i class="fas fa-user-edit mr-3"></i>
+                        Edit Profile
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Token Info Card -->
+        <div class="mt-8">
+            <div class="card">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                    <i class="fas fa-info-circle mr-2"></i>Token Information
+                </h3>
+                <div id="tokenInfo" class="space-y-2 text-sm">
+                    <!-- Token info will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Check authentication on page load
+document.addEventListener('DOMContentLoaded', function() {
+    if (!checkAuth()) return;
+    
+    loadUserInfo();
+    loadTokenInfo();
+});
+
+function loadUserInfo() {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        window.location.href = '/login';
+        return;
+    }
+    
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        document.getElementById('userEmail').textContent = `Hello, ${payload.username}!`;
+        
+        const userInfoDiv = document.getElementById('userInfo');
+        userInfoDiv.innerHTML = `
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="text-gray-600">Email:</span>
+                <span class="font-medium">${payload.username}</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="text-gray-600">Roles:</span>
+                <span class="font-medium">${payload.roles.join(', ')}</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="text-gray-600">Issued:</span>
+                <span class="font-medium">${new Date(payload.iat * 1000).toLocaleString()}</span>
+            </div>
+            <div class="flex justify-between items-center py-2">
+                <span class="text-gray-600">Expires:</span>
+                <span class="font-medium">${new Date(payload.exp * 1000).toLocaleString()}</span>
+            </div>
+        `;
+        
+        document.getElementById('lastLogin').textContent = new Date(payload.iat * 1000).toLocaleTimeString();
+        
+    } catch (error) {
+        console.error('Error parsing token:', error);
+        showToast('Error loading user information', 'error');
+    }
+}
+
+function loadTokenInfo() {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        return;
+    }
+    
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const now = Math.floor(Date.now() / 1000);
+        const timeLeft = payload.exp - now;
+        
+        const tokenInfoDiv = document.getElementById('tokenInfo');
+        tokenInfoDiv.innerHTML = `
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="text-gray-600">Token Status:</span>
+                <span class="font-medium ${timeLeft > 0 ? 'text-green-600' : 'text-red-600'}">
+                    ${timeLeft > 0 ? 'Valid' : 'Expired'}
+                </span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="text-gray-600">Time Remaining:</span>
+                <span class="font-medium">${formatTime(timeLeft)}</span>
+            </div>
+            <div class="flex justify-between items-center py-2">
+                <span class="text-gray-600">Token Length:</span>
+                <span class="font-medium">${token.length} characters</span>
+            </div>
+        `;
+        
+    } catch (error) {
+        console.error('Error parsing token:', error);
+    }
+}
+
+function formatTime(seconds) {
+    if (seconds <= 0) return 'Expired';
+    
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    
+    if (hours > 0) {
+        return `${hours}h ${minutes}m ${secs}s`;
+    } else if (minutes > 0) {
+        return `${minutes}m ${secs}s`;
+    } else {
+        return `${secs}s`;
+    }
+}
+
+async function testProtectedRoute() {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        showToast('No token found, please login again', 'error');
+        window.location.href = '/login';
+        return;
+    }
+    
+    showLoading();
+    
+    try {
+        const data = await apiCall('/api/test');
+        showToast(`Test successful! Message: ${data.message}`, 'success');
+    } catch (error) {
+        showToast('Test failed: ' + error.message, 'error');
+        if (error.message.includes('401') || error.message.includes('token')) {
+            localStorage.removeItem('jwt_token');
+            setTimeout(() => window.location.href = '/login', 1000);
+        }
+    } finally {
+        hideLoading();
+    }
+}
+
+async function refreshToken() {
+    const token = localStorage.getItem('jwt_token');
+    
+    if (!token) {
+        showToast('No token found, please login again', 'error');
+        window.location.href = '/login';
+        return;
+    }
+    
+    showLoading();
+    
+    try {
+        const data = await apiCall('/api/refresh', { method: 'POST' });
+        showToast('Token refreshed successfully!', 'success');
+        loadUserInfo();
+        loadTokenInfo();
+    } catch (error) {
+        showToast('Failed to refresh token: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
+function changePassword() {
+    showToast('Password change feature coming soon!', 'info');
+}
+
+function viewProfile() {
+    showToast('Profile editing feature coming soon!', 'info');
+}
+
+// Update token info every minute
+setInterval(loadTokenInfo, 60000);
+</script>
+{% endblock %}

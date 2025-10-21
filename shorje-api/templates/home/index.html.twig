@@ -1,0 +1,1162 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}الرئيسية - شورجي{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 dark:bg-slate-900">
+    <!-- Navigation -->
+    <nav class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl border-b border-white/20 dark:border-slate-700/20 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="h-10 w-10 bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500 rounded-2xl flex items-center justify-center mr-3 shadow-2xl">
+                            <i class="fas fa-shield-alt text-white text-lg"></i>
+                        </div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500 bg-clip-text text-transparent">شورجي</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    {% if user %}
+                    <a href="/profile" class="bg-white/10 dark:bg-slate-800/10 hover:bg-white/20 dark:hover:bg-slate-800/20 text-slate-700 dark:text-slate-300 px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20">
+                        <i class="fas fa-user ml-2"></i>الملف الشخصي
+                    </a>
+                    <a href="/messages" class="bg-white/10 dark:bg-slate-800/10 hover:bg-white/20 dark:hover:bg-slate-800/20 text-slate-700 dark:text-slate-300 px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20">
+                        <i class="fas fa-comment ml-2"></i>الرسائل
+                    </a>
+                    <button onclick="logout()" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl">
+                        <i class="fas fa-sign-out-alt ml-2"></i>تسجيل الخروج
+                    </button>
+                    {% else %}
+                    <a href="/login" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl">
+                        <i class="fas fa-sign-in-alt ml-2"></i>تسجيل الدخول
+                    </a>
+                    <a href="/register" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl">
+                        <i class="fas fa-user-plus ml-2"></i>إنشاء حساب
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Left Sidebar - Filters -->
+            <div class="lg:col-span-1">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/20 p-6 sticky top-24">
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6">
+                        <i class="fas fa-filter ml-2 text-cyan-500 dark:text-cyan-400"></i>تصفية المنتجات
+                    </h3>
+                    
+                    <!-- Search -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">البحث</label>
+                        <input type="text" id="searchInput" placeholder="ابحث عن منتج..." 
+                               class="w-full px-4 py-3 bg-gray-100 dark:bg-slate-700 border-0 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">الفئة</label>
+                        <select id="categoryFilter" class="w-full px-4 py-3 bg-gray-100 dark:bg-slate-700 border-0 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                            <option value="">جميع الفئات</option>
+                            <option value="car">سيارات</option>
+                            <option value="home_rental">إيجار منازل</option>
+                            <option value="apartment_rental">إيجار شقق</option>
+                            <option value="job">وظائف</option>
+                            <option value="laptop">لابتوب</option>
+                            <option value="electronics">إلكترونيات</option>
+                            <option value="fashion">أزياء</option>
+                            <option value="furniture">أثاث</option>
+                            <option value="books">كتب</option>
+                            <option value="sports">رياضة</option>
+                            <option value="other">أخرى</option>
+                        </select>
+                    </div>
+
+                    <!-- City Filter -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">المدينة</label>
+                        <select id="cityFilter" class="w-full px-4 py-3 bg-gray-100 dark:bg-slate-700 border-0 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                            <option value="">جميع المدن</option>
+                            <option value="بغداد">بغداد</option>
+                            <option value="البصرة">البصرة</option>
+                            <option value="الموصل">الموصل</option>
+                            <option value="أربيل">أربيل</option>
+                            <option value="السليمانية">السليمانية</option>
+                            <option value="دهوك">دهوك</option>
+                            <option value="كركوك">كركوك</option>
+                            <option value="الرمادي">الرمادي</option>
+                            <option value="الفلوجة">الفلوجة</option>
+                            <option value="تكريت">تكريت</option>
+                            <option value="بعقوبة">بعقوبة</option>
+                            <option value="كربلاء">كربلاء</option>
+                            <option value="النجف">النجف</option>
+                            <option value="الحلة">الحلة</option>
+                            <option value="الكوت">الكوت</option>
+                            <option value="الديوانية">الديوانية</option>
+                            <option value="السماوة">السماوة</option>
+                            <option value="الناصرية">الناصرية</option>
+                            <option value="العمارة">العمارة</option>
+                        </select>
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">نطاق السعر</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" id="minPrice" placeholder="الحد الأدنى" 
+                                   class="px-3 py-2 bg-gray-100 dark:bg-slate-700 border-0 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                            <input type="number" id="maxPrice" placeholder="الحد الأقصى" 
+                                   class="px-3 py-2 bg-gray-100 dark:bg-slate-700 border-0 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                        </div>
+                    </div>
+
+                    <!-- Filter Buttons -->
+                    <div class="space-y-3">
+                        <button onclick="applyFilters()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg">
+                            <i class="fas fa-search ml-2"></i>تطبيق الفلاتر
+                        </button>
+                        <button onclick="clearFilters()" class="w-full bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-6 py-3 rounded-xl font-medium transition-all duration-300">
+                            <i class="fas fa-times ml-2"></i>مسح الفلاتر
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="lg:col-span-3">
+                <!-- Post Product Button -->
+                {% if user %}
+                <div class="mb-6">
+                    <button onclick="openPostProductModal()" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
+                        <i class="fas fa-plus ml-3 text-lg"></i>نشر منتج جديد للبيع
+                    </button>
+                </div>
+                {% endif %}
+
+                <!-- Products Feed -->
+                <div id="productsFeed" class="space-y-6">
+                    {% for product in recentProducts %}
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/20 overflow-hidden">
+                        <!-- Product Header -->
+                        <div class="p-6 border-b border-gray-200 dark:border-slate-700">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="h-12 w-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center overflow-hidden">
+                                        <img src="/api/profile/image/{{ product.seller.id }}/profile" 
+                                             alt="{{ product.seller.getFullName() }}" 
+                                             class="w-full h-full object-cover"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <i class="fas fa-user text-white text-lg" style="display: none;"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-slate-800 dark:text-white">{{ product.seller.getFullName() }}</h3>
+                                        <p class="text-sm text-slate-600 dark:text-slate-400">{{ product.createdAt|date('d/m/Y H:i') }}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="bg-cyan-100 dark:bg-cyan-900 text-cyan-800 dark:text-cyan-200 px-3 py-1 rounded-full text-sm font-medium">
+                                        {{ product.getCategoryDisplayName() }}
+                                    </span>
+                                    <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium">
+                                        {{ product.getStatusDisplayName() }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Content -->
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <!-- Product Images -->
+                                <div class="md:col-span-2">
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        {% if product.image1 %}
+                                        <div class="aspect-square bg-gray-100 dark:bg-slate-700 rounded-xl overflow-hidden">
+                                            <img src="/api/products/image/{{ product.id }}/1" 
+                                                 alt="{{ product.title }}" 
+                                                 class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+                                                 onclick="openImageModal('/api/products/image/{{ product.id }}/1')">
+                                        </div>
+                                        {% endif %}
+                                        {% if product.image2 %}
+                                        <div class="aspect-square bg-gray-100 dark:bg-slate-700 rounded-xl overflow-hidden">
+                                            <img src="/api/products/image/{{ product.id }}/2" 
+                                                 alt="{{ product.title }}" 
+                                                 class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+                                                 onclick="openImageModal('/api/products/image/{{ product.id }}/2')">
+                                        </div>
+                                        {% endif %}
+                                        {% if product.image3 %}
+                                        <div class="aspect-square bg-gray-100 dark:bg-slate-700 rounded-xl overflow-hidden">
+                                            <img src="/api/products/image/{{ product.id }}/3" 
+                                                 alt="{{ product.title }}" 
+                                                 class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+                                                 onclick="openImageModal('/api/products/image/{{ product.id }}/3')">
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Product Details -->
+                                <div class="space-y-4">
+                                    <div>
+                                        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">{{ product.title }}</h2>
+                                        <p class="text-slate-600 dark:text-slate-400 leading-relaxed">{{ product.description }}</p>
+                                    </div>
+
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-slate-600 dark:text-slate-400">السعر:</span>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ product.price }}</span>
+                                                <span class="text-sm text-slate-600 dark:text-slate-400">{{ product.getCurrencyDisplayName() }}</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-slate-600 dark:text-slate-400">المدينة:</span>
+                                            <span class="text-slate-800 dark:text-white font-medium">{{ product.city }}</span>
+                                        </div>
+                                        
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-slate-600 dark:text-slate-400">الموقع:</span>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-slate-800 dark:text-white font-medium">{{ product.location }}</span>
+                                                <button onclick="openGoogleMaps('{{ product.location }}, {{ product.city }}, Iraq')" 
+                                                        class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                                        title="عرض على خرائط جوجل">
+                                                    <i class="fas fa-map-marker-alt text-sm"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        {% if product.color %}
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-slate-600 dark:text-slate-400">اللون:</span>
+                                            <span class="text-slate-800 dark:text-white font-medium">{{ product.color }}</span>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if product.condition %}
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-slate-600 dark:text-slate-400">الحالة:</span>
+                                            <span class="text-slate-800 dark:text-white font-medium">{{ product.condition }}</span>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="flex space-x-3 pt-4">
+                                        {% if user and user.id == product.seller.id %}
+                                            <!-- Edit button for product owner -->
+                                            <button onclick="editProduct({{ product.id }})" class="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                                <i class="fas fa-edit ml-2"></i>تعديل المنتج
+                                            </button>
+                                            <button onclick="deleteProduct({{ product.id }})" class="bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-xl font-medium transition-all duration-300">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        {% else %}
+                                            <!-- Contact button for other users -->
+                                            <button onclick="contactSeller({{ product.seller.id }})" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                                <i class="fas fa-comment ml-2"></i>تواصل مع البائع
+                                            </button>
+                                            {% if user and user.id != product.seller.id %}
+                                            <button onclick="toggleFollow({{ product.seller.id }})" class="bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-4 py-3 rounded-xl font-medium transition-all duration-300">
+                                                <i class="fas fa-user-plus"></i>
+                                            </button>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Load More Button -->
+                <div class="text-center mt-8">
+                    <button onclick="loadMoreProducts()" class="bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-8 py-3 rounded-xl font-medium transition-all duration-300 border border-gray-200 dark:border-slate-700">
+                        <i class="fas fa-plus ml-2"></i>تحميل المزيد
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Post Product Modal -->
+<div id="postProductModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+    <div class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 w-full max-w-4xl max-h-[95vh] overflow-y-auto mx-4">
+        <!-- Modal Header -->
+        <div class="sticky top-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-slate-700/50 rounded-t-3xl px-8 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="h-12 w-12 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-plus text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-slate-800 dark:text-white">نشر منتج جديد</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">املأ التفاصيل أدناه لنشر منتجك</p>
+                    </div>
+                </div>
+                <button onclick="closePostProductModal()" class="h-10 w-10 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-xl flex items-center justify-center transition-all duration-200">
+                    <i class="fas fa-times text-gray-600 dark:text-slate-400"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Modal Body -->
+        <div class="p-8">
+            <form id="postProductForm" class="space-y-8">
+            <!-- Product Title & Price Section -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 border border-blue-100 dark:border-slate-600">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            <i class="fas fa-tag ml-2 text-blue-500"></i>عنوان المنتج *
+                        </label>
+                        <input type="text" id="productTitle" required placeholder="أدخل عنوان المنتج..."
+                               class="w-full px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            <i class="fas fa-dollar-sign ml-2 text-green-500"></i>السعر *
+                        </label>
+                        <div class="flex space-x-3">
+                            <input type="number" id="productPrice" required min="0" step="0.01" placeholder="0.00"
+                                   class="flex-1 px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                            <select id="productCurrency" class="px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                                <option value="IQD">دينار عراقي</option>
+                                <option value="USD">دولار أمريكي</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <p class="text-xs text-gray-500 dark:text-slate-400">أدخل السعر بالعملة المختارة</p>
+                            <button type="button" onclick="convertCurrency()" class="text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-3 py-1 rounded-lg hover:bg-green-200 dark:hover:bg-green-800 transition-colors flex items-center">
+                                <i class="fas fa-exchange-alt ml-1"></i>تحويل العملة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description Section -->
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 border border-purple-100 dark:border-slate-600">
+                <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+                    <i class="fas fa-align-right ml-2 text-purple-500"></i>وصف المنتج *
+                </label>
+                <textarea id="productDescription" required rows="4" placeholder="اكتب وصفاً مفصلاً عن منتجك..."
+                          class="w-full px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 shadow-sm resize-none"></textarea>
+            </div>
+
+            <!-- Category & Location Section -->
+            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 border border-emerald-100 dark:border-slate-600">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            <i class="fas fa-th-large ml-2 text-emerald-500"></i>الفئة *
+                        </label>
+                        <select id="productCategory" required
+                                class="w-full px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                            <option value="">اختر الفئة</option>
+                            <option value="car">🚗 سيارات</option>
+                            <option value="home_rental">🏠 إيجار منازل</option>
+                            <option value="apartment_rental">🏢 إيجار شقق</option>
+                            <option value="job">💼 وظائف</option>
+                            <option value="laptop">💻 لابتوب</option>
+                            <option value="electronics">📱 إلكترونيات</option>
+                            <option value="fashion">👕 أزياء</option>
+                            <option value="furniture">🪑 أثاث</option>
+                            <option value="books">📚 كتب</option>
+                            <option value="sports">⚽ رياضة</option>
+                            <option value="other">📦 أخرى</option>
+                        </select>
+                    </div>
+                
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            <i class="fas fa-map-marker-alt ml-2 text-teal-500"></i>المدينة *
+                        </label>
+                        <select id="productCity" required
+                                class="w-full px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                        <option value="">اختر المدينة</option>
+                        <option value="بغداد">بغداد</option>
+                        <option value="البصرة">البصرة</option>
+                        <option value="الموصل">الموصل</option>
+                        <option value="أربيل">أربيل</option>
+                        <option value="السليمانية">السليمانية</option>
+                        <option value="دهوك">دهوك</option>
+                        <option value="كركوك">كركوك</option>
+                        <option value="الرمادي">الرمادي</option>
+                        <option value="الفلوجة">الفلوجة</option>
+                        <option value="تكريت">تكريت</option>
+                        <option value="بعقوبة">بعقوبة</option>
+                        <option value="كربلاء">كربلاء</option>
+                        <option value="النجف">النجف</option>
+                        <option value="الحلة">الحلة</option>
+                        <option value="الكوت">الكوت</option>
+                        <option value="الديوانية">الديوانية</option>
+                        <option value="السماوة">السماوة</option>
+                        <option value="الناصرية">الناصرية</option>
+                        <option value="العمارة">العمارة</option>
+                        <option value="الأنبار">الأنبار</option>
+                        <option value="ديالى">ديالى</option>
+                        <option value="واسط">واسط</option>
+                        <option value="ميسان">ميسان</option>
+                        <option value="ذي قار">ذي قار</option>
+                        <option value="المثنى">المثنى</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location & Details Section -->
+            <div class="bg-gradient-to-r from-orange-50 to-red-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 border border-orange-100 dark:border-slate-600">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            <i class="fas fa-map-pin ml-2 text-orange-500"></i>العنوان التفصيلي *
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="productLocation" required placeholder="مثال: شارع الرشيد، حي الكرادة، بغداد"
+                                   class="w-full px-4 py-4 pr-12 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                            <button type="button" onclick="getCurrentLocation()" 
+                                    class="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 transition-colors"
+                                    title="الحصول على الموقع الحالي">
+                                <i class="fas fa-map-marker-alt text-lg"></i>
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <p class="text-xs text-gray-500 dark:text-slate-400">أدخل العنوان التفصيلي ليظهر على خرائط جوجل</p>
+                            <button type="button" onclick="getCurrentLocation()" 
+                                    class="text-xs bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 px-3 py-1 rounded-lg hover:bg-orange-200 dark:hover:bg-orange-800 transition-colors flex items-center">
+                                <i class="fas fa-crosshairs ml-1"></i>استخدام الموقع الحالي
+                            </button>
+                        </div>
+                    </div>
+                
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            <i class="fas fa-palette ml-2 text-red-500"></i>اللون
+                        </label>
+                        <select id="productColor" class="w-full px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                            <option value="">اختر اللون</option>
+                            <option value="أبيض">⚪ أبيض</option>
+                            <option value="أسود">⚫ أسود</option>
+                            <option value="أحمر">🔴 أحمر</option>
+                            <option value="أزرق">🔵 أزرق</option>
+                            <option value="أخضر">🟢 أخضر</option>
+                            <option value="أصفر">🟡 أصفر</option>
+                            <option value="برتقالي">🟠 برتقالي</option>
+                            <option value="بنفسجي">🟣 بنفسجي</option>
+                            <option value="وردي">🩷 وردي</option>
+                            <option value="بني">🟤 بني</option>
+                            <option value="رمادي">🔘 رمادي</option>
+                            <option value="فضي">⚪ فضي</option>
+                            <option value="ذهبي">🟡 ذهبي</option>
+                            <option value="نحاسي">🟤 نحاسي</option>
+                            <option value="متعدد الألوان">🌈 متعدد الألوان</option>
+                            <option value="أخرى">❓ أخرى</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Condition & Images Section -->
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 border border-indigo-100 dark:border-slate-600">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            <i class="fas fa-star ml-2 text-indigo-500"></i>حالة المنتج
+                        </label>
+                        <select id="productCondition" class="w-full px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                            <option value="">اختر الحالة</option>
+                            <option value="جديد">✨ جديد</option>
+                            <option value="مستعمل - ممتاز">⭐ مستعمل - ممتاز</option>
+                            <option value="مستعمل - جيد جداً">👍 مستعمل - جيد جداً</option>
+                            <option value="مستعمل - جيد">👍 مستعمل - جيد</option>
+                            <option value="مستعمل - مقبول">👌 مستعمل - مقبول</option>
+                            <option value="يحتاج إصلاح">🔧 يحتاج إصلاح</option>
+                            <option value="للقطع">🔨 للقطع</option>
+                            <option value="مشروع">🚧 مشروع</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300">
+                            <i class="fas fa-images ml-2 text-purple-500"></i>صور المنتج (اختياري)
+                        </label>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="aspect-square bg-white dark:bg-slate-800 rounded-xl border-2 border-dashed border-purple-300 dark:border-purple-600 flex items-center justify-center cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200 group" onclick="selectImage(1)">
+                                <input type="file" id="image1" accept="image/*" style="display: none;" onchange="handleImagePreview(1)">
+                                <div id="image1Preview" class="text-center">
+                                    <i class="fas fa-camera text-2xl text-purple-400 group-hover:text-purple-600 dark:group-hover:text-purple-300 mb-2 transition-colors"></i>
+                                    <p class="text-sm text-purple-600 dark:text-purple-400 font-medium">صورة 1</p>
+                                </div>
+                            </div>
+                            <div class="aspect-square bg-white dark:bg-slate-800 rounded-xl border-2 border-dashed border-purple-300 dark:border-purple-600 flex items-center justify-center cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200 group" onclick="selectImage(2)">
+                                <input type="file" id="image2" accept="image/*" style="display: none;" onchange="handleImagePreview(2)">
+                                <div id="image2Preview" class="text-center">
+                                    <i class="fas fa-camera text-2xl text-purple-400 group-hover:text-purple-600 dark:group-hover:text-purple-300 mb-2 transition-colors"></i>
+                                    <p class="text-sm text-purple-600 dark:text-purple-400 font-medium">صورة 2</p>
+                                </div>
+                            </div>
+                            <div class="aspect-square bg-white dark:bg-slate-800 rounded-xl border-2 border-dashed border-purple-300 dark:border-purple-600 flex items-center justify-center cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200 group" onclick="selectImage(3)">
+                                <input type="file" id="image3" accept="image/*" style="display: none;" onchange="handleImagePreview(3)">
+                                <div id="image3Preview" class="text-center">
+                                    <i class="fas fa-camera text-2xl text-purple-400 group-hover:text-purple-600 dark:group-hover:text-purple-300 mb-2 transition-colors"></i>
+                                    <p class="text-sm text-purple-600 dark:text-purple-400 font-medium">صورة 3</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 border border-emerald-100 dark:border-slate-600">
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button type="submit" id="submitProductBtn" class="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center">
+                        <i class="fas fa-plus ml-2 text-lg"></i>نشر المنتج
+                    </button>
+                    <button type="button" onclick="closePostProductModal()" class="px-8 py-4 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-300 rounded-xl font-semibold transition-all duration-300 border border-gray-200 dark:border-slate-600 flex items-center justify-center">
+                        <i class="fas fa-times ml-2"></i>إلغاء
+                    </button>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+<!-- Image Modal -->
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div class="max-w-4xl max-h-[90vh] p-4">
+        <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain rounded-lg">
+        <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+let currentPage = 1;
+let isLoading = false;
+
+// Post Product Modal Functions
+function openPostProductModal() {
+    document.getElementById('postProductModal').classList.remove('hidden');
+}
+
+function closePostProductModal() {
+    document.getElementById('postProductModal').classList.add('hidden');
+    document.getElementById('postProductForm').reset();
+    clearImagePreviews();
+}
+
+function selectImage(imageNumber) {
+    document.getElementById(`image${imageNumber}`).click();
+}
+
+function handleImagePreview(imageNumber) {
+    const file = document.getElementById(`image${imageNumber}`).files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById(`image${imageNumber}Preview`);
+            preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover rounded-lg">`;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function clearImagePreviews() {
+    for (let i = 1; i <= 3; i++) {
+        const preview = document.getElementById(`image${i}Preview`);
+        preview.innerHTML = `
+            <i class="fas fa-camera text-2xl text-purple-400 group-hover:text-purple-600 dark:group-hover:text-purple-300 mb-2 transition-colors"></i>
+            <p class="text-sm text-purple-600 dark:text-purple-400 font-medium">صورة ${i}</p>
+        `;
+    }
+}
+
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+// Image Modal Functions
+function openImageModal(imageSrc) {
+    document.getElementById('modalImage').src = imageSrc;
+    document.getElementById('imageModal').classList.remove('hidden');
+}
+
+function closeImageModal() {
+    document.getElementById('imageModal').classList.add('hidden');
+}
+
+// Post Product Form
+document.getElementById('postProductForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    console.log('Form submission started');
+    
+    // Validate required fields
+    const requiredFields = ['productTitle', 'productDescription', 'productPrice', 'productCategory', 'productCity', 'productLocation'];
+    const missingFields = [];
+    
+    requiredFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (!field.value.trim()) {
+            missingFields.push(fieldId);
+            field.classList.add('ring-2', 'ring-red-500');
+        } else {
+            field.classList.remove('ring-2', 'ring-red-500');
+        }
+    });
+    
+    if (missingFields.length > 0) {
+        showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
+        return;
+    }
+    
+    const formData = {
+        title: document.getElementById('productTitle').value.trim(),
+        description: document.getElementById('productDescription').value.trim(),
+        price: document.getElementById('productPrice').value,
+        currency: document.getElementById('productCurrency').value,
+        category: document.getElementById('productCategory').value,
+        city: document.getElementById('productCity').value,
+        location: document.getElementById('productLocation').value.trim(),
+        color: document.getElementById('productColor').value,
+        condition: document.getElementById('productCondition').value
+    };
+
+    console.log('Form data:', formData);
+
+    // Handle images
+    for (let i = 1; i <= 3; i++) {
+        const file = document.getElementById(`image${i}`).files[0];
+        if (file) {
+            console.log(`Processing image ${i}:`, file.name);
+            const base64 = await fileToBase64(file);
+            formData[`image${i}`] = base64;
+        }
+    }
+
+    try {
+        showLoading();
+        console.log('Sending request to /api/products');
+        
+        const response = await apiCall('/api/products', {
+            method: 'POST',
+            body: JSON.stringify(formData)
+        });
+        
+        console.log('Response received:', response);
+        showToast('تم نشر المنتج بنجاح!', 'success');
+        closePostProductModal();
+        loadProducts(); // Reload products
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        showToast('فشل في نشر المنتج: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+});
+
+// Add click event listener to submit button for debugging
+document.addEventListener('DOMContentLoaded', function() {
+    const submitBtn = document.getElementById('submitProductBtn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function(e) {
+            console.log('Submit button clicked');
+            // Don't prevent default here, let the form handle it
+        });
+    }
+    
+    // Test if form exists
+    const form = document.getElementById('postProductForm');
+    if (form) {
+        console.log('Form found and ready');
+    } else {
+        console.error('Form not found!');
+    }
+    
+    // Set current user ID for JavaScript
+    {% if user %}
+    window.currentUserId = {{ user.id }};
+    {% else %}
+    window.currentUserId = null;
+    {% endif %}
+});
+
+// Filter Functions
+function applyFilters() {
+    console.log('Applying filters...');
+    currentPage = 1;
+    loadProducts();
+}
+
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('categoryFilter').value = '';
+    document.getElementById('cityFilter').value = '';
+    document.getElementById('minPrice').value = '';
+    document.getElementById('maxPrice').value = '';
+    applyFilters();
+}
+
+// Load Products
+async function loadProducts() {
+    if (isLoading) return;
+    
+    isLoading = true;
+    
+    const params = new URLSearchParams({
+        page: currentPage,
+        limit: 10
+    });
+
+    const search = document.getElementById('searchInput').value;
+    const category = document.getElementById('categoryFilter').value;
+    const city = document.getElementById('cityFilter').value;
+    const minPrice = document.getElementById('minPrice').value;
+    const maxPrice = document.getElementById('maxPrice').value;
+
+    console.log('Filter values:', { search, category, city, minPrice, maxPrice });
+
+    if (search) params.append('search', search);
+    if (category) params.append('category', category);
+    if (city) params.append('city', city);
+    if (minPrice) params.append('min_price', minPrice);
+    if (maxPrice) params.append('max_price', maxPrice);
+
+    console.log('API URL:', `/api/products?${params.toString()}`);
+
+    try {
+        // Show loading indicator
+        if (currentPage === 1) {
+            document.getElementById('productsFeed').innerHTML = `
+                <div class="flex justify-center items-center py-12">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"></div>
+                    <span class="mr-3 text-slate-600 dark:text-slate-400">جاري التحميل...</span>
+                </div>
+            `;
+        }
+        
+        const response = await apiCall(`/api/products?${params.toString()}`);
+        
+        if (currentPage === 1) {
+            document.getElementById('productsFeed').innerHTML = '';
+        }
+        
+        renderProducts(response.products);
+        
+        // Show results count for filtered results
+        const hasFilters = search || category || city || minPrice || maxPrice;
+        if (hasFilters && currentPage === 1) {
+            showToast(`تم العثور على ${response.products.length} منتج`, 'success');
+        }
+        
+        if (response.products.length < 10) {
+            document.querySelector('button[onclick="loadMoreProducts()"]').style.display = 'none';
+        } else {
+            document.querySelector('button[onclick="loadMoreProducts()"]').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error loading products:', error);
+        if (currentPage === 1) {
+            document.getElementById('productsFeed').innerHTML = `
+                <div class="text-center py-12">
+                    <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+                    <p class="text-red-500 text-lg">حدث خطأ في تحميل المنتجات</p>
+                    <p class="text-slate-600 dark:text-slate-400 mt-2">يرجى المحاولة مرة أخرى</p>
+                </div>
+            `;
+        }
+        showToast('فشل في تحميل المنتجات: ' + error.message, 'error');
+    } finally {
+        isLoading = false;
+    }
+}
+
+function loadMoreProducts() {
+    currentPage++;
+    loadProducts();
+}
+
+function renderProducts(products) {
+    const container = document.getElementById('productsFeed');
+    
+    products.forEach(product => {
+        const productElement = createProductElement(product);
+        container.appendChild(productElement);
+    });
+}
+
+function createProductElement(product) {
+    const div = document.createElement('div');
+    div.className = 'bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/20 overflow-hidden';
+    
+    const images = [];
+    if (product.hasImages.image1) images.push(`/api/products/image/${product.id}/1`);
+    if (product.hasImages.image2) images.push(`/api/products/image/${product.id}/2`);
+    if (product.hasImages.image3) images.push(`/api/products/image/${product.id}/3`);
+    
+    const imageGrid = images.map((src, index) => `
+        <div class="aspect-square bg-gray-100 dark:bg-slate-700 rounded-xl overflow-hidden">
+            <img src="${src}" alt="${product.title}" 
+                 class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-300"
+                 onclick="openImageModal('${src}')">
+        </div>
+    `).join('');
+    
+    div.innerHTML = `
+        <div class="p-6 border-b border-gray-200 dark:border-slate-700">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="h-12 w-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center overflow-hidden">
+                        <img src="/api/profile/image/${product.seller.id}/profile" 
+                             alt="${product.seller.name}" 
+                             class="w-full h-full object-cover"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <i class="fas fa-user text-white text-lg" style="display: none;"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-slate-800 dark:text-white">${product.seller.name}</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">${formatDate(product.createdAt)}</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="bg-cyan-100 dark:bg-cyan-900 text-cyan-800 dark:text-cyan-200 px-3 py-1 rounded-full text-sm font-medium">
+                        ${product.categoryDisplay}
+                    </span>
+                    <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium">
+                        ${product.statusDisplay}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        ${imageGrid}
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">${product.title}</h2>
+                        <p class="text-slate-600 dark:text-slate-400 leading-relaxed">${product.description}</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600 dark:text-slate-400">السعر:</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">${product.price}</span>
+                                <span class="text-sm text-slate-600 dark:text-slate-400">${product.currencyDisplay}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600 dark:text-slate-400">المدينة:</span>
+                            <span class="text-slate-800 dark:text-white font-medium">${product.city}</span>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600 dark:text-slate-400">الموقع:</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-slate-800 dark:text-white font-medium">${product.location}</span>
+                                <button onclick="openGoogleMaps('${product.location}, ${product.city}, Iraq')" 
+                                        class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                        title="عرض على خرائط جوجل">
+                                    <i class="fas fa-map-marker-alt text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        ${product.color ? `
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600 dark:text-slate-400">اللون:</span>
+                            <span class="text-slate-800 dark:text-white font-medium">${product.color}</span>
+                        </div>
+                        ` : ''}
+                        
+                        ${product.condition ? `
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-600 dark:text-slate-400">الحالة:</span>
+                            <span class="text-slate-800 dark:text-white font-medium">${product.condition}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="flex space-x-3 pt-4">
+                        ${getProductButtons(product)}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    return div;
+}
+
+function contactSeller(sellerId) {
+    window.location.href = `/chat/${sellerId}`;
+}
+
+function getProductButtons(product) {
+    // Check if current user is the seller (you'll need to pass current user ID from backend)
+    const currentUserId = getCurrentUserId(); // We'll need to implement this
+    
+    if (currentUserId && currentUserId == product.seller.id) {
+        // Show edit and delete buttons for product owner
+        return `
+            <button onclick="editProduct(${product.id})" class="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-edit ml-2"></i>تعديل المنتج
+            </button>
+            <button onclick="deleteProduct(${product.id})" class="bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-xl font-medium transition-all duration-300">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+    } else {
+        // Show contact and follow buttons for other users
+        return `
+            <button onclick="contactSeller(${product.seller.id})" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-comment ml-2"></i>تواصل مع البائع
+            </button>
+            <button onclick="toggleFollow(${product.seller.id})" class="bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-4 py-3 rounded-xl font-medium transition-all duration-300">
+                <i class="fas fa-user-plus"></i>
+            </button>
+        `;
+    }
+}
+
+function getCurrentUserId() {
+    // This should be set from the backend when the page loads
+    return window.currentUserId || null;
+}
+
+function editProduct(productId) {
+    // Open edit modal or redirect to edit page
+    showToast('ميزة التعديل قيد التطوير', 'info');
+    // TODO: Implement edit functionality - could open a modal with pre-filled form
+}
+
+async function deleteProduct(productId) {
+    if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+        try {
+            showLoading();
+            const response = await apiCall(`/api/products/${productId}`, {
+                method: 'DELETE'
+            });
+            
+            showToast('تم حذف المنتج بنجاح', 'success');
+            loadProducts(); // Reload the products list
+        } catch (error) {
+            console.error('Error deleting product:', error);
+            showToast('فشل في حذف المنتج: ' + error.message, 'error');
+        } finally {
+            hideLoading();
+        }
+    }
+}
+
+function openGoogleMaps(address) {
+    const encodedAddress = encodeURIComponent(address);
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+    window.open(googleMapsUrl, '_blank');
+}
+
+function getCurrentLocation() {
+    if (!navigator.geolocation) {
+        showToast('المتصفح لا يدعم تحديد الموقع', 'error');
+        return;
+    }
+
+    showLoading();
+    
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            
+            // Use reverse geocoding to get address from coordinates
+            reverseGeocode(latitude, longitude);
+        },
+        function(error) {
+            hideLoading();
+            let errorMessage = 'فشل في الحصول على الموقع';
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMessage = 'تم رفض إذن الوصول للموقع';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMessage = 'معلومات الموقع غير متاحة';
+                    break;
+                case error.TIMEOUT:
+                    errorMessage = 'انتهت مهلة طلب الموقع';
+                    break;
+            }
+            
+            showToast(errorMessage, 'error');
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
+        }
+    );
+}
+
+function reverseGeocode(latitude, longitude) {
+    // Using Google Geocoding API (you'll need to get an API key)
+    // For now, we'll use a simple approach with OpenStreetMap Nominatim
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=ar`;
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            
+            if (data && data.display_name) {
+                // Extract relevant parts of the address
+                let address = data.display_name;
+                
+                // Clean up the address for better readability
+                address = address.replace(/، العراق$/, ''); // Remove "، Iraq" at the end
+                address = address.replace(/، محافظة [^،]*$/, ''); // Remove governorate info
+                
+                // Set the address in the input field
+                document.getElementById('productLocation').value = address;
+                showToast('تم الحصول على الموقع بنجاح!', 'success');
+            } else {
+                // Fallback: use coordinates if address lookup fails
+                const fallbackAddress = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+                document.getElementById('productLocation').value = fallbackAddress;
+                showToast('تم الحصول على الإحداثيات، يمكنك تعديل العنوان', 'info');
+            }
+        })
+        .catch(error => {
+            hideLoading();
+            console.error('Geocoding error:', error);
+            
+            // Fallback: use coordinates
+            const fallbackAddress = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+            document.getElementById('productLocation').value = fallbackAddress;
+            showToast('تم الحصول على الإحداثيات، يمكنك تعديل العنوان', 'info');
+        });
+}
+
+function convertCurrency() {
+    const priceInput = document.getElementById('productPrice');
+    const currencySelect = document.getElementById('productCurrency');
+    const currentPrice = parseFloat(priceInput.value);
+    
+    if (!currentPrice || currentPrice <= 0) {
+        showToast('يرجى إدخال سعر صحيح أولاً', 'error');
+        return;
+    }
+    
+    const currentCurrency = currencySelect.value;
+    let newPrice, newCurrency, message;
+    
+    // Exchange rate: 1 USD = 1500 IQD (approximate rate, you can update this)
+    const exchangeRate = 1500;
+    
+    if (currentCurrency === 'IQD') {
+        newPrice = (currentPrice / exchangeRate).toFixed(2);
+        newCurrency = 'USD';
+        message = `تم تحويل ${currentPrice} دينار عراقي إلى ${newPrice} دولار أمريكي`;
+    } else {
+        newPrice = (currentPrice * exchangeRate).toFixed(0);
+        newCurrency = 'IQD';
+        message = `تم تحويل ${currentPrice} دولار أمريكي إلى ${newPrice} دينار عراقي`;
+    }
+    
+    priceInput.value = newPrice;
+    currencySelect.value = newCurrency;
+    showToast(message, 'success');
+}
+
+// Test function to manually submit form
+function testFormSubmission() {
+    console.log('Testing form submission...');
+    
+    // Fill in some test data
+    document.getElementById('productTitle').value = 'Test Product';
+    document.getElementById('productDescription').value = 'Test Description';
+    document.getElementById('productPrice').value = '100';
+    document.getElementById('productCurrency').value = 'IQD';
+    document.getElementById('productCategory').value = 'other';
+    document.getElementById('productCity').value = 'بغداد';
+    document.getElementById('productLocation').value = 'Test Location';
+    
+    // Trigger form submission
+    const form = document.getElementById('postProductForm');
+    if (form) {
+        form.dispatchEvent(new Event('submit'));
+    } else {
+        console.error('Form not found for testing');
+    }
+}
+
+// Test function for filters
+function testFilters() {
+    console.log('Testing filters...');
+    
+    // Set some test filter values
+    document.getElementById('searchInput').value = 'سيارة';
+    document.getElementById('categoryFilter').value = 'car';
+    document.getElementById('cityFilter').value = 'بغداد';
+    document.getElementById('minPrice').value = '1000';
+    document.getElementById('maxPrice').value = '50000';
+    
+    // Apply filters
+    applyFilters();
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-SA') + ' ' + date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    loadProducts();
+    
+    // Add filter input listeners
+    document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 500));
+    document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+    document.getElementById('cityFilter').addEventListener('change', applyFilters);
+    document.getElementById('minPrice').addEventListener('input', debounce(applyFilters, 500));
+    document.getElementById('maxPrice').addEventListener('input', debounce(applyFilters, 500));
+});
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+</script>
+{% endblock %}
