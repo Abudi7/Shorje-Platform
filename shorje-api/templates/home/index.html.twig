@@ -420,7 +420,7 @@
                                     اكتشف المنتجات المحلية من البائعين في منطقتك. تواصل مباشرة، اتفق على السعر، والتقاط من الموقع
                                 </p>
                                 <div class="flex flex-col sm:flex-row gap-4">
-                                    <button class="bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white/20 transition-all duration-300 border border-white/20">
+                                    <button onclick="goToMyProducts()" class="bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white/20 transition-all duration-300 border border-white/20">
                                         <i class="fas fa-plus ml-2"></i>بيع منتجك
                                     </button>
                                 </div>
@@ -501,7 +501,7 @@
                                     لا رسوم، لا عمولات. ارفع منتجاتك وابدأ البيع فوراً. تواصل مباشرة مع المشترين في منطقتك
                                 </p>
                                 <div class="flex flex-col sm:flex-row gap-4">
-                                    <button class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                                    <button onclick="goToMyProducts()" class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
                                         <i class="fas fa-plus ml-2"></i>بيع منتجك
                                     </button>
                                     <button class="bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white/20 transition-all duration-300 border border-white/20">
@@ -2320,29 +2320,8 @@ document.addEventListener('DOMContentLoaded', function() {
     requestNotificationPermission();
     
     // Test function for debugging (remove in production)
-    window.testMessagesBadge = function(count) {
-        console.log('Testing messages badge with count:', count);
-        updateMessagesBadge(count);
-    };
     
-    // Add test button for debugging (remove in production)
-    const testButton = document.createElement('button');
-    testButton.textContent = 'Test Badge';
-    testButton.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded z-50';
-    testButton.onclick = () => {
-        const count = prompt('Enter badge count:');
-        if (count !== null) {
-            updateMessagesBadge(parseInt(count) || 0);
-        }
-    };
-    document.body.appendChild(testButton);
     
-    // Test badges after 2 seconds (for demonstration)
-    setTimeout(() => {
-        console.log('Testing badge visibility...');
-        // Uncomment the next line to test badges
-        // testBadges();
-    }, 2000);
     
     // Add filter input listeners
     const searchInput = document.getElementById('searchInput');
@@ -2602,10 +2581,18 @@ function selectSuggestion(text) {
 async function loadMessagesCount() {
     try {
         console.log('Loading messages count from home page...');
-        const response = await apiCall('/api/messages/unread-count');
-        const count = response.count || 0;
-        console.log('Messages count received:', count);
-        updateMessagesBadge(count);
+        const response = await apiCall('/web/conversations');
+        const data = await response.json();
+        
+        let totalUnread = 0;
+        if (data.conversations) {
+            data.conversations.forEach(conversation => {
+                totalUnread += conversation.unreadCount || 0;
+            });
+        }
+        
+        console.log('Messages count received:', totalUnread);
+        updateMessagesBadge(totalUnread);
     } catch (error) {
         console.error('Error loading messages count:', error);
         updateMessagesBadge(0);
@@ -2665,6 +2652,31 @@ function openNotifications() {
     window.location.href = '/notifications';
 }
 
+// Function to go to My Products page with authentication check
+async function goToMyProducts() {
+    try {
+        // Check if user is authenticated by making a simple API call
+        const response = await apiCall('/web/conversations');
+        
+        if (response.ok) {
+            // User is authenticated, redirect to My Products page
+            window.location.href = '/products/my';
+        } else {
+            // User is not authenticated, redirect to login
+            showToast('يجب تسجيل الدخول أولاً', 'warning');
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 2000);
+        }
+    } catch (error) {
+        console.error('Authentication check failed:', error);
+        showToast('يجب تسجيل الدخول أولاً', 'warning');
+        setTimeout(() => {
+            window.location.href = '/login';
+        }, 2000);
+    }
+}
+
 // Real-time updates using polling (you can replace with WebSocket later)
 function startRealTimeUpdates() {
     // Load initial counts
@@ -2688,8 +2700,16 @@ let lastMessageCount = 0;
 async function checkForNewMessages() {
     try {
         console.log('Checking for new messages (home page)');
-        const response = await apiCall('/api/messages/unread-count');
-        const currentCount = response.count || 0;
+        const response = await apiCall('/web/conversations');
+        const data = await response.json();
+        
+        let totalUnread = 0;
+        if (data.conversations) {
+            data.conversations.forEach(conversation => {
+                totalUnread += conversation.unreadCount || 0;
+            });
+        }
+        const currentCount = totalUnread;
         console.log('Current message count:', currentCount, 'Last count:', lastMessageCount);
         
         // If there are new messages (count increased)
@@ -2736,15 +2756,6 @@ function requestNotificationPermission() {
     }
 }
 
-// Test function to show badges (for debugging)
-function testBadges() {
-    console.log('Testing badges...');
-    updateMessagesBadge(5);
-    updateNotificationsBadge(3);
-}
-
-// Make test function available globally
-window.testBadges = testBadges;
 
 function debounce(func, wait) {
     let timeout;
