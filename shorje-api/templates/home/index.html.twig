@@ -40,17 +40,19 @@
                 <!-- Logo Section - Left -->
                 <div class="flex items-center">
                     <div class="flex items-center space-x-4">
-                        <!-- Enhanced Logo -->
+                        <!-- Professional Shopping Logo -->
                         <div class="relative">
-                            <div class="h-16 w-16 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 dark:from-cyan-400 dark:via-blue-500 dark:to-purple-500 rounded-3xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-300">
-                                <i class="fas fa-shield-alt text-white text-2xl"></i>
-                                <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-slate-900"></div>
+                            <div class="h-16 w-16 bg-gradient-to-br from-emerald-500 via-green-600 to-teal-600 dark:from-emerald-400 dark:via-green-500 dark:to-teal-500 rounded-3xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-300">
+                                <i class="fas fa-shopping-cart text-white text-2xl"></i>
+                                <div class="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center">
+                                    <span class="text-xs font-bold text-white">!</span>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Brand Text -->
                         <div class="flex flex-col">
-                            <h1 class="text-4xl font-black bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 dark:from-cyan-400 dark:via-blue-500 dark:to-purple-500 bg-clip-text text-transparent leading-tight">
+                            <h1 class="text-4xl font-black bg-gradient-to-r from-emerald-500 via-green-600 to-teal-600 dark:from-emerald-400 dark:via-green-500 dark:to-teal-500 bg-clip-text text-transparent leading-tight">
                                 شورجي
                             </h1>
                             <p class="text-sm font-semibold text-gray-600 dark:text-gray-300 tracking-wide">
@@ -218,12 +220,11 @@
         </div>
     </nav>
 
-    <!-- Hero Image Slider Section -->
-    <div class="relative bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <!-- Slider Container -->
-            <div class="relative">
-                <div id="heroSlider" class="relative h-96 md:h-[500px] rounded-3xl overflow-hidden shadow-2xl">
+    <!-- Full-Screen Hero Slider Section -->
+    <div class="relative w-full h-screen overflow-hidden">
+        <!-- Full-Screen Slider Container -->
+        <div class="relative w-full h-full">
+            <div id="heroSlider" class="relative w-full h-full">
                     {% if sliderImages|length > 0 %}
                         {% for sliderImage in sliderImages %}
                         <div class="slider-slide {{ loop.first ? 'active' : '' }} absolute inset-0 transition-all duration-1000 ease-in-out {{ loop.first ? '' : 'opacity-0' }}">
@@ -232,28 +233,28 @@
                                  alt="{{ sliderImage.title }}" 
                                  class="absolute inset-0 w-full h-full object-cover">
                             {% else %}
-                            <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/90 via-blue-600/90 to-purple-600/90"></div>
+                            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/90 via-green-600/90 to-teal-600/90"></div>
                             {% endif %}
-                            <div class="absolute inset-0 bg-black/40"></div>
+                            <div class="absolute inset-0 bg-black/50"></div>
                             <div class="relative z-10 flex items-center justify-center h-full">
-                                <div class="text-center text-white px-8">
-                                    <h2 class="text-4xl md:text-6xl font-black mb-6 leading-tight">
+                                <div class="text-center text-white px-8 max-w-4xl mx-auto">
+                                    <h2 class="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight">
                                         {{ sliderImage.title }}
                                     </h2>
                                     {% if sliderImage.description %}
-                                    <p class="text-xl md:text-2xl mb-8 font-semibold">
+                                    <p class="text-2xl md:text-3xl lg:text-4xl mb-12 font-semibold leading-relaxed">
                                         {{ sliderImage.description }}
                                     </p>
                                     {% endif %}
-                                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                                    <div class="flex flex-col sm:flex-row gap-6 justify-center">
                                         {% if sliderImage.buttonText and sliderImage.buttonUrl %}
-                                        <a href="{{ sliderImage.buttonUrl }}" class="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl">
-                                            <i class="fas fa-rocket ml-2"></i>{{ sliderImage.buttonText }}
+                                        <a href="{{ sliderImage.buttonUrl }}" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-12 py-6 rounded-3xl font-bold text-xl transition-all duration-300 transform hover:scale-110 shadow-2xl">
+                                            <i class="fas fa-shopping-cart ml-3"></i>{{ sliderImage.buttonText }}
                                         </a>
                                         {% endif %}
                                         {% if sliderImage.buttonText2 and sliderImage.buttonUrl2 %}
-                                        <a href="{{ sliderImage.buttonUrl2 }}" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 border border-white/30">
-                                            <i class="fas fa-arrow-left ml-2"></i>{{ sliderImage.buttonText2 }}
+                                        <a href="{{ sliderImage.buttonUrl2 }}" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-12 py-6 rounded-3xl font-bold text-xl transition-all duration-300 transform hover:scale-110 border-2 border-white/30">
+                                            <i class="fas fa-arrow-left ml-3"></i>{{ sliderImage.buttonText2 }}
                                         </a>
                                         {% endif %}
                                     </div>
@@ -264,22 +265,22 @@
                     {% else %}
                         <!-- Default slides when no slider images are configured -->
                         <div class="slider-slide active absolute inset-0 transition-all duration-1000 ease-in-out">
-                            <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/90 via-blue-600/90 to-purple-600/90"></div>
-                            <div class="absolute inset-0 bg-black/20"></div>
+                            <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/90 via-green-600/90 to-teal-600/90"></div>
+                            <div class="absolute inset-0 bg-black/50"></div>
                             <div class="relative z-10 flex items-center justify-center h-full">
-                                <div class="text-center text-white px-8">
-                                    <h2 class="text-4xl md:text-6xl font-black mb-6 leading-tight">
+                                <div class="text-center text-white px-8 max-w-4xl mx-auto">
+                                    <h2 class="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight">
                                         مرحباً بك في <span class="text-yellow-300">شورجي</span>
                                     </h2>
-                                    <p class="text-xl md:text-2xl mb-8 font-semibold">
+                                    <p class="text-2xl md:text-3xl lg:text-4xl mb-12 font-semibold leading-relaxed">
                                         منصة التسوق الذكية المتطورة
                                     </p>
-                                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                                        <a href="/register" class="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl">
-                                            <i class="fas fa-rocket ml-2"></i>ابدأ الآن
+                                    <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                                        <a href="/register" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-12 py-6 rounded-3xl font-bold text-xl transition-all duration-300 transform hover:scale-110 shadow-2xl">
+                                            <i class="fas fa-shopping-cart ml-3"></i>ابدأ التسوق الآن
                                         </a>
-                                        <a href="/users" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 border border-white/30">
-                                            <i class="fas fa-users ml-2"></i>تصفح المستخدمين
+                                        <a href="/users" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-12 py-6 rounded-3xl font-bold text-xl transition-all duration-300 transform hover:scale-110 border-2 border-white/30">
+                                            <i class="fas fa-users ml-3"></i>تصفح المستخدمين
                                         </a>
                                     </div>
                                 </div>
@@ -288,51 +289,54 @@
                     {% endif %}
                 </div>
                 
-                <!-- Slider Controls -->
+                <!-- Professional Slider Controls -->
                 {% if sliderImages|length > 1 %}
-                <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
+                <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-4">
                     {% for sliderImage in sliderImages %}
-                    <button onclick="changeSlide({{ loop.index0 }})" class="slider-dot w-4 h-4 rounded-full {{ loop.first ? 'bg-white/80 active' : 'bg-white/50' }} hover:bg-white transition-all duration-300"></button>
+                    <button onclick="changeSlide({{ loop.index0 }})" class="slider-dot w-5 h-5 rounded-full {{ loop.first ? 'bg-white/90 active' : 'bg-white/50' }} hover:bg-white transition-all duration-300 shadow-lg"></button>
                     {% endfor %}
                 </div>
                 {% endif %}
                 
-                <!-- Navigation Arrows -->
-                <button onclick="previousSlide()" class="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-4 rounded-2xl transition-all duration-300 transform hover:scale-110">
-                    <i class="fas fa-chevron-right text-xl"></i>
+                <!-- Professional Navigation Arrows -->
+                <button onclick="previousSlide()" class="absolute left-8 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-6 rounded-3xl transition-all duration-300 transform hover:scale-110 shadow-2xl border border-white/30">
+                    <i class="fas fa-chevron-right text-2xl"></i>
                 </button>
-                <button onclick="nextSlide()" class="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-4 rounded-2xl transition-all duration-300 transform hover:scale-110">
-                    <i class="fas fa-chevron-left text-xl"></i>
+                <button onclick="nextSlide()" class="absolute right-8 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white p-6 rounded-3xl transition-all duration-300 transform hover:scale-110 shadow-2xl border border-white/30">
+                    <i class="fas fa-chevron-left text-2xl"></i>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Category Slider Section -->
-    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl shadow-xl border-b border-white/20 dark:border-slate-700/20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-6 text-center">
-                <i class="fas fa-th-large ml-3 text-purple-500"></i>تصفح حسب الفئة
-            </h2>
+    <!-- Professional Category Section -->
+    <div class="bg-gradient-to-br from-slate-50 via-white to-emerald-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-black text-slate-800 dark:text-white mb-4">
+                    <i class="fas fa-shopping-bag ml-4 text-emerald-500"></i>تصفح حسب الفئة
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400">اكتشف المنتجات والخدمات المتنوعة</p>
+            </div>
             
             <!-- Category Slider -->
             <div class="relative">
                 <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4" id="categorySlider">
-                    <!-- All Categories Button -->
-                    <button onclick="filterByCategory('all')" 
-                            class="category-btn flex-shrink-0 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-xl active:scale-95" 
-                            data-category="all">
-                        <i class="fas fa-th-large ml-3 text-lg"></i>
-                        <span>الكل</span>
-                    </button>
+                        <!-- All Categories Button -->
+                        <button onclick="filterByCategory('all')" 
+                                class="category-btn flex-shrink-0 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-10 py-5 rounded-3xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl active:scale-95" 
+                                data-category="all">
+                            <i class="fas fa-th-large ml-3 text-xl"></i>
+                            <span>الكل</span>
+                        </button>
                     
-                    <!-- Car Category -->
-                    <button onclick="filterByCategory('car')" 
-                            class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-200 dark:border-slate-600 active:scale-95" 
-                            data-category="car">
-                        <i class="fas fa-car ml-3 text-lg"></i>
-                        <span>سيارات</span>
-                    </button>
+                        <!-- Car Category -->
+                        <button onclick="filterByCategory('car')" 
+                                class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 px-10 py-5 rounded-3xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl border-2 border-gray-200 dark:border-slate-600 hover:border-emerald-300 dark:hover:border-emerald-600 active:scale-95" 
+                                data-category="car">
+                            <i class="fas fa-car ml-3 text-xl"></i>
+                            <span>سيارات</span>
+                        </button>
                     
                     <!-- Home Rental Category -->
                     <button onclick="filterByCategory('home_rental')" 
@@ -1778,25 +1782,28 @@ let selectedCategory = 'all';
 function filterByCategory(category) {
     selectedCategory = category;
     
-    // Update button styles
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        const btnCategory = btn.getAttribute('data-category');
-        if (btnCategory === category) {
-            // Active state
-            btn.className = btn.className.replace('bg-white dark:bg-slate-700', 'bg-gradient-to-r from-purple-500 to-pink-500')
-                .replace('text-gray-700 dark:text-gray-300', 'text-white')
-                .replace('border border-gray-200 dark:border-slate-600', '')
-                .replace('hover:bg-gray-50 dark:hover:bg-slate-600', 'hover:from-purple-600 hover:to-pink-600');
-        } else {
-            // Inactive state
-            btn.className = btn.className.replace('bg-gradient-to-r from-purple-500 to-pink-500', 'bg-white dark:bg-slate-700')
-                .replace('text-white', 'text-gray-700 dark:text-gray-300')
-                .replace('hover:from-purple-600 hover:to-pink-600', 'hover:bg-gray-50 dark:hover:bg-slate-600');
-            if (!btn.className.includes('border')) {
-                btn.className += ' border border-gray-200 dark:border-slate-600';
+        // Update button styles
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            const btnCategory = btn.getAttribute('data-category');
+            if (btnCategory === category) {
+                // Active state
+                btn.className = btn.className.replace('bg-white dark:bg-slate-700', 'bg-gradient-to-r from-emerald-500 to-green-600')
+                    .replace('text-gray-700 dark:text-gray-300', 'text-white')
+                    .replace('border-2 border-gray-200 dark:border-slate-600', '')
+                    .replace('hover:bg-emerald-50 dark:hover:bg-emerald-900/20', 'hover:from-emerald-600 hover:to-green-700')
+                    .replace('hover:text-emerald-600 dark:hover:text-emerald-400', '')
+                    .replace('hover:border-emerald-300 dark:hover:border-emerald-600', '');
+            } else {
+                // Inactive state
+                btn.className = btn.className.replace('bg-gradient-to-r from-emerald-500 to-green-600', 'bg-white dark:bg-slate-700')
+                    .replace('text-white', 'text-gray-700 dark:text-gray-300')
+                    .replace('hover:from-emerald-600 hover:to-green-700', 'hover:bg-emerald-50 dark:hover:bg-emerald-900/20')
+                    .replace('hover:text-emerald-600 dark:hover:text-emerald-400', 'hover:text-emerald-600 dark:hover:text-emerald-400');
+                if (!btn.className.includes('border-2')) {
+                    btn.className += ' border-2 border-gray-200 dark:border-slate-600 hover:border-emerald-300 dark:hover:border-emerald-600';
+                }
             }
-        }
-    });
+        });
     
     // Reset pagination and load products
     currentPage = 1;
