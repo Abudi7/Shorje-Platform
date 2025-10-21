@@ -51,10 +51,12 @@
                     </div>
                 </div>
                 
-                <!-- Edit Button -->
+                <!-- Edit Button - Only show for own profile -->
+                {% if isOwnProfile %}
                 <a href="/edit-profile" class="absolute top-6 right-6 bg-white/20 dark:bg-slate-800/20 backdrop-blur-md hover:bg-white/30 dark:hover:bg-slate-800/30 text-white p-4 rounded-2xl transition-all duration-300 transform hover:scale-110 border border-white/30 dark:border-slate-700/30 shadow-xl">
                     <i class="fas fa-edit text-xl"></i>
                 </a>
+                {% endif %}
             </div>
         </div>
 
@@ -184,9 +186,11 @@
                         {% endif %}
 
                         <div class="flex justify-end space-x-6 mt-8">
+                            {% if isOwnProfile %}
                             <a href="/edit-profile" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
                                 <i class="fas fa-edit ml-3 text-lg"></i>تعديل الملف الشخصي
                             </a>
+                            {% endif %}
                             <a href="/users" class="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
                                 <i class="fas fa-users ml-3 text-lg"></i>المستخدمين
                             </a>
@@ -231,9 +235,11 @@
     </div>
 </div>
 
-<!-- Hidden file inputs -->
+<!-- Hidden file inputs - Only show for own profile -->
+{% if isOwnProfile %}
 <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="handleImageUpload('profile')">
 <input type="file" id="coverImageInput" accept="image/*" style="display: none;" onchange="handleImageUpload('cover')">
+{% endif %}
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -242,11 +248,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function uploadProfileImage() {
+    {% if isOwnProfile %}
     document.getElementById('profileImageInput').click();
+    {% else %}
+    showToast('لا يمكنك تعديل هذا الملف الشخصي', 'error');
+    {% endif %}
 }
 
 function uploadCoverImage() {
+    {% if isOwnProfile %}
     document.getElementById('coverImageInput').click();
+    {% else %}
+    showToast('لا يمكنك تعديل هذا الملف الشخصي', 'error');
+    {% endif %}
 }
 
 async function handleImageUpload(type) {
