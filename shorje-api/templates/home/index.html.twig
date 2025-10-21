@@ -958,6 +958,10 @@ function contactSeller(sellerId) {
     window.location.href = `/chat/${sellerId}`;
 }
 
+function viewProfile(userId) {
+    window.location.href = `/profile/${userId}`;
+}
+
 function getProductButtons(product) {
     // Check if current user is the seller (you'll need to pass current user ID from backend)
     const currentUserId = getCurrentUserId(); // We'll need to implement this

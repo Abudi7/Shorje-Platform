@@ -332,7 +332,7 @@ class SocialController extends AbstractController
     }
 
     #[Route('/chat/{userId}', name: 'app_chat')]
-    public function chat(int $userId, EntityManagerInterface $em): Response
+    public function chat(int $userId, EntityManagerInterface $em, MessageRepository $messageRepo): Response
     {
         $currentUser = $this->getUser();
         if (!$currentUser) {
@@ -344,9 +344,13 @@ class SocialController extends AbstractController
             throw $this->createNotFoundException('المستخدم غير موجود');
         }
 
+        // Get conversation messages
+        $messages = $messageRepo->findConversation($currentUser, $otherUser);
+
         return $this->render('social/chat.html.twig', [
             'currentUser' => $currentUser,
-            'otherUser' => $otherUser
+            'otherUser' => $otherUser,
+            'messages' => $messages
         ]);
     }
 
