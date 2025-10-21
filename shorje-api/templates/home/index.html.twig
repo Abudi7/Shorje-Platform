@@ -123,6 +123,24 @@
                         </button>
                     </div>
                 </div>
+                
+                <!-- Seller Search Section -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/20 p-6 mt-6">
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-6">
+                        <i class="fas fa-users ml-2 text-purple-500 dark:text-purple-400"></i>البحث عن البائعين
+                    </h3>
+                    
+                    <!-- Seller Search -->
+                    <div class="mb-4">
+                        <input type="text" id="sellerSearchInput" placeholder="ابحث عن بائع بالاسم أو البريد الإلكتروني..." 
+                               class="w-full px-4 py-3 bg-gray-100 dark:bg-slate-700 border-0 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    
+                    <!-- Search Results -->
+                    <div id="sellerSearchResults" class="space-y-3 max-h-96 overflow-y-auto">
+                        <!-- Search results will be populated here -->
+                    </div>
+                </div>
             </div>
 
             <!-- Main Content -->
@@ -1135,6 +1153,63 @@ function formatDate(dateString) {
     return date.toLocaleDateString('ar-SA') + ' ' + date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
 }
 
+// Seller Search functionality
+async function searchSellers(query) {
+    if (query.length < 2) {
+        document.getElementById('sellerSearchResults').innerHTML = '';
+        return;
+    }
+    
+    try {
+        const response = await apiCall(`/api/search-sellers?q=${encodeURIComponent(query)}`);
+        
+        if (response.sellers && response.sellers.length > 0) {
+            displaySellerResults(response.sellers);
+        } else {
+            document.getElementById('sellerSearchResults').innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-4">لم يتم العثور على بائعين</p>';
+        }
+    } catch (error) {
+        console.error('Seller search error:', error);
+        document.getElementById('sellerSearchResults').innerHTML = '<p class="text-red-500 text-center py-4">حدث خطأ أثناء البحث</p>';
+    }
+}
+
+function displaySellerResults(sellers) {
+    const resultsContainer = document.getElementById('sellerSearchResults');
+    
+    const sellersHtml = sellers.map(seller => `
+        <div class="bg-gray-50 dark:bg-slate-700 rounded-xl p-4 border border-gray-200 dark:border-slate-600">
+            <div class="flex items-center space-x-4">
+                <div class="h-12 w-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center overflow-hidden">
+                    <img src="/api/profile/image/${seller.id}/profile" 
+                         alt="${seller.name}" 
+                         class="w-full h-full object-cover"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <i class="fas fa-user text-white text-lg" style="display: none;"></i>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-semibold text-slate-800 dark:text-white">${seller.name}</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">${seller.email}</p>
+                    ${seller.isVerified ? '<span class="text-xs text-green-500"><i class="fas fa-check-circle ml-1"></i>مؤكد</span>' : ''}
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="viewProfile(${seller.id})" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300">
+                        <i class="fas fa-user ml-1"></i>الملف
+                    </button>
+                    <button onclick="contactSeller(${seller.id})" class="bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300">
+                        <i class="fas fa-comment ml-1"></i>رسالة
+                    </button>
+                    <button onclick="toggleFollow(${seller.id})" class="bg-gray-200 dark:bg-slate-600 hover:bg-gray-300 dark:hover:bg-slate-500 text-slate-700 dark:text-slate-300 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300">
+                        <i class="fas fa-user-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    resultsContainer.innerHTML = sellersHtml;
+}
+
 // Follow/Unfollow functionality
 async function toggleFollow(userId) {
     try {
@@ -1184,6 +1259,11 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('cityFilter').addEventListener('change', applyFilters);
     document.getElementById('minPrice').addEventListener('input', debounce(applyFilters, 500));
     document.getElementById('maxPrice').addEventListener('input', debounce(applyFilters, 500));
+    
+    // Add seller search listener
+    document.getElementById('sellerSearchInput').addEventListener('input', debounce(function(e) {
+        searchSellers(e.target.value);
+    }, 300));
 });
 
 function debounce(func, wait) {

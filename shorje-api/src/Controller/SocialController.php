@@ -100,7 +100,7 @@ class SocialController extends AbstractController
     }
 
     #[Route('/api/follow-status/{userId}', name: 'api_follow_status', methods: ['GET'])]
-    public function getFollowStatus(int $userId, FollowRepository $followRepo): JsonResponse
+    public function getFollowStatus(int $userId, EntityManagerInterface $em, FollowRepository $followRepo): JsonResponse
     {
         try {
             $currentUser = $this->getUser();
@@ -108,7 +108,7 @@ class SocialController extends AbstractController
                 return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
             }
 
-            $user = $this->getDoctrine()->getRepository(User::class)->find($userId);
+            $user = $em->getRepository(User::class)->find($userId);
             if (!$user) {
                 return new JsonResponse(['error' => 'المستخدم غير موجود'], 404);
             }
@@ -348,6 +348,45 @@ class SocialController extends AbstractController
             'currentUser' => $currentUser,
             'otherUser' => $otherUser
         ]);
+    }
+
+    #[Route('/api/search-sellers', name: 'api_search_sellers', methods: ['GET'])]
+    public function searchSellers(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $query = $request->query->get('q', '');
+        if (empty($query)) {
+            return new JsonResponse(['sellers' => []]);
+        }
+
+        $sellers = $em->getRepository(User::class)
+            ->createQueryBuilder('u')
+            ->where('u.id != :currentUserId')
+            ->andWhere('(u.firstName LIKE :query OR u.lastName LIKE :query OR u.email LIKE :query OR CONCAT(u.firstName, \' \', u.lastName) LIKE :query)')
+            ->setParameter('currentUserId', $currentUser->getId())
+            ->setParameter('query', '%' . $query . '%')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+
+        $sellersData = [];
+        foreach ($sellers as $seller) {
+            $sellersData[] = [
+                'id' => $seller->getId(),
+                'name' => $seller->getFullName(),
+                'email' => $seller->getEmail(),
+                'firstName' => $seller->getFirstName(),
+                'lastName' => $seller->getLastName(),
+                'isVerified' => $seller->isVerified(),
+                'hasProfilePicture' => $seller->getProfilePicture() !== null
+            ];
+        }
+
+        return new JsonResponse(['sellers' => $sellersData]);
     }
 
     #[Route('/messages', name: 'app_messages')]
