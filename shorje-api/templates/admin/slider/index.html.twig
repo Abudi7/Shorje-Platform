@@ -1,0 +1,138 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}إدارة صور الشريحة - شورجي{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 dark:bg-slate-900">
+    <!-- Header -->
+    <div class="bg-white dark:bg-slate-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">إدارة صور الشريحة</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mt-2">إدارة الصور المعروضة في الشريحة الرئيسية</p>
+                </div>
+                <a href="{{ path('admin_slider_new') }}" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-plus ml-2"></i>إضافة صورة جديدة
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% if sliderImages|length > 0 %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for sliderImage in sliderImages %}
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-slate-700 overflow-hidden">
+                <!-- Image Preview -->
+                <div class="relative h-48 bg-gray-100 dark:bg-slate-700">
+                    {% if sliderImage.image %}
+                    <img src="{{ path('admin_slider_image', {id: sliderImage.id}) }}" 
+                         alt="{{ sliderImage.title }}" 
+                         class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="flex items-center justify-center h-full text-gray-400 dark:text-slate-500">
+                        <i class="fas fa-image text-4xl"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Status Badge -->
+                    <div class="absolute top-3 right-3">
+                        {% if sliderImage.isActive %}
+                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">نشط</span>
+                        {% else %}
+                        <span class="bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-semibold">غير نشط</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Content -->
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">{{ sliderImage.title }}</h3>
+                    {% if sliderImage.description %}
+                    <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">{{ sliderImage.description }}</p>
+                    {% endif %}
+                    
+                    <!-- Buttons Info -->
+                    <div class="space-y-2 mb-4">
+                        {% if sliderImage.buttonText %}
+                        <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                            <i class="fas fa-link ml-2"></i>
+                            <span>{{ sliderImage.buttonText }}</span>
+                        </div>
+                        {% endif %}
+                        {% if sliderImage.buttonText2 %}
+                        <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                            <i class="fas fa-link ml-2"></i>
+                            <span>{{ sliderImage.buttonText2 }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Sort Order -->
+                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                        ترتيب: {{ sliderImage.sortOrder }}
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="flex space-x-2">
+                        <a href="{{ path('admin_slider_edit', {id: sliderImage.id}) }}" 
+                           class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-200 text-center">
+                            <i class="fas fa-edit ml-1"></i>تعديل
+                        </a>
+                        <button onclick="toggleSlider({{ sliderImage.id }})" 
+                                class="flex-1 {{ sliderImage.isActive ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600' }} text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-200">
+                            <i class="fas fa-{{ sliderImage.isActive ? 'pause' : 'play' }} ml-1"></i>
+                            {{ sliderImage.isActive ? 'إيقاف' : 'تفعيل' }}
+                        </button>
+                        <form method="POST" action="{{ path('admin_slider_delete', {id: sliderImage.id}) }}" 
+                              class="flex-1" onsubmit="return confirm('هل أنت متأكد من حذف هذه الصورة؟')">
+                            <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-200">
+                                <i class="fas fa-trash ml-1"></i>حذف
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <div class="bg-gray-100 dark:bg-slate-700 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-images text-4xl text-gray-400 dark:text-slate-500"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-600 dark:text-slate-300 mb-2">لا توجد صور</h3>
+            <p class="text-gray-500 dark:text-slate-400 mb-6">لم يتم إضافة أي صور للشريحة بعد</p>
+            <a href="{{ path('admin_slider_new') }}" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-plus ml-2"></i>إضافة أول صورة
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+async function toggleSlider(sliderId) {
+    try {
+        const response = await fetch(`/admin/slider/${sliderId}/toggle`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('حدث خطأ أثناء تغيير حالة الشريحة');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('حدث خطأ أثناء تغيير حالة الشريحة');
+    }
+}
+</script>
+{% endblock %}
