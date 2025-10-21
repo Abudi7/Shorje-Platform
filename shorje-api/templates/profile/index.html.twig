@@ -298,19 +298,26 @@ function fileToBase64(file) {
 async function loadFollowStatus() {
     try {
         const response = await apiCall('/api/follow-status/{{ user.id }}');
-        document.getElementById('followersCount').textContent = response.followersCount;
-        document.getElementById('followingCount').textContent = response.followingCount;
         
-        // Update follow button state
-        const followBtn = document.getElementById('followBtn');
-        const followText = document.getElementById('followText');
-        
-        if (response.isFollowing) {
-            followText.textContent = 'إلغاء المتابعة';
-            followBtn.className = followBtn.className.replace('from-cyan-500 to-blue-600', 'from-red-500 to-red-600').replace('hover:from-cyan-600 hover:to-blue-700', 'hover:from-red-600 hover:to-red-700');
+        if (response.success) {
+            document.getElementById('followersCount').textContent = response.followersCount;
+            document.getElementById('followingCount').textContent = response.followingCount;
+            
+            // Update follow button state only if it exists (not own profile)
+            const followBtn = document.getElementById('followBtn');
+            const followText = document.getElementById('followText');
+            
+            if (followBtn && followText && response.isFollowing) {
+                followText.textContent = 'إلغاء المتابعة';
+                followBtn.className = followBtn.className.replace('from-cyan-500 to-blue-600', 'from-red-500 to-red-600').replace('hover:from-cyan-600 hover:to-blue-700', 'hover:from-red-600 hover:to-red-700');
+            }
+        } else {
+            console.error('API returned error:', response.error);
+            showToast('فشل في تحميل حالة المتابعة', 'error');
         }
     } catch (error) {
         console.error('Failed to load follow status:', error);
+        showToast('فشل في تحميل حالة المتابعة: ' + error.message, 'error');
     }
 }
 
@@ -319,27 +326,47 @@ async function toggleFollow(userId) {
     const followBtn = document.getElementById('followBtn');
     const followText = document.getElementById('followText');
     
+    if (!followBtn || !followText) {
+        console.error('Follow button elements not found');
+        return;
+    }
+    
     try {
         // Check current follow status
         const statusResponse = await apiCall(`/api/follow-status/${userId}`);
-        const isFollowing = statusResponse.isFollowing;
         
-        let response;
-        if (isFollowing) {
-            response = await apiCall(`/api/unfollow/${userId}`, { method: 'POST' });
-            followText.textContent = 'متابعة';
-            followBtn.className = followBtn.className.replace('from-red-500 to-red-600', 'from-cyan-500 to-blue-600').replace('hover:from-red-600 hover:to-red-700', 'hover:from-cyan-600 hover:to-blue-700');
-        } else {
-            response = await apiCall(`/api/follow/${userId}`, { method: 'POST' });
-            followText.textContent = 'إلغاء المتابعة';
-            followBtn.className = followBtn.className.replace('from-cyan-500 to-blue-600', 'from-red-500 to-red-600').replace('hover:from-cyan-600 hover:to-blue-700', 'hover:from-red-600 hover:to-red-700');
+        if (!statusResponse.success) {
+            showToast('فشل في جلب حالة المتابعة: ' + statusResponse.error, 'error');
+            return;
         }
         
-        // Update stats
-        document.getElementById('followersCount').textContent = response.followersCount;
-        showToast(response.message, 'success');
+        const isFollowing = statusResponse.isFollowing;
+        let response;
+        
+        if (isFollowing) {
+            response = await apiCall(`/api/unfollow/${userId}`, { method: 'POST' });
+            if (response.success) {
+                followText.textContent = 'متابعة';
+                followBtn.className = followBtn.className.replace('from-red-500 to-red-600', 'from-cyan-500 to-blue-600').replace('hover:from-red-600 hover:to-red-700', 'hover:from-cyan-600 hover:to-blue-700');
+            }
+        } else {
+            response = await apiCall(`/api/follow/${userId}`, { method: 'POST' });
+            if (response.success) {
+                followText.textContent = 'إلغاء المتابعة';
+                followBtn.className = followBtn.className.replace('from-cyan-500 to-blue-600', 'from-red-500 to-red-600').replace('hover:from-cyan-600 hover:to-blue-700', 'hover:from-red-600 hover:to-red-700');
+            }
+        }
+        
+        if (response.success) {
+            // Update stats
+            document.getElementById('followersCount').textContent = response.followersCount;
+            showToast(response.message, 'success');
+        } else {
+            showToast(response.error || 'حدث خطأ أثناء المتابعة', 'error');
+        }
         
     } catch (error) {
+        console.error('Follow toggle error:', error);
         showToast(error.message || 'حدث خطأ أثناء المتابعة', 'error');
     }
 }

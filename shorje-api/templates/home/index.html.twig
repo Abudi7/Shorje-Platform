@@ -1135,8 +1135,47 @@ function formatDate(dateString) {
     return date.toLocaleDateString('ar-SA') + ' ' + date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
 }
 
+// Follow/Unfollow functionality
+async function toggleFollow(userId) {
+    try {
+        // Check current follow status
+        const statusResponse = await apiCall(`/api/follow-status/${userId}`);
+        
+        if (!statusResponse.success) {
+            showToast('فشل في جلب حالة المتابعة: ' + statusResponse.error, 'error');
+            return;
+        }
+        
+        const isFollowing = statusResponse.isFollowing;
+        let response;
+        
+        if (isFollowing) {
+            response = await apiCall(`/api/unfollow/${userId}`, { method: 'POST' });
+        } else {
+            response = await apiCall(`/api/follow/${userId}`, { method: 'POST' });
+        }
+        
+        if (response.success) {
+            showToast(response.message, 'success');
+        } else {
+            showToast(response.error || 'حدث خطأ أثناء المتابعة', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Follow toggle error:', error);
+        showToast(error.message || 'حدث خطأ أثناء المتابعة', 'error');
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
+    // Set current user ID for JavaScript functions
+    {% if user %}
+    window.currentUserId = {{ user.id }};
+    {% else %}
+    window.currentUserId = null;
+    {% endif %}
+    
     loadProducts();
     
     // Add filter input listeners

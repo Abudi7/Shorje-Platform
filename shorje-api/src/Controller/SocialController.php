@@ -20,93 +20,114 @@ class SocialController extends AbstractController
     #[Route('/api/follow/{userId}', name: 'api_follow_user', methods: ['POST'])]
     public function followUser(int $userId, EntityManagerInterface $em, FollowRepository $followRepo): JsonResponse
     {
-        $currentUser = $this->getUser();
-        if (!$currentUser) {
-            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        try {
+            $currentUser = $this->getUser();
+            if (!$currentUser) {
+                return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+            }
+
+            $userToFollow = $em->getRepository(User::class)->find($userId);
+            if (!$userToFollow) {
+                return new JsonResponse(['error' => 'المستخدم غير موجود'], 404);
+            }
+
+            if ($currentUser->getId() === $userId) {
+                return new JsonResponse(['error' => 'لا يمكنك متابعة نفسك'], 400);
+            }
+
+            if ($followRepo->isFollowing($currentUser, $userToFollow)) {
+                return new JsonResponse(['error' => 'أنت تتابع هذا المستخدم بالفعل'], 400);
+            }
+
+            $follow = new Follow();
+            $follow->setFollower($currentUser);
+            $follow->setFollowing($userToFollow);
+
+            $em->persist($follow);
+            $em->flush();
+
+            return new JsonResponse([
+                'message' => 'تم متابعة المستخدم بنجاح',
+                'followersCount' => $followRepo->getFollowersCount($userToFollow),
+                'success' => true
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => 'حدث خطأ أثناء المتابعة: ' . $e->getMessage()
+            ], 500);
         }
-
-        $userToFollow = $em->getRepository(User::class)->find($userId);
-        if (!$userToFollow) {
-            return new JsonResponse(['error' => 'المستخدم غير موجود'], 404);
-        }
-
-        if ($currentUser->getId() === $userId) {
-            return new JsonResponse(['error' => 'لا يمكنك متابعة نفسك'], 400);
-        }
-
-        if ($followRepo->isFollowing($currentUser, $userToFollow)) {
-            return new JsonResponse(['error' => 'أنت تتابع هذا المستخدم بالفعل'], 400);
-        }
-
-        $follow = new Follow();
-        $follow->setFollower($currentUser);
-        $follow->setFollowing($userToFollow);
-
-        $em->persist($follow);
-        $em->flush();
-
-        return new JsonResponse([
-            'message' => 'تم متابعة المستخدم بنجاح',
-            'followersCount' => $followRepo->getFollowersCount($userToFollow)
-        ]);
     }
 
     #[Route('/api/unfollow/{userId}', name: 'api_unfollow_user', methods: ['POST'])]
     public function unfollowUser(int $userId, EntityManagerInterface $em, FollowRepository $followRepo): JsonResponse
     {
-        $currentUser = $this->getUser();
-        if (!$currentUser) {
-            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        try {
+            $currentUser = $this->getUser();
+            if (!$currentUser) {
+                return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+            }
+
+            $userToUnfollow = $em->getRepository(User::class)->find($userId);
+            if (!$userToUnfollow) {
+                return new JsonResponse(['error' => 'المستخدم غير موجود'], 404);
+            }
+
+            $follow = $followRepo->createQueryBuilder('f')
+                ->where('f.follower = :follower')
+                ->andWhere('f.following = :following')
+                ->setParameter('follower', $currentUser)
+                ->setParameter('following', $userToUnfollow)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            if (!$follow) {
+                return new JsonResponse(['error' => 'أنت لا تتابع هذا المستخدم'], 400);
+            }
+
+            $em->remove($follow);
+            $em->flush();
+
+            return new JsonResponse([
+                'message' => 'تم إلغاء متابعة المستخدم بنجاح',
+                'followersCount' => $followRepo->getFollowersCount($userToUnfollow),
+                'success' => true
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => 'حدث خطأ أثناء إلغاء المتابعة: ' . $e->getMessage()
+            ], 500);
         }
-
-        $userToUnfollow = $em->getRepository(User::class)->find($userId);
-        if (!$userToUnfollow) {
-            return new JsonResponse(['error' => 'المستخدم غير موجود'], 404);
-        }
-
-        $follow = $followRepo->createQueryBuilder('f')
-            ->where('f.follower = :follower')
-            ->andWhere('f.following = :following')
-            ->setParameter('follower', $currentUser)
-            ->setParameter('following', $userToUnfollow)
-            ->getQuery()
-            ->getOneOrNullResult();
-
-        if (!$follow) {
-            return new JsonResponse(['error' => 'أنت لا تتابع هذا المستخدم'], 400);
-        }
-
-        $em->remove($follow);
-        $em->flush();
-
-        return new JsonResponse([
-            'message' => 'تم إلغاء متابعة المستخدم بنجاح',
-            'followersCount' => $followRepo->getFollowersCount($userToUnfollow)
-        ]);
     }
 
     #[Route('/api/follow-status/{userId}', name: 'api_follow_status', methods: ['GET'])]
     public function getFollowStatus(int $userId, FollowRepository $followRepo): JsonResponse
     {
-        $currentUser = $this->getUser();
-        if (!$currentUser) {
-            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        try {
+            $currentUser = $this->getUser();
+            if (!$currentUser) {
+                return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+            }
+
+            $user = $this->getDoctrine()->getRepository(User::class)->find($userId);
+            if (!$user) {
+                return new JsonResponse(['error' => 'المستخدم غير موجود'], 404);
+            }
+
+            $isFollowing = $followRepo->isFollowing($currentUser, $user);
+            $followersCount = $followRepo->getFollowersCount($user);
+            $followingCount = $followRepo->getFollowingCount($user);
+
+            return new JsonResponse([
+                'isFollowing' => $isFollowing,
+                'followersCount' => $followersCount,
+                'followingCount' => $followingCount,
+                'success' => true
+            ]);
+        } catch (\Exception $e) {
+            return new JsonResponse([
+                'error' => 'حدث خطأ أثناء جلب حالة المتابعة: ' . $e->getMessage()
+            ], 500);
         }
-
-        $user = $this->getDoctrine()->getRepository(User::class)->find($userId);
-        if (!$user) {
-            return new JsonResponse(['error' => 'المستخدم غير موجود'], 404);
-        }
-
-        $isFollowing = $followRepo->isFollowing($currentUser, $user);
-        $followersCount = $followRepo->getFollowersCount($user);
-        $followingCount = $followRepo->getFollowingCount($user);
-
-        return new JsonResponse([
-            'isFollowing' => $isFollowing,
-            'followersCount' => $followersCount,
-            'followingCount' => $followingCount
-        ]);
     }
 
     #[Route('/api/send-message', name: 'api_send_message', methods: ['POST'])]
