@@ -1,101 +1,88 @@
-# 🛒 Shorje Platform - Modern Arabic Marketplace
+# 🛒 Shorje Platform
 
-A complete Symfony 7 marketplace application with modern features, built for the Iraqi market with Arabic language support.
+**Modern Arabic Marketplace & Social Platform**
 
-## 🚀 Live Demo
-
-**🌐 Application URL**: [https://your-app.herokuapp.com](https://your-app.herokuapp.com) *(Update with your deployment URL)*
+A comprehensive marketplace application built with Symfony 7, featuring user authentication, social interactions, and product management with Arabic RTL support.
 
 ## ✨ Features
 
 ### 🔐 Authentication & Security
 - **JWT Authentication** with secure token management
-- **Google OAuth** integration for easy sign-up
-- **Facebook OAuth** integration for social login
-- **Email verification** system
-- **Password reset** functionality
-- **Session management** with security
+- **OAuth Integration** (Google & Facebook)
+- **Email Verification** with SMTP support
+- **Password Reset** functionality
+- **Session Management** with proper security
 
-### 👤 User Management
-- **User registration** and profile management
-- **Profile pictures** and cover images (BLOB storage)
-- **Bio and personal information** management
-- **Email verification** on profile updates
-- **Dark/Light mode** toggle
+### 👥 Social Features
+- **User Profiles** with profile pictures and cover images
+- **Follow/Unfollow System** for connecting with other users
+- **Real-time Messaging** between users
+- **Notifications** for new messages and interactions
+- **User Discovery** through marketplace interactions
 
-### 🛍️ Marketplace Features
-- **Product posting** with modern form design
-- **Image uploads** (up to 3 images per product)
-- **Advanced filtering** (search, category, city, price range)
-- **Currency support** (Iraqi Dinar & US Dollar)
-- **Real-time search** with debounced input
-- **Product categories** (cars, electronics, jobs, etc.)
-- **Iraqi cities** support
-
-### 💬 Social Features
-- **Real-time messaging** system
-- **Chat interface** with modern design
-- **Follow/Unfollow** functionality
-- **Notifications** system
-- **User discovery** and connections
+### 🛍️ Marketplace
+- **Product Management** with image uploads
+- **Category System** (Cars, Real Estate, Jobs, Electronics, etc.)
+- **Location-based Search** with Iraqi cities
+- **Price Filtering** with currency support (IQD/USD)
+- **Advanced Filters** by category, city, price, color, condition
+- **Google Maps Integration** for location display
 
 ### 🎨 Modern UI/UX
-- **Responsive design** for all devices
-- **Arabic RTL** support
-- **Glass-morphism** design elements
-- **Gradient backgrounds** and modern styling
-- **Interactive animations** and transitions
-- **Professional typography** with Arabic fonts
+- **Arabic RTL Support** with proper typography
+- **Dark/Light Mode** toggle
+- **Responsive Design** for all devices
+- **Glass-morphism Effects** for modern aesthetics
+- **Professional Color Scheme** with gradients
 
 ## 🛠️ Technical Stack
 
-- **Backend**: Symfony 7 with PHP 8.2+
-- **Database**: MySQL with Doctrine ORM
-- **Frontend**: Tailwind CSS with JavaScript
-- **Authentication**: JWT + OAuth2 (Google/Facebook)
-- **Email**: SMTP configuration
-- **Storage**: BLOB image storage
-- **Real-time**: Polling-based notifications
+### Backend
+- **Symfony 7** - Modern PHP framework
+- **MySQL** - Database with Doctrine ORM
+- **JWT** - JSON Web Token authentication
+- **OAuth2** - Social login integration
+- **Symfony Mailer** - Email notifications
 
-## 📱 Pages & Functionality
+### Frontend
+- **Twig Templates** - Server-side rendering
+- **Tailwind CSS** - Utility-first CSS framework
+- **JavaScript ES6+** - Modern client-side functionality
+- **Font Awesome** - Icon library
+- **Google Fonts** - Arabic typography (Cairo, Tajawal)
 
-### Public Pages
-- **Home Page** - Product feed with filtering
-- **Login/Register** - Authentication pages
-- **Forgot Password** - Password reset flow
-
-### Authenticated Pages
-- **Profile** - User profile management
-- **Edit Profile** - Profile editing with image uploads
-- **Product Creation** - Modern form for posting products
-- **Messages** - Chat and messaging system
-- **Users** - User discovery and social features
+### Development Tools
+- **Composer** - PHP dependency management
+- **Doctrine Migrations** - Database versioning
+- **PHPUnit** - Testing framework
+- **Git** - Version control
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- PHP 8.2 or higher
-- Composer
+- PHP 8.2+
 - MySQL 8.0+
-- Node.js (for asset compilation)
+- Composer
+- Node.js (for frontend assets)
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
    git clone https://github.com/Abudi7/Shorje-Platform.git
-   cd Shorje-Platform/shorje-api
+   cd Shorje-Platform
    ```
 
 2. **Install dependencies**
    ```bash
+   cd shorje-api
    composer install
    ```
 
 3. **Configure environment**
    ```bash
    cp .env.dev .env
-   # Edit .env with your database and OAuth credentials
+   # Edit .env with your database credentials
    ```
 
 4. **Set up database**
@@ -109,137 +96,105 @@ A complete Symfony 7 marketplace application with modern features, built for the
    php bin/console lexik:jwt:generate-keypair
    ```
 
-6. **Start the server**
+6. **Start development server**
    ```bash
    symfony server:start
    ```
+
+## 📱 Usage
+
+### For Users
+1. **Register** with email or OAuth (Google/Facebook)
+2. **Complete Profile** with personal information
+3. **Browse Products** using filters and search
+4. **Follow Sellers** to stay updated
+5. **Message Users** for inquiries
+6. **Post Products** to sell items
+
+### For Developers
+- **API Endpoints** for all functionality
+- **RESTful Design** with proper HTTP methods
+- **Error Handling** with meaningful messages
+- **Security Middleware** for protected routes
 
 ## 🔧 Configuration
 
 ### Environment Variables
 ```env
 # Database
-DATABASE_URL="mysql://username:password@127.0.0.1:3306/shorje"
+DATABASE_URL="mysql://user:password@localhost:3306/shorje"
 
 # JWT
-JWT_PASSPHRASE=your-secret-passphrase
-
-# Email
-MAILER_DSN="smtp://username:password@smtp.gmail.com:587"
-MAILER_FROM_EMAIL=noreply@shorje.com
-MAILER_FROM_NAME="Shorje Team"
+JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
+JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
+JWT_PASSPHRASE=your_passphrase
 
 # OAuth
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-FACEBOOK_CLIENT_ID=your-facebook-app-id
-FACEBOOK_CLIENT_SECRET=your-facebook-app-secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+FACEBOOK_CLIENT_ID=your_facebook_client_id
+FACEBOOK_CLIENT_SECRET=your_facebook_client_secret
+
+# Email
+MAILER_DSN=smtp://user:password@smtp.gmail.com:587
+MAILER_FROM_EMAIL=noreply@shorje.com
 ```
-
-### OAuth Setup
-1. **Google OAuth**:
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create OAuth 2.0 credentials
-   - Add authorized redirect URI: `http://localhost:8000/connect/google/check`
-
-2. **Facebook OAuth**:
-   - Go to [Facebook Developers](https://developers.facebook.com/)
-   - Create a new app
-   - Add Facebook Login product
-   - Add redirect URI: `http://localhost:8000/connect/facebook/check`
 
 ## 📊 Database Schema
 
-### Entities
-- **User** - User accounts with profile information
-- **Product** - Marketplace products with images
-- **Message** - Chat messages between users
-- **Follow** - User follow relationships
-
-### Key Features
-- **BLOB storage** for images
-- **Proper relationships** between entities
-- **Migration system** for schema updates
-- **Validation** and constraints
-
-## 🎯 API Endpoints
-
-### Authentication
-- `POST /api/register` - User registration
-- `POST /api/login` - User login
-- `POST /api/forgot-password` - Password reset request
-- `POST /api/reset-password` - Password reset confirmation
-
-### Products
-- `GET /api/products` - List products with filtering
-- `POST /api/products` - Create new product
-- `PUT /api/products/{id}` - Update product
-- `DELETE /api/products/{id}` - Delete product
-
-### Social
-- `GET /api/messages` - Get user messages
-- `POST /api/messages` - Send message
-- `POST /api/follow/{userId}` - Follow user
-- `DELETE /api/follow/{userId}` - Unfollow user
+### Core Entities
+- **User** - User accounts and profiles
+- **Product** - Marketplace items
+- **Message** - User communications
+- **Follow** - Social connections
+- **Category** - Product categorization
 
 ## 🧪 Testing
 
-### Manual Testing
-1. **Register a new account**
-2. **Login with OAuth** (Google/Facebook)
-3. **Create a product** with images
-4. **Test filtering** and search
-5. **Send messages** to other users
-6. **Follow/unfollow** users
+```bash
+# Run PHPUnit tests
+php bin/phpunit
 
-### Test Functions
-Open browser console and run:
-```javascript
-// Test form submission
-testFormSubmission();
-
-// Test filters
-testFilters();
+# Run with coverage
+php bin/phpunit --coverage-html coverage/
 ```
-
-## 📱 Mobile Support
-
-- **Responsive design** for all screen sizes
-- **Touch-friendly** interface
-- **Mobile-optimized** forms and navigation
-- **Progressive Web App** features
-
-## 🌍 Localization
-
-- **Arabic language** support
-- **RTL layout** implementation
-- **Arabic fonts** (Cairo, Tajawal, Amiri)
-- **Cultural considerations** for Iraqi market
-
-## 🔒 Security Features
-
-- **CSRF protection** on all forms
-- **XSS prevention** with proper escaping
-- **SQL injection** protection with Doctrine
-- **Secure password** hashing
-- **JWT token** security
-- **OAuth2** secure authentication
 
 ## 📈 Performance
 
-- **Optimized queries** with Doctrine
-- **Image compression** and BLOB storage
-- **Debounced search** to reduce API calls
-- **Lazy loading** for better performance
-- **Caching** for static content
+- **Optimized Queries** with Doctrine ORM
+- **Image Compression** for faster loading
+- **Caching Strategy** for improved performance
+- **Database Indexing** for search optimization
+
+## 🔒 Security
+
+- **CSRF Protection** on all forms
+- **XSS Prevention** with input sanitization
+- **SQL Injection Protection** via prepared statements
+- **Rate Limiting** for API endpoints
+- **Secure Headers** implementation
+
+## 🌐 Deployment
+
+### Production Setup
+1. **Configure Environment** for production
+2. **Set up SSL Certificate** for HTTPS
+3. **Configure Web Server** (Apache/Nginx)
+4. **Set up Database** with proper credentials
+5. **Configure Email Service** for notifications
+
+### Recommended Hosting
+- **VPS/Dedicated Server** for full control
+- **Cloud Platforms** (AWS, DigitalOcean, Linode)
+- **Shared Hosting** with PHP 8.2+ support
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## 📄 License
 
@@ -249,14 +204,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Abdulrhman Alshalal**
 - GitHub: [@Abudi7](https://github.com/Abudi7)
+- Email: abdul@herosan.world
 
 ## 🙏 Acknowledgments
 
-- Symfony framework and community
-- Tailwind CSS for styling
-- Font Awesome for icons
-- Google Fonts for Arabic typography
+- **Symfony Community** for the amazing framework
+- **Tailwind CSS** for the utility-first approach
+- **Font Awesome** for the comprehensive icon set
+- **Google Fonts** for Arabic typography support
 
 ---
 
-**🌟 Star this repository if you find it helpful!**
+**Built with ❤️ for the Arabic-speaking community**

@@ -78,6 +78,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $facebookId = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isOnline = false;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $lastSeenAt = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $location = null;
+
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    private ?string $gender = null;
+
     #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'seller', cascade: ['persist', 'remove'])]
     private Collection $products;
 
@@ -352,9 +364,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return trim($this->firstName . ' ' . $this->lastName) ?: $this->email;
     }
 
+    public function getAvatarUrl(): string
+    {
+        if ($this->profilePicture && $this->profilePictureMimeType) {
+            return '/api/user/avatar/' . $this->getId();
+        }
+        return '/images/default-avatar.png';
+    }
+
+    public function hasProfilePicture(): bool
+    {
+        return $this->profilePicture !== null && $this->profilePictureMimeType !== null;
+    }
+
     public function getProducts()
     {
         return $this->products;
+    }
+
+    public function isOnline(): bool
+    {
+        return $this->isOnline;
+    }
+
+    public function setIsOnline(bool $isOnline): static
+    {
+        $this->isOnline = $isOnline;
+        return $this;
+    }
+
+    public function getLastSeenAt(): ?\DateTimeInterface
+    {
+        return $this->lastSeenAt;
+    }
+
+    public function setLastSeenAt(?\DateTimeInterface $lastSeenAt): static
+    {
+        $this->lastSeenAt = $lastSeenAt;
+        return $this;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(?string $location): static
+    {
+        $this->location = $location;
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?string $gender): static
+    {
+        $this->gender = $gender;
+        return $this;
     }
 
     public function addProduct(Product $product): static

@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}إضافة صورة شريحة جديدة - شورجي{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 dark:bg-slate-900">
+    <!-- Header -->
+    <div class="bg-white dark:bg-slate-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center">
+                <a href="{{ path('admin_slider_index') }}" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white mr-4">
+                    <i class="fas fa-arrow-right text-xl"></i>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">إضافة صورة شريحة جديدة</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mt-2">أضف صورة جديدة للشريحة الرئيسية</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-gray-200 dark:border-slate-700 p-8">
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                <!-- Title -->
+                <div>
+                    <label for="title" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-heading ml-2"></i>عنوان الصورة
+                    </label>
+                    <input type="text" id="title" name="title" required
+                           class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                           placeholder="أدخل عنوان الصورة">
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label for="description" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-align-right ml-2"></i>وصف الصورة
+                    </label>
+                    <textarea id="description" name="description" rows="3"
+                              class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                              placeholder="أدخل وصف الصورة (اختياري)"></textarea>
+                </div>
+
+                <!-- Image Upload -->
+                <div>
+                    <label for="image" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-image ml-2"></i>صورة الشريحة
+                    </label>
+                    <input type="file" id="image" name="image" accept="image/*" required
+                           class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-white">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">اختر صورة عالية الجودة للشريحة</p>
+                </div>
+
+                <!-- Button 1 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="buttonText" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-mouse-pointer ml-2"></i>نص الزر الأول
+                        </label>
+                        <input type="text" id="buttonText" name="buttonText"
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                               placeholder="مثال: ابدأ الآن">
+                    </div>
+                    <div>
+                        <label for="buttonUrl" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-link ml-2"></i>رابط الزر الأول
+                        </label>
+                        <input type="url" id="buttonUrl" name="buttonUrl"
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                               placeholder="مثال: /register">
+                    </div>
+                </div>
+
+                <!-- Button 2 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="buttonText2" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-mouse-pointer ml-2"></i>نص الزر الثاني
+                        </label>
+                        <input type="text" id="buttonText2" name="buttonText2"
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                               placeholder="مثال: تعرف علينا">
+                    </div>
+                    <div>
+                        <label for="buttonUrl2" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-link ml-2"></i>رابط الزر الثاني
+                        </label>
+                        <input type="url" id="buttonUrl2" name="buttonUrl2"
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
+                               placeholder="مثال: /about">
+                    </div>
+                </div>
+
+                <!-- Sort Order and Status -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="sortOrder" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-sort ml-2"></i>ترتيب العرض
+                        </label>
+                        <input type="number" id="sortOrder" name="sortOrder" value="0" min="0"
+                               class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-white">
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="isActive" name="isActive" checked
+                               class="w-5 h-5 text-cyan-600 bg-gray-100 border-gray-300 rounded focus:ring-cyan-500 dark:focus:ring-cyan-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="isActive" class="mr-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                            <i class="fas fa-toggle-on ml-2"></i>نشط
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-slate-600">
+                    <a href="{{ path('admin_slider_index') }}" 
+                       class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-200">
+                        <i class="fas fa-times ml-2"></i>إلغاء
+                    </a>
+                    <button type="submit" 
+                            class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-save ml-2"></i>حفظ الصورة
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

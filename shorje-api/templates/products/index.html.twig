@@ -1,0 +1,904 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}جميع المنتجات - شورجي{% endblock %}
+
+{% block body %}
+<style>
+    /* Custom animations and styles */
+    .glass {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    
+    .glass-dark {
+        background: rgba(15, 23, 42, 0.25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .gradient-text {
+        background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .product-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .product-card:hover {
+        transform: translateY(-4px) scale(1.02);
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 3px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+    
+    .line-clamp-2 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+    
+    .line-clamp-3 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+    }
+</style>
+
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <!-- Modern Header -->
+    <nav class="glass sticky top-0 z-50 border-b border-white/20 dark:border-slate-700/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo Section -->
+                <div class="flex items-center">
+                    <div class="flex items-center space-x-4">
+                        <div class="h-12 w-12 bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+                            <i class="fas fa-th-large text-white text-xl relative z-10"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold gradient-text">جميع المنتجات</h1>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">اكتشف وابحث عن المنتجات</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Actions -->
+                <div class="flex items-center space-x-4">
+                    <a href="/home" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-home"></i>
+                        <span>الرئيسية</span>
+                    </a>
+                    <a href="/messages" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50 relative">
+                        <i class="fas fa-comments"></i>
+                        <span>الرسائل</span>
+                        <span id="messagesCount" class="absolute -top-1 -right-1 bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg hidden z-10">0</span>
+                    </a>
+                    {% if user %}
+                    <a href="/profile" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-user"></i>
+                        <span>الملف الشخصي</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                <i class="fas fa-th-large text-emerald-500 ml-3"></i>
+                جميع المنتجات
+            </h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                اكتشف وابحث عن المنتجات من البائعين في منطقتك
+            </p>
+        </div>
+
+        <!-- Advanced Search and Filters -->
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-4 sm:p-6 lg:p-8 mb-8">
+            <!-- Mobile Layout (Stacked) -->
+            <div class="block lg:hidden space-y-4">
+                <!-- Search Input -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-search ml-2"></i>البحث
+                    </label>
+                    <input type="text" id="searchInput" 
+                           placeholder="ابحث عن المنتجات..."
+                           class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300">
+                </div>
+
+                <!-- Filters Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Category Filter -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-tag ml-2"></i>الفئة
+                        </label>
+                        <select id="categoryFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
+                            <option value="">جميع الفئات</option>
+                            <option value="car">سيارات</option>
+                            <option value="home_rental">إيجار منازل</option>
+                            <option value="apartment_rental">إيجار شقق</option>
+                            <option value="job">وظائف</option>
+                            <option value="laptop">لابتوب</option>
+                            <option value="electronics">إلكترونيات</option>
+                            <option value="fashion">أزياء</option>
+                            <option value="furniture">أثاث</option>
+                            <option value="books">كتب</option>
+                            <option value="sports">رياضة</option>
+                            <option value="other">أخرى</option>
+                        </select>
+                    </div>
+
+                    <!-- City Filter -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-map-marker-alt ml-2"></i>المدينة
+                        </label>
+                        <select id="cityFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
+                            <option value="">جميع المدن</option>
+                            <option value="بغداد">بغداد</option>
+                            <option value="البصرة">البصرة</option>
+                            <option value="الموصل">الموصل</option>
+                            <option value="أربيل">أربيل</option>
+                            <option value="السليمانية">السليمانية</option>
+                            <option value="كربلاء">كربلاء</option>
+                            <option value="النجف">النجف</option>
+                            <option value="بابل">بابل</option>
+                            <option value="الأنبار">الأنبار</option>
+                            <option value="ديالى">ديالى</option>
+                            <option value="واسط">واسط</option>
+                            <option value="ميسان">ميسان</option>
+                            <option value="ذي قار">ذي قار</option>
+                            <option value="المثنى">المثنى</option>
+                            <option value="صلاح الدين">صلاح الدين</option>
+                            <option value="دهوك">دهوك</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Price Range -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-dollar-sign ml-2"></i>السعر
+                    </label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="minPrice" placeholder="الحد الأدنى" 
+                               class="w-full px-3 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300">
+                        <input type="number" id="maxPrice" placeholder="الحد الأقصى" 
+                               class="w-full px-3 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300">
+                    </div>
+                </div>
+
+                <!-- Sort Options -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">ترتيب حسب:</label>
+                    <select id="sortBy" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
+                        <option value="newest">الأحدث</option>
+                        <option value="oldest">الأقدم</option>
+                        <option value="price_low">السعر: من الأقل للأعلى</option>
+                        <option value="price_high">السعر: من الأعلى للأقل</option>
+                        <option value="title">الاسم: أ-ي</option>
+                    </select>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button onclick="clearFilters()" class="group relative px-4 py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border border-gray-400/20">
+                        <div class="flex items-center justify-center space-x-2">
+                            <div class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
+                                <i class="fas fa-times text-xs"></i>
+                            </div>
+                            <span class="text-sm">مسح الفلاتر</span>
+                        </div>
+                    </button>
+                    <button onclick="applyFilters()" class="group relative px-4 py-3 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 hover:from-emerald-600 hover:via-blue-600 hover:to-purple-600 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl border border-emerald-400/20">
+                        <div class="flex items-center justify-center space-x-2">
+                            <div class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
+                                <i class="fas fa-filter text-xs"></i>
+                            </div>
+                            <span class="text-sm">تطبيق الفلاتر</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Desktop Layout (Grid) -->
+            <div class="hidden lg:block">
+                <div class="grid grid-cols-12 gap-4 mb-6">
+                    <!-- Search Input -->
+                    <div class="col-span-12 lg:col-span-4">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-search ml-2"></i>البحث
+                        </label>
+                        <input type="text" id="searchInput" 
+                               placeholder="ابحث عن المنتجات..."
+                               class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300">
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="col-span-12 sm:col-span-6 lg:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-tag ml-2"></i>الفئة
+                        </label>
+                        <select id="categoryFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
+                            <option value="">جميع الفئات</option>
+                            <option value="car">سيارات</option>
+                            <option value="home_rental">إيجار منازل</option>
+                            <option value="apartment_rental">إيجار شقق</option>
+                            <option value="job">وظائف</option>
+                            <option value="laptop">لابتوب</option>
+                            <option value="electronics">إلكترونيات</option>
+                            <option value="fashion">أزياء</option>
+                            <option value="furniture">أثاث</option>
+                            <option value="books">كتب</option>
+                            <option value="sports">رياضة</option>
+                            <option value="other">أخرى</option>
+                        </select>
+                    </div>
+
+                    <!-- City Filter -->
+                    <div class="col-span-12 sm:col-span-6 lg:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-map-marker-alt ml-2"></i>المدينة
+                        </label>
+                        <select id="cityFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
+                            <option value="">جميع المدن</option>
+                            <option value="بغداد">بغداد</option>
+                            <option value="البصرة">البصرة</option>
+                            <option value="الموصل">الموصل</option>
+                            <option value="أربيل">أربيل</option>
+                            <option value="السليمانية">السليمانية</option>
+                            <option value="كربلاء">كربلاء</option>
+                            <option value="النجف">النجف</option>
+                            <option value="بابل">بابل</option>
+                            <option value="الأنبار">الأنبار</option>
+                            <option value="ديالى">ديالى</option>
+                            <option value="واسط">واسط</option>
+                            <option value="ميسان">ميسان</option>
+                            <option value="ذي قار">ذي قار</option>
+                            <option value="المثنى">المثنى</option>
+                            <option value="صلاح الدين">صلاح الدين</option>
+                            <option value="دهوك">دهوك</option>
+                        </select>
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="col-span-12 sm:col-span-6 lg:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-dollar-sign ml-2"></i>السعر
+                        </label>
+                        <div class="grid grid-cols-2 gap-1">
+                            <input type="number" id="minPrice" placeholder="الحد الأدنى" 
+                                   class="w-full px-2 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300 text-sm">
+                            <input type="number" id="maxPrice" placeholder="الحد الأقصى" 
+                                   class="w-full px-2 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300 text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Sort Options -->
+                    <div class="col-span-12 sm:col-span-6 lg:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">ترتيب حسب:</label>
+                        <select id="sortBy" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
+                            <option value="newest">الأحدث</option>
+                            <option value="oldest">الأقدم</option>
+                            <option value="price_low">السعر: من الأقل للأعلى</option>
+                            <option value="price_high">السعر: من الأعلى للأقل</option>
+                            <option value="title">الاسم: أ-ي</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-center space-x-4">
+                    <button onclick="clearFilters()" class="group relative px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border border-gray-400/20">
+                        <div class="flex items-center justify-center space-x-2">
+                            <div class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
+                                <i class="fas fa-times text-sm"></i>
+                            </div>
+                            <span>مسح الفلاتر</span>
+                        </div>
+                    </button>
+                    <button onclick="applyFilters()" class="group relative px-6 py-3 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 hover:from-emerald-600 hover:via-blue-600 hover:to-purple-600 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl border border-emerald-400/20">
+                        <div class="flex items-center justify-center space-x-2">
+                            <div class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
+                                <i class="fas fa-filter text-sm"></i>
+                            </div>
+                            <span>تطبيق الفلاتر</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
+            <!-- Results Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                        <i class="fas fa-box text-emerald-500 ml-2"></i>المنتجات المتاحة
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-400 mt-1" id="resultsCount">جاري التحميل...</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 px-4 py-2 rounded-2xl font-semibold" id="productsCount">
+                        0 منتج
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center py-12">
+                <div class="inline-flex items-center space-x-3">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500"></div>
+                    <span class="text-gray-600 dark:text-gray-400 font-medium">جاري تحميل المنتجات...</span>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="text-center py-16 hidden">
+                <div class="w-24 h-24 bg-gradient-to-br from-gray-400 to-gray-500 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+                    <i class="fas fa-search text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-600 dark:text-slate-300 mb-4">لا توجد منتجات</h3>
+                <p class="text-gray-500 dark:text-slate-400 text-lg">لم يتم العثور على منتجات تطابق معايير البحث</p>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
+                <!-- Products will be loaded here -->
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="flex flex-wrap items-center justify-center mt-12 gap-2 sm:gap-4">
+                <!-- Pagination will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global variables
+let currentPage = 1;
+let totalPages = 1;
+let totalProducts = 0;
+let isLoading = false;
+let currentProducts = [];
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadProducts();
+    
+    // Load messages count and start real-time updates
+    loadMessagesCount();
+    startRealTimeUpdates();
+    
+    // Test function for debugging
+    window.testMessagesBadge = function(count) {
+        console.log('Testing messages badge with count:', count);
+        updateMessagesBadge(count);
+    };
+    
+    // Add test button for debugging (remove in production)
+    const testButton = document.createElement('button');
+    testButton.textContent = 'Test Badge';
+    testButton.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded z-50';
+    testButton.onclick = () => {
+        const count = prompt('Enter badge count:');
+        if (count !== null) {
+            updateMessagesBadge(parseInt(count) || 0);
+        }
+    };
+    document.body.appendChild(testButton);
+    
+    // Add filter input listeners
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const cityFilter = document.getElementById('cityFilter');
+    const minPrice = document.getElementById('minPrice');
+    const maxPrice = document.getElementById('maxPrice');
+    const sortBy = document.getElementById('sortBy');
+
+    if (searchInput) searchInput.addEventListener('input', debounce(applyFilters, 500));
+    if (categoryFilter) categoryFilter.addEventListener('change', applyFilters);
+    if (cityFilter) cityFilter.addEventListener('change', applyFilters);
+    if (minPrice) minPrice.addEventListener('input', debounce(applyFilters, 500));
+    if (maxPrice) maxPrice.addEventListener('input', debounce(applyFilters, 500));
+    if (sortBy) sortBy.addEventListener('change', applyFilters);
+});
+
+// Load products with filters
+async function loadProducts() {
+    if (isLoading) return;
+    
+    isLoading = true;
+    document.getElementById('loadingState').classList.remove('hidden');
+    document.getElementById('emptyState').classList.add('hidden');
+    document.getElementById('pagination').classList.add('hidden');
+    
+    const params = new URLSearchParams();
+    const search = document.getElementById('searchInput').value;
+    const category = document.getElementById('categoryFilter').value;
+    const city = document.getElementById('cityFilter').value;
+    const minPriceValue = document.getElementById('minPrice').value;
+    const maxPriceValue = document.getElementById('maxPrice').value;
+    const sortByValue = document.getElementById('sortBy').value;
+    
+    if (search) params.append('search', search);
+    if (category) params.append('category', category);
+    if (city) params.append('city', city);
+    if (minPriceValue) params.append('min_price', minPriceValue);
+    if (maxPriceValue) params.append('max_price', maxPriceValue);
+    if (sortByValue) params.append('sort', sortByValue);
+    
+    params.append('page', currentPage);
+    params.append('limit', 12);
+
+    try {
+        const response = await apiCall(`/api/products?${params.toString()}`);
+        console.log('Products API response:', response);
+        
+        if (response.products && response.products.length > 0) {
+            currentProducts = response.products;
+            console.log('Current products loaded:', currentProducts);
+            renderProducts(response.products);
+            updatePagination(response.pagination);
+            document.getElementById('emptyState').classList.add('hidden');
+        } else {
+            document.getElementById('productsGrid').innerHTML = '';
+            document.getElementById('emptyState').classList.remove('hidden');
+            document.getElementById('pagination').classList.add('hidden');
+        }
+        
+        document.getElementById('productsCount').textContent = `${response.pagination.total} منتج`;
+        document.getElementById('resultsCount').textContent = `عرض ${response.products.length} من ${response.pagination.total} منتج`;
+        
+    } catch (error) {
+        console.error('Error loading products:', error);
+        document.getElementById('productsGrid').innerHTML = `
+            <div class="col-span-full text-center py-12">
+                <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+                <p class="text-red-500 text-lg">حدث خطأ في تحميل المنتجات</p>
+                <p class="text-slate-600 dark:text-slate-400 mt-2">يرجى المحاولة مرة أخرى</p>
+            </div>
+        `;
+        showToast('فشل في تحميل المنتجات: ' + error.message, 'error');
+    } finally {
+        isLoading = false;
+        document.getElementById('loadingState').classList.add('hidden');
+    }
+}
+
+// Render products
+function renderProducts(products) {
+    const grid = document.getElementById('productsGrid');
+    
+    grid.innerHTML = products.map(product => `
+        <div class="product-card bg-white dark:bg-slate-700 rounded-2xl shadow-md border border-gray-100 dark:border-slate-600 overflow-hidden hover:shadow-xl transition-all duration-300 group">
+            <!-- Product Image -->
+            <div class="relative h-48 bg-gray-100 dark:bg-slate-600 overflow-hidden">
+                ${product.hasImages && product.hasImages.image1 ? 
+                    `<img src="/api/products/image/${product.id}/1" alt="${product.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">` :
+                    ``
+                }
+                <div class="flex items-center justify-center text-gray-400 dark:text-slate-400 h-full" style="display: ${product.hasImages && product.hasImages.image1 ? 'none' : 'flex'};">
+                    <div class="text-center">
+                        <i class="fas fa-image text-4xl mb-2"></i>
+                        <p class="text-sm">لا توجد صورة</p>
+                    </div>
+                </div>
+                
+                <!-- Status Badge -->
+                <div class="absolute top-3 right-3">
+                    <span class="px-3 py-1 rounded-full text-xs font-medium ${getStatusBadgeClass(product.status)}">
+                        ${product.statusDisplay || 'متاح'}
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="p-5">
+                <!-- Category -->
+                <div class="mb-3">
+                    <span class="inline-block bg-gray-100 dark:bg-slate-600 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-xs font-medium">
+                        ${product.categoryDisplay || product.category}
+                    </span>
+                </div>
+                
+                <!-- Title -->
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 leading-tight">${product.title}</h3>
+                
+                <!-- Price -->
+                <div class="mb-3">
+                    <span class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                        ${product.price} ${product.currencyDisplay || product.currency}
+                    </span>
+                </div>
+                
+                <!-- Description -->
+                <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-2 mb-4 leading-relaxed">${product.description}</p>
+                
+                <!-- Location and Date -->
+                <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-map-marker-alt ml-1"></i>
+                        <span>${product.city}</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-calendar ml-1"></i>
+                        <span>${formatDate(product.createdAt)}</span>
+                    </div>
+                </div>
+                
+                <!-- Seller -->
+                <div class="flex items-center mb-4">
+                    <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <img src="/api/user/avatar/${product.seller?.id || 0}" 
+                             alt="${product.seller?.name || 'غير محدد'}" 
+                             class="w-full h-full object-cover"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <i class="fas fa-user text-white text-xs" style="display: none;"></i>
+                    </div>
+                    <div class="mr-3">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">${product.seller?.name || 'غير محدد'}</p>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex space-x-2">
+                    <button onclick="contactSellerWithProduct(${product.id}, ${product.seller?.id || 0})" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 text-sm" title="Seller ID: ${product.seller?.id || 'N/A'}">
+                        <i class="fas fa-comments ml-1"></i>رسالة
+                    </button>
+                    <button onclick="viewSellerProfile(${product.seller?.id || 0})" class="px-4 py-2 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors duration-200 text-sm">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <button onclick="viewProduct(${product.id})" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors duration-200 text-sm">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Get status color
+function getStatusColor(status) {
+    switch (status) {
+        case 'available': return 'from-emerald-500 to-green-500';
+        case 'sold': return 'from-red-500 to-pink-500';
+        case 'reserved': return 'from-yellow-500 to-orange-500';
+        default: return 'from-emerald-500 to-green-500';
+    }
+}
+
+// Get status badge class
+function getStatusBadgeClass(status) {
+    switch (status) {
+        case 'available': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200';
+        case 'sold': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+        case 'reserved': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+        default: return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200';
+    }
+}
+
+// Format date
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+}
+
+// Update pagination
+function updatePagination(pagination) {
+    const paginationDiv = document.getElementById('pagination');
+    totalPages = pagination.pages;
+    totalProducts = pagination.total;
+    currentPage = pagination.page;
+    
+    if (totalPages <= 1) {
+        paginationDiv.classList.add('hidden');
+        return;
+    }
+    
+    paginationDiv.classList.remove('hidden');
+    
+    let paginationHTML = '';
+    
+    // Previous button
+    if (currentPage > 1) {
+        paginationHTML += `
+            <button onclick="goToPage(${currentPage - 1})" 
+                    class="px-4 py-2 bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-slate-600 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        `;
+    }
+    
+    // Page numbers
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+    
+    for (let i = startPage; i <= endPage; i++) {
+        paginationHTML += `
+            <button onclick="goToPage(${i})" 
+                    class="px-4 py-2 ${i === currentPage ? 'bg-emerald-500 text-white' : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-300'} border border-gray-300 dark:border-slate-600 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-600 transition-colors">
+                ${i}
+            </button>
+        `;
+    }
+    
+    // Next button
+    if (currentPage < totalPages) {
+        paginationHTML += `
+            <button onclick="goToPage(${currentPage + 1})" 
+                    class="px-4 py-2 bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-slate-600 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        `;
+    }
+    
+    paginationDiv.innerHTML = paginationHTML;
+}
+
+// Pagination functions
+function goToPage(page) {
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
+        currentPage = page;
+        loadProducts();
+    }
+}
+
+function nextPage() {
+    if (currentPage < totalPages) {
+        goToPage(currentPage + 1);
+    }
+}
+
+function previousPage() {
+    if (currentPage > 1) {
+        goToPage(currentPage - 1);
+    }
+}
+
+// Apply filters
+function applyFilters() {
+    currentPage = 1;
+    loadProducts();
+}
+
+// Clear filters
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('categoryFilter').value = '';
+    document.getElementById('cityFilter').value = '';
+    document.getElementById('minPrice').value = '';
+    document.getElementById('maxPrice').value = '';
+    document.getElementById('sortBy').value = 'newest';
+    
+    applyFilters();
+}
+
+// API call function
+async function apiCall(url, options = {}) {
+    const defaultOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+    
+    const response = await fetch(url, { ...defaultOptions, ...options });
+    
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+}
+
+// Debounce function
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Toast notification function
+// Contact seller function
+function contactSeller(sellerId) {
+    if (sellerId && sellerId !== 0) {
+        window.location.href = `/messages?seller=${sellerId}`;
+    } else {
+        showToast('معلومات البائع غير متوفرة', 'warning');
+    }
+}
+
+// Contact seller with product details
+function contactSellerWithProduct(productId, sellerId) {
+    console.log('Contacting seller:', { productId, sellerId });
+    console.log('Current products:', currentProducts);
+    
+    if (!sellerId || sellerId === 0) {
+        showToast('معلومات البائع غير متوفرة', 'warning');
+        return;
+    }
+    
+    // Find the product details
+    const product = currentProducts.find(p => p.id === productId);
+    console.log('Found product:', product);
+    
+    if (!product) {
+        showToast('معلومات المنتج غير متوفرة', 'warning');
+        return;
+    }
+    
+    // Create comprehensive product attachment data
+    const productAttachment = {
+        productId: product.id,
+        productName: product.title,
+        productPrice: `${product.price} ${product.currencyDisplay || product.currency}`,
+        productImage: product.hasImages?.image1 ? `/api/products/image/${product.id}/1` : null,
+        productCategory: product.categoryDisplay || product.category,
+        productCity: product.city,
+        productDescription: product.description || '',
+        productCondition: product.condition || 'جديد',
+        sellerName: product.seller?.firstName + ' ' + product.seller?.lastName || 'البائع',
+        sellerId: product.seller?.id || sellerId
+    };
+    
+    console.log('Product attachment:', productAttachment);
+    
+    // Show loading toast
+    showToast('جاري تحضير الرسالة...', 'info');
+    
+    // Encode the product data as URL parameter
+    const productData = encodeURIComponent(JSON.stringify(productAttachment));
+    
+    console.log('Encoded product data:', productData);
+    console.log('Redirecting to:', `/messages?seller=${sellerId}&product=${productData}`);
+    
+    // Redirect to messages with product attachment
+    window.location.href = `/messages?seller=${sellerId}&product=${productData}`;
+}
+
+// View seller profile function
+function viewSellerProfile(sellerId) {
+    if (sellerId && sellerId !== 0) {
+        window.location.href = `/profile/${sellerId}`;
+    } else {
+        showToast('معلومات البائع غير متوفرة', 'warning');
+    }
+}
+
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-2xl text-white font-medium shadow-2xl transform transition-all duration-300 ${
+        type === 'success' ? 'bg-emerald-500' : 
+        type === 'error' ? 'bg-red-500' : 
+        type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+    }`;
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+        toast.style.opacity = '1';
+    }, 100);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 3000);
+}
+
+// Messages count and real-time updates
+async function loadMessagesCount() {
+    try {
+        console.log('Loading messages count...');
+        const response = await apiCall('/web/conversations');
+        const count = response.unreadCount || 0;
+        console.log('Messages count received:', count);
+        updateMessagesBadge(count);
+    } catch (error) {
+        console.error('Error loading messages count:', error);
+        updateMessagesBadge(0);
+    }
+}
+
+function updateMessagesBadge(count) {
+    console.log('Updating messages badge with count:', count);
+    const badge = document.getElementById('messagesCount');
+    console.log('Badge element found:', badge);
+    
+    if (badge) {
+        if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.classList.remove('hidden');
+            console.log('Badge shown with count:', count);
+        } else {
+            badge.classList.add('hidden');
+            console.log('Badge hidden (count is 0)');
+        }
+    } else {
+        console.error('Messages badge element not found!');
+    }
+}
+
+// Real-time updates using polling
+let lastMessageCount = 0;
+function startRealTimeUpdates() {
+    // Update counts every 30 seconds
+    setInterval(() => {
+        loadMessagesCount();
+    }, 30000);
+    
+    // Check for new messages every 10 seconds for toast notifications
+    setInterval(() => {
+        checkForNewMessages();
+    }, 10000);
+}
+
+// Check for new messages and show toast notifications
+async function checkForNewMessages() {
+    try {
+        console.log('Checking for new messages (products page)');
+        const response = await apiCall('/web/conversations');
+        const currentCount = response.unreadCount || 0;
+        console.log('Current message count:', currentCount, 'Last count:', lastMessageCount);
+        
+        // If there are new messages (count increased)
+        if (currentCount > lastMessageCount && lastMessageCount > 0) {
+            const newMessages = currentCount - lastMessageCount;
+            console.log('New messages detected:', newMessages);
+            showToast(`لديك ${newMessages} رسالة جديدة`, 'info');
+        }
+        
+        lastMessageCount = currentCount;
+        updateMessagesBadge(currentCount);
+    } catch (error) {
+        console.error('Error checking for new messages:', error);
+        if (error.message === 'Authentication required') {
+            console.log('User not authenticated, stopping real-time updates');
+        }
+    }
+}
+</script>
+{% endblock %}

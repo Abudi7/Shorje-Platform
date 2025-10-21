@@ -28,6 +28,21 @@ class Message
     #[ORM\Column(type: 'boolean')]
     private bool $isRead = false;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isHtml = false;
+
+    #[ORM\Column(type: 'blob', nullable: true)]
+    private $attachment = null;
+
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private ?string $attachmentMimeType = null;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $attachmentName = null;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $seenAt = null;
+
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
 
@@ -82,6 +97,61 @@ class Message
     public function setIsRead(bool $isRead): static
     {
         $this->isRead = $isRead;
+        return $this;
+    }
+
+    public function isHtml(): bool
+    {
+        return $this->isHtml;
+    }
+
+    public function setIsHtml(bool $isHtml): static
+    {
+        $this->isHtml = $isHtml;
+        return $this;
+    }
+
+    public function getAttachment()
+    {
+        return $this->attachment;
+    }
+
+    public function setAttachment($attachment): static
+    {
+        $this->attachment = $attachment;
+        return $this;
+    }
+
+    public function getAttachmentMimeType(): ?string
+    {
+        return $this->attachmentMimeType;
+    }
+
+    public function setAttachmentMimeType(?string $attachmentMimeType): static
+    {
+        $this->attachmentMimeType = $attachmentMimeType;
+        return $this;
+    }
+
+    public function getAttachmentName(): ?string
+    {
+        return $this->attachmentName;
+    }
+
+    public function setAttachmentName(?string $attachmentName): static
+    {
+        $this->attachmentName = $attachmentName;
+        return $this;
+    }
+
+    public function getSeenAt(): ?\DateTimeInterface
+    {
+        return $this->seenAt;
+    }
+
+    public function setSeenAt(?\DateTimeInterface $seenAt): static
+    {
+        $this->seenAt = $seenAt;
         return $this;
     }
 

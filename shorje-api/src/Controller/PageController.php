@@ -5,12 +5,22 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class PageController extends AbstractController
 {
-    public function login(): Response
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        return $this->render('auth/login.html.twig');
+        // Get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        
+        // Last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render('auth/login.html.twig', [
+            'error' => $error,
+            'last_username' => $lastUsername,
+        ]);
     }
 
     public function register(): Response

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\SliderImageRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -12,7 +13,7 @@ class HomeController extends AbstractController
 {
     #[Route('/home', name: 'app_home')]
     #[Route('/', name: 'app_home_redirect')]
-    public function home(EntityManagerInterface $em): Response
+    public function home(EntityManagerInterface $em, SliderImageRepository $sliderImageRepo): Response
     {
         $user = $this->getUser();
         $conversations = [];
@@ -34,10 +35,14 @@ class HomeController extends AbstractController
             ->getQuery()
             ->getResult();
 
+        // Get active slider images
+        $sliderImages = $sliderImageRepo->findActiveSlides();
+
         return $this->render('home/index.html.twig', [
             'user' => $user,
             'conversations' => $conversations,
-            'recentProducts' => $recentProducts
+            'recentProducts' => $recentProducts,
+            'sliderImages' => $sliderImages
         ]);
     }
 }

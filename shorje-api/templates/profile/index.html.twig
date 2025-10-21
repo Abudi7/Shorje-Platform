@@ -3,224 +3,457 @@
 {% block title %}الملف الشخصي - شورجي{% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-colors duration-300">
-    <!-- Navigation -->
-    <nav class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl border-b border-white/20 dark:border-slate-700/20 sticky top-0 z-40">
+<style>
+    /* Custom animations and styles */
+    .glass {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    
+    .glass-dark {
+        background: rgba(15, 23, 42, 0.25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .gradient-text {
+        background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .profile-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .profile-card:hover {
+        transform: translateY(-4px);
+    }
+    
+    .product-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .product-card:hover {
+        transform: translateY(-4px) scale(1.02);
+    }
+    
+    .floating-action {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 50;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 3px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+    
+    .pulse-animation {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: .5;
+        }
+    }
+    
+    .line-clamp-2 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+    }
+    
+    .line-clamp-3 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+    }
+</style>
+
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <!-- Modern Header -->
+    <nav class="glass sticky top-0 z-50 border-b border-white/20 dark:border-slate-700/30">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo Section -->
                 <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center">
-                        <div class="h-12 w-12 bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500 rounded-2xl flex items-center justify-center mr-4 shadow-2xl">
-                            <i class="fas fa-shield-alt text-white text-xl"></i>
+                    <div class="flex items-center space-x-4">
+                        <div class="h-12 w-12 bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+                            <i class="fas fa-user text-white text-xl relative z-10"></i>
                         </div>
-                        <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500 bg-clip-text text-transparent">شورجي</h1>
+                        <div>
+                            <h1 class="text-3xl font-bold gradient-text">الملف الشخصي</h1>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">عرض وتعديل معلوماتك الشخصية</p>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Navigation Actions -->
                 <div class="flex items-center space-x-4">
-                    <a href="/home" class="bg-white/10 dark:bg-slate-800/10 hover:bg-white/20 dark:hover:bg-slate-800/20 text-slate-700 dark:text-slate-300 px-8 py-3 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20">
-                        <i class="fas fa-home ml-2"></i>الرئيسية
+                    <a href="/home" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-home"></i>
+                        <span>الرئيسية</span>
                     </a>
-                    <button onclick="logout()" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-8 py-3 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl">
-                        <i class="fas fa-sign-out-alt ml-2"></i>تسجيل الخروج
-                    </button>
+                    <a href="/messages" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50 relative">
+                        <i class="fas fa-comments"></i>
+                        <span>الرسائل</span>
+                        <span id="messagesCount" class="absolute -top-1 -right-1 bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg hidden">0</span>
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Cover Image with Profile Picture -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Profile Header Card -->
         <div class="relative mb-8">
-            <div class="h-64 bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-700 dark:from-cyan-600 dark:via-blue-700 dark:to-purple-800 rounded-3xl overflow-hidden shadow-2xl" id="coverImageContainer">
+            <div class="bg-gradient-to-br from-emerald-500 via-blue-600 to-purple-700 dark:from-emerald-600 dark:via-blue-700 dark:to-purple-800 rounded-3xl overflow-hidden shadow-2xl relative">
+                <!-- Animated Background -->
                 <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                <div class="absolute top-8 right-8 w-20 h-20 bg-white/10 rounded-full blur-xl animate-pulse"></div>
+                <div class="absolute bottom-8 left-8 w-32 h-32 bg-emerald-400/20 rounded-full blur-2xl animate-pulse"></div>
+                <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-400/20 rounded-full blur-xl animate-pulse"></div>
                 
-                <!-- Floating Elements -->
-                <div class="absolute top-8 right-8 w-16 h-16 bg-white/10 rounded-full blur-xl"></div>
-                <div class="absolute bottom-8 left-8 w-24 h-24 bg-cyan-400/20 rounded-full blur-2xl"></div>
-                
-                <!-- Profile Picture Inside Cover -->
-                <div class="absolute bottom-6 right-6">
-                    <div class="h-32 w-32 bg-gradient-to-br from-white to-gray-100 dark:from-slate-800 dark:to-slate-700 rounded-3xl shadow-2xl border-4 border-white dark:border-slate-600 overflow-hidden backdrop-blur-sm" id="profileImageContainer">
-                        <img id="profileImage" src="/api/profile/image/{{ user.id }}/profile" 
-                             alt="صورة الملف الشخصي" 
-                             class="w-full h-full object-cover"
-                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjY0IiBjeT0iNDgiIHI9IjE4IiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0yNCA5NkM0MCA4MCA2OCA3MiA2NCA3MkM2MCA3MiA4OCA4MCAxMDQgOTZIMjRaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo='">
-                    </div>
-                    <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white dark:border-slate-600 shadow-lg flex items-center justify-center">
-                        <i class="fas fa-check text-white text-xs"></i>
+                <div class="relative p-8">
+                    <div class="flex flex-col lg:flex-row items-start lg:items-end space-y-6 lg:space-y-0 lg:space-x-8">
+                        <!-- Profile Picture -->
+                        <div class="relative">
+                            <div class="h-40 w-40 bg-gradient-to-br from-white to-gray-100 dark:from-slate-800 dark:to-slate-700 rounded-3xl shadow-2xl border-4 border-white dark:border-slate-600 overflow-hidden backdrop-blur-sm" id="profileImageContainer">
+                                <img id="profileImage" src="{{ user.getAvatarUrl() }}" 
+                                     alt="صورة الملف الشخصي" 
+                                     class="w-full h-full object-cover"
+                                     onerror="this.src='/images/default-avatar.png'">
+                            </div>
+                            <div class="absolute -bottom-2 -right-2 w-10 h-10 bg-emerald-500 rounded-full border-4 border-white dark:border-slate-600 shadow-lg flex items-center justify-center">
+                                <i class="fas fa-check text-white text-sm"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- User Info -->
+                        <div class="flex-1 text-white">
+                            <h1 class="text-4xl font-bold mb-2" id="userFullName">{{ user.getFullName() }}</h1>
+                            <p class="text-blue-100 mb-4 text-lg" id="userEmail">{{ user.email }}</p>
+                            
+                            <!-- Bio Display -->
+                            {% if user.bio %}
+                                <p class="text-blue-100 mb-6 text-lg leading-relaxed max-w-2xl">{{ user.bio }}</p>
+                            {% endif %}
+                            
+                            <!-- Status Badges -->
+                            <div class="flex flex-wrap items-center space-x-4 mb-6">
+                                <span class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-2xl text-sm font-medium border border-white/30">
+                                    <i class="fas fa-check-circle ml-2 text-emerald-300"></i>
+                                    {{ user.isVerified ? 'مؤكد' : 'غير مؤكد' }}
+                                </span>
+                                <span class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-2xl text-sm font-medium border border-white/30">
+                                    <i class="fas fa-calendar ml-2 text-blue-300"></i>
+                                    عضو منذ {{ 'now'|date('Y') }}
+                                </span>
+                                <span class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-2xl text-sm font-medium border border-white/30">
+                                    <i class="fas fa-map-marker-alt ml-2 text-purple-300"></i>
+                                    {{ user.city ?? 'غير محدد' }}
+                                </span>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex flex-wrap items-center space-x-4">
+                                {% if not isOwnProfile %}
+                                <button onclick="toggleFollow({{ user.id }})" 
+                                        id="followBtn"
+                                        class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-8 py-3 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-xl border border-white/30">
+                                    <i class="fas fa-user-plus ml-2 text-lg"></i>
+                                    <span id="followText">متابعة</span>
+                                </button>
+                                {% endif %}
+                                <button onclick="viewAllMessages()" 
+                                        class="bg-gradient-to-r from-emerald-400 to-blue-400 hover:from-emerald-500 hover:to-blue-500 text-white px-8 py-3 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-xl relative">
+                                    <i class="fas fa-comments ml-2 text-lg"></i>الرسائل
+                                    <span id="messagesCountMain" class="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold shadow-lg hidden">0</span>
+                                </button>
+                                {% if isOwnProfile %}
+                                <a href="/edit-profile" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-8 py-3 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-xl border border-white/30">
+                                    <i class="fas fa-edit ml-2 text-lg"></i>تعديل الملف
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <!-- Edit Button -->
-                <a href="/edit-profile" class="absolute top-6 right-6 bg-white/20 dark:bg-slate-800/20 backdrop-blur-md hover:bg-white/30 dark:hover:bg-slate-800/30 text-white p-4 rounded-2xl transition-all duration-300 transform hover:scale-110 border border-white/30 dark:border-slate-700/30 shadow-xl">
-                    <i class="fas fa-edit text-xl"></i>
-                </a>
             </div>
         </div>
 
-        <!-- Profile Content -->
-        <div class="mb-12">
-            <div class="text-center lg:text-right">
-                
-                <!-- User Info -->
-                <div class="flex-1 text-center lg:text-right">
-                    <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-slate-800 to-slate-600 dark:from-white dark:to-cyan-200 bg-clip-text text-transparent" id="userFullName">{{ user.getFullName() }}</h1>
-                    <p class="text-slate-600 dark:text-slate-300 mb-4 text-lg" id="userEmail">{{ user.email }}</p>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Main Content - User's Products -->
+            <div class="lg:col-span-3">
+                <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-white">
+                            <i class="fas fa-box text-emerald-500 ml-3"></i>منتجات {{ user.getFullName() }}
+                        </h2>
+                        <div class="bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 px-4 py-2 rounded-2xl font-semibold">
+                            {{ products|length }} منتج
+                        </div>
+                    </div>
                     
-                    <!-- Bio Display -->
-                    {% if user.bio %}
-                        <p class="text-slate-700 dark:text-slate-200 mb-6 text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">{{ user.bio }}</p>
+                    {% if products|length > 0 %}
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {% for product in products %}
+                        <div class="product-card bg-white dark:bg-slate-700 rounded-2xl shadow-lg border border-gray-200 dark:border-slate-600 overflow-hidden hover:shadow-2xl transition-all duration-300">
+                            <!-- Product Image -->
+                            <div class="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-600 dark:to-slate-700 flex items-center justify-center overflow-hidden">
+                                {% if product.image1 %}
+                                <img src="/api/products/image/{{ product.id }}/1" 
+                                     alt="{{ product.title }}" 
+                                     class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                     loading="lazy">
+                                {% endif %}
+                                <div class="flex items-center justify-center text-gray-400 dark:text-slate-400" 
+                                     style="display: {{ product.image1 ? 'none' : 'flex' }};">
+                                    <i class="fas fa-image text-4xl"></i>
+                                </div>
+                                
+                                <!-- Product Status Badge -->
+                                <div class="absolute top-3 right-3">
+                                    {% if product.status == 'available' %}
+                                    <span class="bg-gradient-to-r from-emerald-500 to-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">متاح</span>
+                                    {% elseif product.status == 'sold' %}
+                                    <span class="bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">مباع</span>
+                                    {% elseif product.status == 'reserved' %}
+                                    <span class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">محجوز</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Product Info -->
+                            <div class="p-6">
+                                <!-- Title -->
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">{{ product.title }}</h3>
+                                
+                                <!-- Price -->
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="bg-gradient-to-r from-emerald-500 to-green-500 text-white px-4 py-2 rounded-2xl font-bold text-lg shadow-lg">
+                                        {{ product.price }} {{ product.currency }}
+                                    </div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        <i class="fas fa-map-marker-alt ml-1"></i>{{ product.city }}
+                                    </div>
+                                </div>
+                                
+                                <!-- Type/Condition and Category -->
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 text-blue-800 dark:text-blue-200 px-3 py-2 rounded-full text-sm font-medium">
+                                        <i class="fas fa-tag ml-1"></i>{{ product.category }}
+                                    </span>
+                                    {% if product.condition %}
+                                    <span class="bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900 dark:to-purple-800 text-purple-800 dark:text-purple-200 px-3 py-2 rounded-full text-sm font-medium">
+                                        <i class="fas fa-info-circle ml-1"></i>{{ product.condition }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Description -->
+                                <p class="text-gray-600 dark:text-gray-300 text-sm line-clamp-2 mb-4">{{ product.description }}</p>
+                                
+                                <!-- Date -->
+                                <div class="flex items-center justify-end text-xs text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-calendar ml-1"></i>
+                                    <span>{{ product.createdAt|date('M d, Y') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-16">
+                        <div class="w-24 h-24 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+                            <i class="fas fa-box text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-600 dark:text-slate-300 mb-4">لا توجد منتجات</h3>
+                        <p class="text-gray-500 dark:text-slate-400 text-lg">لم يقم هذا المستخدم بنشر أي منتجات بعد</p>
+                        {% if isOwnProfile %}
+                        <button onclick="window.location.href='/home'" class="mt-6 bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-8 py-3 rounded-2xl font-semibold hover:from-emerald-600 hover:to-blue-600 transition-all duration-300 shadow-lg">
+                            <i class="fas fa-plus ml-2"></i>نشر منتج جديد
+                        </button>
+                        {% endif %}
+                    </div>
                     {% endif %}
-                    
-                    <div class="flex items-center justify-center lg:justify-start space-x-4 mb-6">
-                        <span class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md px-4 py-2 rounded-2xl text-sm font-medium border border-white/30 dark:border-slate-700/30 shadow-lg">
-                            <i class="fas fa-check-circle ml-2 text-green-500"></i>
-                            {{ user.isVerified ? 'مؤكد' : 'غير مؤكد' }}
-                        </span>
-                        <span class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md px-4 py-2 rounded-2xl text-sm font-medium border border-white/30 dark:border-slate-700/30 shadow-lg">
-                            <i class="fas fa-calendar ml-2 text-blue-500"></i>
-                            عضو منذ {{ user.id ? 'الآن' : 'غير محدد' }}
-                        </span>
-                    </div>
-                    
-                    <!-- Social Stats -->
-                    <div class="flex items-center justify-center lg:justify-start space-x-8 mb-8">
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-slate-800 dark:text-white" id="followersCount">0</div>
-                            <div class="text-sm text-slate-600 dark:text-slate-300 font-medium">متابع</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-slate-800 dark:text-white" id="followingCount">0</div>
-                            <div class="text-sm text-slate-600 dark:text-slate-300 font-medium">متابع</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Social Action Buttons -->
-                    <div class="flex justify-center lg:justify-start space-x-6">
-                        {% if not isOwnProfile %}
-                        <button onclick="toggleFollow({{ user.id }})" 
-                                id="followBtn"
-                                class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
-                            <i class="fas fa-user-plus ml-3 text-lg"></i>
-                            <span id="followText">متابعة</span>
-                        </button>
-                        {% endif %}
-                        <button onclick="viewAllMessages()" 
-                                class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
-                            <i class="fas fa-comment ml-3 text-lg"></i>الرسائل
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <!-- Profile Information -->
-            <div class="lg:col-span-2">
-                <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
-                    <h2 class="text-3xl font-bold text-slate-800 dark:text-white mb-8">
-                        <i class="fas fa-user-edit ml-3 text-cyan-500"></i>معلومات الملف الشخصي
-                    </h2>
-                    
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <div class="flex items-center text-sm font-semibold text-slate-600 dark:text-cyan-200 mb-3">
-                                    <i class="fas fa-user ml-2 text-cyan-500"></i>الاسم الأول
-                                </div>
-                                <div class="text-xl text-slate-800 dark:text-white font-semibold">
-                                    {{ user.firstName ?? 'غير محدد' }}
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <div class="flex items-center text-sm font-semibold text-slate-600 dark:text-cyan-200 mb-3">
-                                    <i class="fas fa-user ml-2 text-cyan-500"></i>الاسم الأخير
-                                </div>
-                                <div class="text-xl text-slate-800 dark:text-white font-semibold">
-                                    {{ user.lastName ?? 'غير محدد' }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <div class="flex items-center text-sm font-semibold text-slate-600 dark:text-cyan-200 mb-3">
-                                    <i class="fas fa-envelope ml-2 text-cyan-500"></i>البريد الإلكتروني
-                                </div>
-                                <div class="text-xl text-slate-800 dark:text-white font-semibold">
-                                    {{ user.email }}
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <div class="flex items-center text-sm font-semibold text-slate-600 dark:text-cyan-200 mb-3">
-                                    <i class="fas fa-calendar ml-2 text-cyan-500"></i>العمر
-                                </div>
-                                <div class="text-xl text-slate-800 dark:text-white font-semibold">
-                                    {{ user.age ? user.age ~ ' سنة' : 'غير محدد' }}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div class="flex items-center text-sm font-semibold text-slate-600 dark:text-cyan-200 mb-3">
-                                <i class="fas fa-phone ml-2 text-cyan-500"></i>رقم الهاتف
-                            </div>
-                            <div class="text-xl text-slate-800 dark:text-white font-semibold">
-                                {{ user.phoneNumber ?? 'غير محدد' }}
-                            </div>
-                        </div>
-
-                        {% if user.bio %}
-                        <div>
-                            <div class="flex items-center text-sm font-semibold text-slate-600 dark:text-cyan-200 mb-3">
-                                <i class="fas fa-user-edit ml-2 text-cyan-500"></i>نبذة شخصية
-                            </div>
-                            <div class="text-lg text-slate-700 dark:text-slate-200 leading-relaxed bg-slate-50 dark:bg-slate-700/50 p-6 rounded-2xl backdrop-blur-sm border border-slate-200 dark:border-slate-600">
-                                {{ user.bio }}
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        <div class="flex justify-end space-x-6 mt-8">
-                            <a href="/edit-profile" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
-                                <i class="fas fa-edit ml-3 text-lg"></i>تعديل الملف الشخصي
-                            </a>
-                            <a href="/users" class="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
-                                <i class="fas fa-users ml-3 text-lg"></i>المستخدمين
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
 
             <!-- Sidebar -->
-            <div class="space-y-8">
-                <!-- Account Status -->
-                <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
-                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-6">
-                        <i class="fas fa-info-circle ml-3 text-purple-500"></i>حالة الحساب
+            <div class="lg:col-span-1 space-y-8">
+                <!-- Profile Stats -->
+                <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-chart-bar text-emerald-500 ml-3"></i>الإحصائيات
                     </h3>
                     
                     <div class="space-y-4">
-                        <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl backdrop-blur-sm border border-slate-200 dark:border-slate-600">
-                            <span class="text-slate-600 dark:text-cyan-200 font-medium">البريد الإلكتروني:</span>
-                            <span class="font-semibold {{ user.isVerified ? 'text-green-500' : 'text-red-500' }}">
+                        <div class="bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-900/20 dark:to-blue-900/20 p-6 rounded-2xl border border-emerald-200 dark:border-emerald-700">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-emerald-600 dark:text-emerald-400 font-medium">المتابعون</p>
+                                    <p class="text-3xl font-bold text-emerald-700 dark:text-emerald-300" id="followersCount">0</p>
+                                </div>
+                                <div class="w-12 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-users text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-2xl border border-blue-200 dark:border-blue-700">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">المتابعون</p>
+                                    <p class="text-3xl font-bold text-blue-700 dark:text-blue-300" id="followingCount">0</p>
+                                </div>
+                                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-user-friends text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 rounded-2xl border border-purple-200 dark:border-purple-700">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-purple-600 dark:text-purple-400 font-medium">المنتجات</p>
+                                    <p class="text-3xl font-bold text-purple-700 dark:text-purple-300">{{ products|length }}</p>
+                                </div>
+                                <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-box text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Information -->
+                <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-info-circle text-blue-500 ml-3"></i>معلومات الحساب
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 dark:bg-slate-700/50 p-4 rounded-2xl">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">البريد الإلكتروني</p>
+                            <p class="text-gray-900 dark:text-white font-semibold">{{ user.email }}</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 dark:bg-slate-700/50 p-4 rounded-2xl">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">رقم الهاتف</p>
+                            <p class="text-gray-900 dark:text-white font-semibold">{{ user.phoneNumber ?? 'غير محدد' }}</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 dark:bg-slate-700/50 p-4 rounded-2xl">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">العمر</p>
+                            <p class="text-gray-900 dark:text-white font-semibold">{{ user.age ? user.age ~ ' سنة' : 'غير محدد' }}</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 dark:bg-slate-700/50 p-4 rounded-2xl">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">الجنس</p>
+                            <p class="text-gray-900 dark:text-white font-semibold">
+                                {% if user.gender == 'male' %}
+                                    <i class="fas fa-mars text-blue-500 ml-2"></i>ذكر
+                                {% elseif user.gender == 'female' %}
+                                    <i class="fas fa-venus text-pink-500 ml-2"></i>أنثى
+                                {% else %}
+                                    غير محدد
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <div class="bg-gray-50 dark:bg-slate-700/50 p-4 rounded-2xl">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">الموقع</p>
+                            <p class="text-gray-900 dark:text-white font-semibold">
+                                {% if user.location %}
+                                    <i class="fas fa-map-marker-alt text-emerald-500 ml-2"></i>{{ user.location }}
+                                {% else %}
+                                    <i class="fas fa-map-marker-alt text-gray-400 ml-2"></i>غير محدد
+                                    <span class="text-xs text-gray-500 block mt-1">مثال: بغداد، العراق</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        
+                        <div class="bg-gray-50 dark:bg-slate-700/50 p-4 rounded-2xl">
+                            <p class="text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">المدينة</p>
+                            <p class="text-gray-900 dark:text-white font-semibold">{{ user.city ?? 'غير محدد' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Status -->
+                <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        <i class="fas fa-shield-alt text-green-500 ml-3"></i>حالة الحساب
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700/50 rounded-2xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-r {{ user.isVerified ? 'from-emerald-500 to-green-500' : 'from-gray-400 to-gray-500' }} rounded-2xl flex items-center justify-center">
+                                    <i class="fas fa-check text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-900 dark:text-white">البريد الإلكتروني</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">الحالة</p>
+                                </div>
+                            </div>
+                            <span class="font-semibold {{ user.isVerified ? 'text-emerald-600' : 'text-gray-500' }}">
                                 {{ user.isVerified ? 'مؤكد' : 'غير مؤكد' }}
                             </span>
                         </div>
                         
-                        <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl backdrop-blur-sm border border-slate-200 dark:border-slate-600">
-                            <span class="text-slate-600 dark:text-cyan-200 font-medium">مصادقة جوجل:</span>
-                            <span class="font-semibold {{ user.googleId ? 'text-green-500' : 'text-slate-400' }}">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700/50 rounded-2xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-r {{ user.googleId ? 'from-blue-500 to-blue-600' : 'from-gray-400 to-gray-500' }} rounded-2xl flex items-center justify-center">
+                                    <i class="fab fa-google text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-900 dark:text-white">جوجل</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">متصلة</p>
+                                </div>
+                            </div>
+                            <span class="font-semibold {{ user.googleId ? 'text-blue-600' : 'text-gray-500' }}">
                                 {{ user.googleId ? 'متصلة' : 'غير متصلة' }}
                             </span>
                         </div>
                         
-                        <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-700/50 p-4 rounded-2xl backdrop-blur-sm border border-slate-200 dark:border-slate-600">
-                            <span class="text-slate-600 dark:text-cyan-200 font-medium">مصادقة فيسبوك:</span>
-                            <span class="font-semibold {{ user.facebookId ? 'text-green-500' : 'text-slate-400' }}">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700/50 rounded-2xl">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-gradient-to-r {{ user.facebookId ? 'from-blue-600 to-blue-700' : 'from-gray-400 to-gray-500' }} rounded-2xl flex items-center justify-center">
+                                    <i class="fab fa-facebook text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-gray-900 dark:text-white">فيسبوك</p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">متصلة</p>
+                                </div>
+                            </div>
+                            <span class="font-semibold {{ user.facebookId ? 'text-blue-600' : 'text-gray-500' }}">
                                 {{ user.facebookId ? 'متصلة' : 'غير متصلة' }}
                             </span>
                         </div>
@@ -229,24 +462,50 @@
             </div>
         </div>
     </div>
+
+    <!-- Floating Action Button for Own Profile -->
+    {% if isOwnProfile %}
+    <div class="floating-action">
+        <a href="/edit-profile" class="p-4 bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-110">
+            <i class="fas fa-edit text-xl"></i>
+        </a>
+    </div>
+    {% endif %}
 </div>
 
-<!-- Hidden file inputs -->
+<!-- Hidden file inputs - Only show for own profile -->
+{% if isOwnProfile %}
 <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="handleImageUpload('profile')">
 <input type="file" id="coverImageInput" accept="image/*" style="display: none;" onchange="handleImageUpload('cover')">
+{% endif %}
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Load follow status when page loads
     loadFollowStatus();
+    
+    // Load messages count and start real-time updates
+    loadMessagesCount();
+    startRealTimeUpdates();
+    
+    // Request notification permission
+    requestNotificationPermission();
 });
 
 function uploadProfileImage() {
+    {% if isOwnProfile %}
     document.getElementById('profileImageInput').click();
+    {% else %}
+    showToast('لا يمكنك تعديل هذا الملف الشخصي', 'error');
+    {% endif %}
 }
 
 function uploadCoverImage() {
+    {% if isOwnProfile %}
     document.getElementById('coverImageInput').click();
+    {% else %}
+    showToast('لا يمكنك تعديل هذا الملف الشخصي', 'error');
+    {% endif %}
 }
 
 async function handleImageUpload(type) {
@@ -299,20 +558,49 @@ function fileToBase64(file) {
 // Load follow status and stats
 async function loadFollowStatus() {
     try {
-        const response = await apiCall('/api/follow-status/{{ user.id }}');
-        document.getElementById('followersCount').textContent = response.followersCount;
-        document.getElementById('followingCount').textContent = response.followingCount;
+        console.log('Loading follow status for user ID: {{ user.id }}');
+        const response = await apiCall('/web/follow-status/{{ user.id }}');
+        console.log('Follow status response:', response);
         
-        // Update follow button state only if it exists (not own profile)
-        const followBtn = document.getElementById('followBtn');
-        const followText = document.getElementById('followText');
-        
-        if (followBtn && followText && response.isFollowing) {
-            followText.textContent = 'إلغاء المتابعة';
-            followBtn.className = followBtn.className.replace('from-cyan-500 to-blue-600', 'from-red-500 to-red-600').replace('hover:from-cyan-600 hover:to-blue-700', 'hover:from-red-600 hover:to-red-700');
+        if (response.success) {
+            // Update stats
+            if (document.getElementById('followersCount')) {
+                document.getElementById('followersCount').textContent = response.followersCount;
+            }
+            if (document.getElementById('followingCount')) {
+                document.getElementById('followingCount').textContent = response.followingCount;
+            }
+            
+            // Check if it's the user's own profile
+            if (response.isOwnProfile) {
+                console.log('This is the user\'s own profile');
+                // Hide follow button for own profile
+                const followBtn = document.getElementById('followBtn');
+                if (followBtn) {
+                    followBtn.style.display = 'none';
+                }
+            } else {
+                // Update follow button for other users
+                const followBtn = document.getElementById('followBtn');
+                const followText = document.getElementById('followText');
+                
+                if (followBtn && followText) {
+                    if (response.isFollowing) {
+                        followText.textContent = 'إلغاء المتابعة';
+                        followBtn.className = followBtn.className.replace('bg-white/20', 'bg-red-500/20').replace('hover:bg-white/30', 'hover:bg-red-500/30');
+                    } else {
+                        followText.textContent = 'متابعة';
+                        followBtn.className = followBtn.className.replace('bg-red-500/20', 'bg-white/20').replace('hover:bg-red-500/30', 'hover:bg-white/30');
+                    }
+                }
+            }
+        } else {
+            console.error('Follow status API returned error:', response.error);
+            showToast('فشل في تحميل حالة المتابعة: ' + (response.error || 'خطأ غير معروف'), 'error');
         }
     } catch (error) {
         console.error('Failed to load follow status:', error);
+        showToast('فشل في تحميل حالة المتابعة: ' + error.message, 'error');
     }
 }
 
@@ -321,27 +609,47 @@ async function toggleFollow(userId) {
     const followBtn = document.getElementById('followBtn');
     const followText = document.getElementById('followText');
     
+    if (!followBtn || !followText) {
+        console.error('Follow button elements not found');
+        return;
+    }
+    
     try {
         // Check current follow status
-        const statusResponse = await apiCall(`/api/follow-status/${userId}`);
-        const isFollowing = statusResponse.isFollowing;
+        const statusResponse = await apiCall(`/web/follow-status/${userId}`);
         
-        let response;
-        if (isFollowing) {
-            response = await apiCall(`/api/unfollow/${userId}`, { method: 'POST' });
-            followText.textContent = 'متابعة';
-            followBtn.className = followBtn.className.replace('from-red-500 to-red-600', 'from-cyan-500 to-blue-600').replace('hover:from-red-600 hover:to-red-700', 'hover:from-cyan-600 hover:to-blue-700');
-        } else {
-            response = await apiCall(`/api/follow/${userId}`, { method: 'POST' });
-            followText.textContent = 'إلغاء المتابعة';
-            followBtn.className = followBtn.className.replace('from-cyan-500 to-blue-600', 'from-red-500 to-red-600').replace('hover:from-cyan-600 hover:to-blue-700', 'hover:from-red-600 hover:to-red-700');
+        if (!statusResponse.success) {
+            showToast('فشل في جلب حالة المتابعة: ' + statusResponse.error, 'error');
+            return;
         }
         
-        // Update stats
-        document.getElementById('followersCount').textContent = response.followersCount;
-        showToast(response.message, 'success');
+        const isFollowing = statusResponse.isFollowing;
+        let response;
+        
+        if (isFollowing) {
+            response = await apiCall(`/web/unfollow/${userId}`, { method: 'POST' });
+            if (response.success) {
+                followText.textContent = 'متابعة';
+                followBtn.className = followBtn.className.replace('bg-red-500/20', 'bg-white/20').replace('hover:bg-red-500/30', 'hover:bg-white/30');
+            }
+        } else {
+            response = await apiCall(`/web/follow/${userId}`, { method: 'POST' });
+            if (response.success) {
+                followText.textContent = 'إلغاء المتابعة';
+                followBtn.className = followBtn.className.replace('bg-white/20', 'bg-red-500/20').replace('hover:bg-white/30', 'hover:bg-red-500/30');
+            }
+        }
+        
+        if (response.success) {
+            // Update stats
+            document.getElementById('followersCount').textContent = response.followersCount;
+            showToast(response.message, 'success');
+        } else {
+            showToast(response.error || 'حدث خطأ أثناء المتابعة', 'error');
+        }
         
     } catch (error) {
+        console.error('Follow toggle error:', error);
         showToast(error.message || 'حدث خطأ أثناء المتابعة', 'error');
     }
 }
@@ -351,5 +659,155 @@ function viewAllMessages() {
     window.location.href = '/messages';
 }
 
+// Toast notification function
+function showToast(message, type = 'info') {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-2xl text-white font-medium shadow-2xl transform transition-all duration-300 ${
+        type === 'success' ? 'bg-emerald-500' : 
+        type === 'error' ? 'bg-red-500' : 
+        type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+    }`;
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+        toast.style.opacity = '1';
+    }, 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 3000);
+}
+
+// Messages count and real-time updates
+async function loadMessagesCount() {
+    try {
+        console.log('Loading messages count from profile page...');
+        const response = await apiCall('/api/messages/unread-count');
+        const count = response.count || 0;
+        console.log('Messages count received:', count);
+        updateMessagesBadge(count);
+    } catch (error) {
+        console.error('Error loading messages count:', error);
+        updateMessagesBadge(0);
+    }
+}
+
+function updateMessagesBadge(count) {
+    const badge = document.getElementById('messagesCount');
+    const badgeMain = document.getElementById('messagesCountMain');
+    
+    console.log('Updating messages badge with count:', count);
+    console.log('Navigation badge found:', badge);
+    console.log('Main badge found:', badgeMain);
+    
+    if (badge) {
+        if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.classList.remove('hidden');
+            console.log('Navigation badge shown with count:', count);
+        } else {
+            badge.classList.add('hidden');
+            console.log('Navigation badge hidden');
+        }
+    } else {
+        console.error('Navigation messages badge element not found!');
+    }
+    
+    if (badgeMain) {
+        if (count > 0) {
+            badgeMain.textContent = count > 99 ? '99+' : count;
+            badgeMain.classList.remove('hidden');
+            console.log('Main badge shown with count:', count);
+        } else {
+            badgeMain.classList.add('hidden');
+            console.log('Main badge hidden');
+        }
+    } else {
+        console.error('Main messages badge element not found!');
+    }
+}
+
+// Real-time updates using polling
+let realTimeInterval;
+function startRealTimeUpdates() {
+    // Update counts every 30 seconds
+    setInterval(() => {
+        loadMessagesCount();
+    }, 30000);
+    
+    // Check for new messages every 10 seconds for toast notifications
+    setInterval(() => {
+        checkForNewMessages();
+    }, 10000);
+}
+
+// Check for new messages and show toast notifications
+let lastMessageCount = 0;
+async function checkForNewMessages() {
+    try {
+        console.log('Checking for new messages (profile page)');
+        const response = await apiCall('/api/messages/unread-count');
+        const currentCount = response.count || 0;
+        console.log('Current message count:', currentCount, 'Last count:', lastMessageCount);
+        
+        // If there are new messages (count increased)
+        if (currentCount > lastMessageCount && lastMessageCount > 0) {
+            const newMessages = currentCount - lastMessageCount;
+            console.log('New messages detected:', newMessages);
+            showToast(`لديك ${newMessages} رسالة جديدة`, 'info');
+            
+            // Show browser notification if page is not focused
+            if (document.hidden || !document.hasFocus()) {
+                showBrowserNotification({
+                    title: 'رسالة جديدة',
+                    body: `لديك ${newMessages} رسالة جديدة`,
+                    icon: '/favicon.ico'
+                });
+            }
+        }
+        
+        lastMessageCount = currentCount;
+        updateMessagesBadge(currentCount);
+    } catch (error) {
+        console.error('Error checking for new messages:', error);
+        if (error.message === 'Authentication required') {
+            console.log('User not authenticated, stopping real-time updates');
+        }
+    }
+}
+
+// Browser notification function
+function showBrowserNotification(options) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification(options.title, {
+            body: options.body,
+            icon: options.icon || '/favicon.ico',
+            badge: '/favicon.ico'
+        });
+    }
+}
+
+// Request notification permission
+function requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+}
+
+// Test function for debugging (remove in production)
+window.testMessagesBadge = function(count) {
+    console.log('Testing messages badge with count:', count);
+    updateMessagesBadge(count);
+};
 </script>
 {% endblock %}

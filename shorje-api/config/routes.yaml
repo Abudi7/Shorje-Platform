@@ -13,6 +13,10 @@ app_login:
     path: /login
     controller: App\Controller\PageController::login
 
+app_login_check:
+    path: /login_check
+    methods: [POST]
+
 app_register:
     path: /register
     controller: App\Controller\PageController::register
@@ -52,6 +56,91 @@ app_chat:
 app_messages:
     path: /messages
     controller: App\Controller\SocialController::messages
+
+# Web-specific API endpoints (session-based auth)
+web_conversation:
+    path: /web/conversation/{userId}
+    controller: App\Controller\SocialController::getConversation
+    methods: [GET]
+
+web_conversations:
+    path: /web/conversations
+    controller: App\Controller\SocialController::getConversations
+    methods: [GET]
+
+web_send_message:
+    path: /web/send-message
+    controller: App\Controller\SocialController::sendMessage
+    methods: [POST]
+
+web_mark_read:
+    path: /web/conversation/{userId}/mark-read
+    controller: App\Controller\SocialController::markConversationAsRead
+    methods: [POST]
+
+web_message_attachment:
+    path: /web/message/{messageId}/attachment
+    controller: App\Controller\SocialController::getMessageAttachment
+    methods: [GET]
+
+web_mark_seen:
+    path: /web/message/{messageId}/mark-seen
+    controller: App\Controller\SocialController::markMessageAsSeen
+    methods: [POST]
+
+web_user_status:
+    path: /web/user/{userId}/status
+    controller: App\Controller\SocialController::getUserStatus
+    methods: [GET]
+
+web_update_status:
+    path: /web/user/update-status
+    controller: App\Controller\SocialController::updateUserStatus
+    methods: [POST]
+web_follow_status:
+    path: /web/follow-status/{userId}
+    controller: App\Controller\SocialController::getFollowStatus
+    methods: [GET]
+web_follow_user:
+    path: /web/follow/{userId}
+    controller: App\Controller\SocialController::followUser
+    methods: [POST]
+web_unfollow_user:
+    path: /web/unfollow/{userId}
+    controller: App\Controller\SocialController::unfollowUser
+    methods: [POST]
+web_notifications:
+    path: /web/notifications
+    controller: App\Controller\NotificationsController::getNotifications
+    methods: [GET]
+web_notification_mark_read:
+    path: /web/notifications/{id}/read
+    controller: App\Controller\NotificationsController::markNotificationAsRead
+    methods: [POST]
+web_notifications_mark_all_read:
+    path: /web/notifications/mark-all-read
+    controller: App\Controller\NotificationsController::markAllNotificationsAsRead
+    methods: [POST]
+web_notifications_unread_count:
+    path: /web/notifications/unread-count
+    controller: App\Controller\SocialController::getUnreadNotificationsCount
+    methods: [GET]
+web_profile_update:
+    path: /web/profile/update
+    controller: App\Controller\ProfileController::updateProfile
+    methods: [POST]
+web_profile_upload_image:
+    path: /web/profile/upload-image
+    controller: App\Controller\ProfileController::uploadImage
+    methods: [POST]
+web_profile_change_password:
+    path: /web/profile/change-password
+    controller: App\Controller\ProfileController::changePassword
+    methods: [POST]
+web_profile_image:
+    path: /web/profile/image/{userId}/{type}
+    controller: App\Controller\ProfileController::getProfileImage
+    methods: [GET]
 
 app_logout:
     path: /logout
