@@ -1,0 +1,269 @@
+name: 🌐 Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: 🏗️ Build Application
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🐘 Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, zip, gd, curl, json, bcmath, soap, xmlrpc, xsl, gmp, exif, fileinfo, sodium, redis
+
+    - name: 📥 Install Composer dependencies
+      run: |
+        cd shorje-api
+        composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
+
+    - name: 🔧 Setup environment
+      run: |
+        cd shorje-api
+        cp .env.dev .env
+        echo "APP_ENV=prod" >> .env
+        echo "APP_DEBUG=false" >> .env
+        echo "DATABASE_URL=sqlite:///%kernel.project_dir%/var/data.db" >> .env
+
+    - name: 🗄️ Setup SQLite database
+      run: |
+        cd shorje-api
+        php bin/console doctrine:database:create
+        php bin/console doctrine:migrations:migrate --no-interaction
+
+    - name: 🏗️ Build for production
+      run: |
+        cd shorje-api
+        php bin/console cache:clear --env=prod
+        php bin/console cache:warmup --env=prod
+
+    - name: 📁 Prepare GitHub Pages
+      run: |
+        mkdir -p gh-pages
+        cp -r shorje-api/public/* gh-pages/
+        cp README.md gh-pages/
+        cp DEPLOYMENT.md gh-pages/
+        
+        # Create a beautiful landing page
+        cat > gh-pages/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>🛒 Shorje Platform - Modern Arabic Marketplace</title>
+            <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body {
+                    font-family: 'Cairo', 'Tajawal', Arial, sans-serif;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    min-height: 100vh;
+                    color: white;
+                    overflow-x: hidden;
+                }
+                .container {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    padding: 2rem;
+                }
+                .hero {
+                    text-align: center;
+                    padding: 4rem 0;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                    margin-bottom: 3rem;
+                }
+                .hero h1 {
+                    font-size: 4rem;
+                    margin-bottom: 1rem;
+                    background: linear-gradient(45deg, #ff6b6b, #ee5a24, #feca57);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                }
+                .hero p {
+                    font-size: 1.5rem;
+                    margin-bottom: 2rem;
+                    opacity: 0.9;
+                }
+                .btn {
+                    display: inline-block;
+                    padding: 1rem 2rem;
+                    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 50px;
+                    font-weight: bold;
+                    margin: 0.5rem;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+                }
+                .btn:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+                }
+                .btn-secondary {
+                    background: linear-gradient(45deg, #667eea, #764ba2);
+                    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+                }
+                .btn-secondary:hover {
+                    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+                }
+                .features {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 2rem;
+                    margin: 3rem 0;
+                }
+                .feature {
+                    background: rgba(255, 255, 255, 0.1);
+                    padding: 2rem;
+                    border-radius: 15px;
+                    backdrop-filter: blur(10px);
+                    text-align: center;
+                    transition: transform 0.3s ease;
+                }
+                .feature:hover {
+                    transform: translateY(-5px);
+                }
+                .feature h3 {
+                    font-size: 1.5rem;
+                    margin-bottom: 1rem;
+                    color: #feca57;
+                }
+                .feature p {
+                    opacity: 0.9;
+                    line-height: 1.6;
+                }
+                .stats {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
+                    margin: 3rem 0;
+                }
+                .stat {
+                    background: rgba(255, 255, 255, 0.1);
+                    padding: 1.5rem;
+                    border-radius: 10px;
+                    text-align: center;
+                    backdrop-filter: blur(5px);
+                }
+                .stat h4 {
+                    font-size: 2rem;
+                    color: #feca57;
+                    margin-bottom: 0.5rem;
+                }
+                .footer {
+                    text-align: center;
+                    padding: 2rem 0;
+                    border-top: 1px solid rgba(255, 255, 255, 0.2);
+                    margin-top: 3rem;
+                }
+                @media (max-width: 768px) {
+                    .hero h1 { font-size: 2.5rem; }
+                    .hero p { font-size: 1.2rem; }
+                    .container { padding: 1rem; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="hero">
+                    <h1>🛒 Shorje Platform</h1>
+                    <p>Modern Arabic Marketplace - Built with Symfony 7</p>
+                    
+                    <a href="/app.php" class="btn">🚀 Launch Application</a>
+                    <a href="/README.md" class="btn btn-secondary">📚 Documentation</a>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <h4>🔐</h4>
+                        <p>JWT + OAuth Authentication</p>
+                    </div>
+                    <div class="stat">
+                        <h4>🛍️</h4>
+                        <p>Product Marketplace</p>
+                    </div>
+                    <div class="stat">
+                        <h4>💬</h4>
+                        <p>Real-time Messaging</p>
+                    </div>
+                    <div class="stat">
+                        <h4>🌍</h4>
+                        <p>Arabic RTL Support</p>
+                    </div>
+                </div>
+                
+                <div class="features">
+                    <div class="feature">
+                        <h3>🔐 Authentication & Security</h3>
+                        <p>JWT Authentication with Google and Facebook OAuth integration for secure and easy user registration and login.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>🛍️ Marketplace Features</h3>
+                        <p>Complete product posting system with image uploads, advanced filtering, and currency support for Iraqi Dinar and US Dollar.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>💬 Social Features</h3>
+                        <p>Real-time messaging system, follow/unfollow functionality, and user discovery for building connections.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>🎨 Modern UI/UX</h3>
+                        <p>Responsive design with Arabic RTL support, dark/light mode toggle, and glass-morphism design elements.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>👤 User Management</h3>
+                        <p>Complete profile management with profile pictures, cover images, bio, and email verification system.</p>
+                    </div>
+                    <div class="feature">
+                        <h3>📱 Mobile Ready</h3>
+                        <p>Fully responsive design optimized for all devices with touch-friendly interface and mobile-optimized forms.</p>
+                    </div>
+                </div>
+                
+                <div class="footer">
+                    <p>Built with ❤️ by <strong>Abudi7</strong> | <a href="https://github.com/Abudi7/Shorje-Platform" style="color: #feca57;">View on GitHub</a></p>
+                </div>
+            </div>
+        </body>
+        </html>
+        EOF
+
+    - name: 📤 Upload Pages artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: ./gh-pages
+
+  deploy:
+    name: 🚀 Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: 📤 Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
