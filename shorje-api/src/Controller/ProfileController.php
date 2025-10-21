@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,16 +20,23 @@ use Symfony\Component\Uid\Uuid;
 class ProfileController extends AbstractController
 {
     #[Route('/profile', name: 'app_profile')]
-    public function profile(): Response
+    public function profile(EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
         if (!$user) {
             throw new AccessDeniedException('يجب تسجيل الدخول أولاً');
         }
 
+        // Get user's products
+        $products = $em->getRepository(Product::class)->findBy(
+            ['seller' => $user],
+            ['createdAt' => 'DESC']
+        );
+
         return $this->render('profile/index.html.twig', [
             'user' => $user,
-            'isOwnProfile' => true
+            'isOwnProfile' => true,
+            'products' => $products
         ]);
     }
 
@@ -45,9 +53,16 @@ class ProfileController extends AbstractController
             throw $this->createNotFoundException('المستخدم غير موجود');
         }
 
+        // Get user's products
+        $products = $em->getRepository(Product::class)->findBy(
+            ['seller' => $user],
+            ['createdAt' => 'DESC']
+        );
+
         return $this->render('profile/index.html.twig', [
             'user' => $user,
-            'isOwnProfile' => $currentUser->getId() === $userId
+            'isOwnProfile' => $currentUser->getId() === $userId,
+            'products' => $products
         ]);
     }
 
