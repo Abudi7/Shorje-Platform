@@ -79,7 +79,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/api/profile/update', name: 'api_profile_update', methods: ['POST'])]
+    #[Route('/web/profile/update', name: 'web_profile_update', methods: ['POST'])]
     public function updateProfile(
         Request $request,
         EntityManagerInterface $em,
@@ -116,6 +116,14 @@ class ProfileController extends AbstractController
             $user->setBio($data['bio']);
         }
         
+        if (isset($data['location'])) {
+            $user->setLocation($data['location']);
+        }
+        
+        if (isset($data['gender'])) {
+            $user->setGender($data['gender']);
+        }
+        
         if (isset($data['email']) && $data['email'] !== $oldEmail) {
             $user->setEmail($data['email']);
             $user->setIsVerified(false);
@@ -140,7 +148,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/api/profile/upload-image', name: 'api_profile_upload_image', methods: ['POST'])]
+    #[Route('/web/profile/upload-image', name: 'web_profile_upload_image', methods: ['POST'])]
     public function uploadImage(
         Request $request,
         EntityManagerInterface $em
@@ -202,7 +210,7 @@ class ProfileController extends AbstractController
         }
     }
 
-    #[Route('/api/profile/change-password', name: 'api_profile_change_password', methods: ['POST'])]
+    #[Route('/web/profile/change-password', name: 'web_profile_change_password', methods: ['POST'])]
     public function changePassword(
         Request $request,
         EntityManagerInterface $em,
@@ -249,7 +257,7 @@ class ProfileController extends AbstractController
         $mailer->send($email);
     }
 
-    #[Route('/api/profile/image/{userId}/{type}', name: 'api_profile_image', methods: ['GET'])]
+    #[Route('/web/profile/image/{userId}/{type}', name: 'web_profile_image', methods: ['GET'])]
     public function getProfileImage(
         int $userId,
         string $type,

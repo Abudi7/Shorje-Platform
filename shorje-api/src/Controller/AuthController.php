@@ -16,6 +16,7 @@ use Symfony\Component\Uid\Uuid;
 
 class AuthController extends AbstractController
 {
+
     #[Route('/api/register', name: 'api_register', methods: ['POST'])]
     public function register(
         Request $request,
@@ -45,6 +46,9 @@ class AuthController extends AbstractController
         // Generate email verification token
         $user->setEmailVerificationToken(Uuid::v4()->toRfc4122());
         $user->setIsVerified(false);
+        
+        // Set default avatar for new users
+        $this->setDefaultAvatar($user);
 
         $em->persist($user);
         $em->flush();
@@ -198,5 +202,35 @@ class AuthController extends AbstractController
             ]));
 
         $mailer->send($email);
+    }
+
+    private function setDefaultAvatar(User $user): void
+    {
+        $defaultAvatarPath = __DIR__ . '/../../public/images/default-avatar.png';
+        
+        // Create directory if it doesn't exist
+        $dir = dirname($defaultAvatarPath);
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        // Create default avatar if it doesn't exist
+        if (!file_exists($defaultAvatarPath)) {
+            $image = imagecreate(64, 64);
+            $bgColor = imagecolorallocate($image, 200, 200, 200);
+            $textColor = imagecolorallocate($image, 100, 100, 100);
+            
+            // Draw a simple user icon
+            imagefilledellipse($image, 32, 24, 32, 32, $textColor);
+            imagefilledellipse($image, 32, 52, 24, 16, $textColor);
+            
+            imagepng($image, $defaultAvatarPath);
+            imagedestroy($image);
+        }
+
+        // Read the default avatar and set it as the user's profile picture
+        $avatarData = file_get_contents($defaultAvatarPath);
+        $user->setProfilePicture($avatarData);
+        $user->setProfilePictureMimeType('image/png');
     }
 }

@@ -1,0 +1,335 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.title }} - شورجي{% endblock %}
+
+{% block body %}
+<style>
+    /* Custom animations and styles */
+    .glass {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    
+    .glass-dark {
+        background: rgba(15, 23, 42, 0.25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .gradient-text {
+        background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .product-image {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .product-image:hover {
+        transform: scale(1.05);
+    }
+    
+    .line-clamp-3 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border-radius: 3px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+    }
+</style>
+
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <!-- Modern Header -->
+    <nav class="glass sticky top-0 z-50 border-b border-white/20 dark:border-slate-700/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo Section -->
+                <div class="flex items-center">
+                    <div class="flex items-center space-x-4">
+                        <div class="h-12 w-12 bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+                            <i class="fas fa-box text-white text-xl relative z-10"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold gradient-text">{{ product.title }}</h1>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">تفاصيل المنتج</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Actions -->
+                <div class="flex items-center space-x-4">
+                    <a href="/home" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-home"></i>
+                        <span>الرئيسية</span>
+                    </a>
+                    <a href="/products" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-th-large"></i>
+                        <span>المنتجات</span>
+                    </a>
+                    <a href="/messages" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-comments"></i>
+                        <span>الرسائل</span>
+                    </a>
+                    <a href="/profile" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-user"></i>
+                        <span>الملف الشخصي</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Product Details -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Product Images -->
+            <div class="space-y-4">
+                <!-- Main Image -->
+                <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 overflow-hidden">
+                    <div class="relative h-96 bg-gray-100 dark:bg-slate-700">
+                        {% if product.image1 %}
+                        <img src="/api/products/image/{{ product.id }}/1" 
+                             alt="{{ product.title }}" 
+                             class="w-full h-full object-cover product-image cursor-pointer"
+                             onclick="openImageModal('/api/products/image/{{ product.id }}/1')"
+                             loading="lazy">
+                        {% else %}
+                        <div class="flex items-center justify-center h-full text-gray-400 dark:text-slate-400">
+                            <div class="text-center">
+                                <i class="fas fa-image text-6xl mb-4"></i>
+                                <p class="text-lg">لا توجد صورة</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Status Badge -->
+                        <div class="absolute top-4 right-4">
+                            {% if product.status == 'available' %}
+                            <span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                                متاح
+                            </span>
+                            {% elseif product.status == 'sold' %}
+                            <span class="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                                مباع
+                            </span>
+                            {% elseif product.status == 'reserved' %}
+                            <span class="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                                محجوز
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Images -->
+                {% if product.image2 or product.image3 %}
+                <div class="grid grid-cols-2 gap-4">
+                    {% if product.image2 %}
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-white/20 dark:border-slate-700/20 overflow-hidden">
+                        <img src="/api/products/image/{{ product.id }}/2" 
+                             alt="{{ product.title }}" 
+                             class="w-full h-32 object-cover product-image cursor-pointer"
+                             onclick="openImageModal('/api/products/image/{{ product.id }}/2')"
+                             loading="lazy">
+                    </div>
+                    {% endif %}
+                    {% if product.image3 %}
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-white/20 dark:border-slate-700/20 overflow-hidden">
+                        <img src="/api/products/image/{{ product.id }}/3" 
+                             alt="{{ product.title }}" 
+                             class="w-full h-32 object-cover product-image cursor-pointer"
+                             onclick="openImageModal('/api/products/image/{{ product.id }}/3')"
+                             loading="lazy">
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Product Information -->
+            <div class="space-y-6">
+                <!-- Product Header -->
+                <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
+                    <div class="flex items-start justify-between mb-6">
+                        <div class="flex-1">
+                            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ product.title }}</h1>
+                            <div class="flex items-center space-x-4 mb-4">
+                                <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
+                                    <i class="fas fa-tag ml-1"></i>{{ product.categoryDisplayName }}
+                                </span>
+                                {% if product.condition %}
+                                <span class="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-3 py-1 rounded-full text-sm font-medium">
+                                    <i class="fas fa-info-circle ml-1"></i>{{ product.condition }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-4xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+                                {{ product.price }} {{ product.currencyDisplayName }}
+                            </div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">السعر</p>
+                        </div>
+                    </div>
+
+                    <!-- Product Description -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">الوصف</h3>
+                        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">{{ product.description }}</p>
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-emerald-500 ml-2"></i>
+                            <span class="text-gray-700 dark:text-gray-300 font-medium">{{ product.city }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar text-blue-500 ml-2"></i>
+                            <span class="text-gray-700 dark:text-gray-300 font-medium">{{ product.createdAt|date('M d, Y') }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-4">
+                        <button onclick="contactSellerWithProduct({{ product.id }}, {{ product.seller.id }})" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-semibold transition-colors duration-200">
+                            <i class="fas fa-comments ml-2"></i>رسالة البائع
+                        </button>
+                        <button onclick="viewSellerProfile({{ product.seller.id }})" class="px-6 py-3 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-2xl hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors duration-200">
+                            <i class="fas fa-user ml-2"></i>الملف الشخصي
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Seller Information -->
+                <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">معلومات البائع</h3>
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-user text-white text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white">{{ product.seller.fullName }}</h4>
+                            <p class="text-gray-600 dark:text-gray-400">{{ product.seller.email }}</p>
+                        </div>
+                        <button onclick="viewSellerProfile({{ product.seller.id }})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl transition-colors duration-200">
+                            <i class="fas fa-eye ml-1"></i>عرض الملف
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center p-4">
+        <div class="relative max-w-4xl max-h-full">
+            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 z-10">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain rounded-2xl">
+        </div>
+    </div>
+</div>
+
+<script>
+// Contact seller with product details
+function contactSellerWithProduct(productId, sellerId) {
+    if (!sellerId || sellerId === 0) {
+        showToast('معلومات البائع غير متوفرة', 'warning');
+        return;
+    }
+    
+    // Create product attachment data
+    const productAttachment = {
+        productId: productId,
+        productName: '{{ product.title }}',
+        productPrice: '{{ product.price }} {{ product.currencyDisplayName }}',
+        productImage: '{{ product.image1 ? "/api/products/image/" ~ product.id ~ "/1" : null }}',
+        productCategory: '{{ product.categoryDisplayName }}',
+        productCity: '{{ product.city }}'
+    };
+    
+    // Encode the product data as URL parameter
+    const productData = encodeURIComponent(JSON.stringify(productAttachment));
+    
+    // Redirect to messages with product attachment
+    window.location.href = `/messages?seller=${sellerId}&product=${productData}`;
+}
+
+// View seller profile function
+function viewSellerProfile(sellerId) {
+    if (sellerId && sellerId !== 0) {
+        window.location.href = `/profile/${sellerId}`;
+    } else {
+        showToast('معلومات البائع غير متوفرة', 'warning');
+    }
+}
+
+// Image modal functions
+function openImageModal(imageSrc) {
+    document.getElementById('modalImage').src = imageSrc;
+    document.getElementById('imageModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+    document.getElementById('imageModal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal when clicking outside
+document.getElementById('imageModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeImageModal();
+    }
+});
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-2xl text-white font-medium shadow-2xl transform transition-all duration-300 ${
+        type === 'success' ? 'bg-emerald-500' : 
+        type === 'error' ? 'bg-red-500' : 
+        type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+    }`;
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(0)';
+        toast.style.opacity = '1';
+    }, 100);
+    
+    setTimeout(() => {
+        toast.style.transform = 'translateX(100%)';
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 3000);
+}
+</script>
+{% endblock %}
