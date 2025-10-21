@@ -40,6 +40,28 @@
             <p class="text-lg text-gray-600">اكتشف وتواصل مع المستخدمين الآخرين</p>
         </div>
 
+        <!-- Search Section -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">
+                <i class="fas fa-search ml-2 text-purple-600"></i>البحث عن البائعين
+            </h2>
+            
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" id="userSearchInput" placeholder="ابحث عن بائع بالاسم أو البريد الإلكتروني..." 
+                           class="w-full px-4 py-3 bg-gray-100 border-0 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <button onclick="clearSearch()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-xl font-medium transition-all duration-300">
+                    <i class="fas fa-times ml-2"></i>مسح البحث
+                </button>
+            </div>
+            
+            <!-- Search Results -->
+            <div id="userSearchResults" class="mt-6 space-y-4 max-h-96 overflow-y-auto">
+                <!-- Search results will be populated here -->
+            </div>
+        </div>
+
         <!-- Users Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for user in users %}
@@ -181,9 +203,92 @@ async function loadFollowStatuses() {
     }
 }
 
+// User Search functionality
+async function searchUsers(query) {
+    if (query.length < 2) {
+        document.getElementById('userSearchResults').innerHTML = '';
+        return;
+    }
+    
+    try {
+        const response = await apiCall(`/api/search-sellers?q=${encodeURIComponent(query)}`);
+        
+        if (response.sellers && response.sellers.length > 0) {
+            displayUserSearchResults(response.sellers);
+        } else {
+            document.getElementById('userSearchResults').innerHTML = '<p class="text-gray-500 text-center py-4">لم يتم العثور على مستخدمين</p>';
+        }
+    } catch (error) {
+        console.error('User search error:', error);
+        document.getElementById('userSearchResults').innerHTML = '<p class="text-red-500 text-center py-4">حدث خطأ أثناء البحث</p>';
+    }
+}
+
+function displayUserSearchResults(users) {
+    const resultsContainer = document.getElementById('userSearchResults');
+    
+    const usersHtml = users.map(user => `
+        <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 hover:bg-gray-100 transition-colors">
+            <div class="flex items-center space-x-4">
+                <div class="h-12 w-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center overflow-hidden">
+                    <img src="/api/profile/image/${user.id}/profile" 
+                         alt="${user.name}" 
+                         class="w-full h-full object-cover"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <i class="fas fa-user text-white text-lg" style="display: none;"></i>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-semibold text-gray-900">${user.name}</h4>
+                    <p class="text-sm text-gray-600">${user.email}</p>
+                    ${user.isVerified ? '<span class="text-xs text-green-500"><i class="fas fa-check-circle ml-1"></i>مؤكد</span>' : ''}
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="viewUserProfile(${user.id})" class="bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300">
+                        <i class="fas fa-user ml-1"></i>الملف
+                    </button>
+                    <button onclick="startChat(${user.id})" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300">
+                        <i class="fas fa-comment ml-1"></i>رسالة
+                    </button>
+                    <button onclick="toggleFollow(${user.id})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300">
+                        <i class="fas fa-user-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    resultsContainer.innerHTML = usersHtml;
+}
+
+function clearSearch() {
+    document.getElementById('userSearchInput').value = '';
+    document.getElementById('userSearchResults').innerHTML = '';
+}
+
+function viewUserProfile(userId) {
+    window.location.href = `/profile/${userId}`;
+}
+
 // Load follow statuses when page loads
 document.addEventListener('DOMContentLoaded', function() {
     loadFollowStatuses();
+    
+    // Add search input listener
+    document.getElementById('userSearchInput').addEventListener('input', debounce(function(e) {
+        searchUsers(e.target.value);
+    }, 300));
 });
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
 </script>
 {% endblock %}
