@@ -27,7 +27,27 @@ class ProfileController extends AbstractController
         }
 
         return $this->render('profile/index.html.twig', [
-            'user' => $user
+            'user' => $user,
+            'isOwnProfile' => true
+        ]);
+    }
+
+    #[Route('/profile/{userId}', name: 'app_user_profile')]
+    public function userProfile(int $userId, EntityManagerInterface $em): Response
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            throw new AccessDeniedException('يجب تسجيل الدخول أولاً');
+        }
+
+        $user = $em->getRepository(User::class)->find($userId);
+        if (!$user) {
+            throw $this->createNotFoundException('المستخدم غير موجود');
+        }
+
+        return $this->render('profile/index.html.twig', [
+            'user' => $user,
+            'isOwnProfile' => $currentUser->getId() === $userId
         ]);
     }
 

@@ -825,7 +825,7 @@ function createProductElement(product) {
         <div class="p-6 border-b border-gray-200 dark:border-slate-700">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
-                    <div class="h-12 w-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center overflow-hidden">
+                    <div class="h-12 w-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center overflow-hidden cursor-pointer hover:scale-110 transition-transform duration-300" onclick="viewProfile(${product.seller.id})">
                         <img src="/api/profile/image/${product.seller.id}/profile" 
                              alt="${product.seller.name}" 
                              class="w-full h-full object-cover"
@@ -833,7 +833,7 @@ function createProductElement(product) {
                         <i class="fas fa-user text-white text-lg" style="display: none;"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-semibold text-slate-800 dark:text-white">${product.seller.name}</h3>
+                        <h3 class="text-lg font-semibold text-slate-800 dark:text-white cursor-pointer hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors" onclick="viewProfile(${product.seller.id})">${product.seller.name}</h3>
                         <p class="text-sm text-slate-600 dark:text-slate-400">${formatDate(product.createdAt)}</p>
                     </div>
                 </div>
@@ -918,6 +918,10 @@ function contactSeller(sellerId) {
     window.location.href = `/chat/${sellerId}`;
 }
 
+function viewProfile(userId) {
+    window.location.href = `/profile/${userId}`;
+}
+
 function getProductButtons(product) {
     // Check if current user is the seller (you'll need to pass current user ID from backend)
     const currentUserId = getCurrentUserId(); // We'll need to implement this
@@ -933,10 +937,13 @@ function getProductButtons(product) {
             </button>
         `;
     } else {
-        // Show contact and follow buttons for other users
+        // Show contact, profile, and follow buttons for other users
         return `
-            <button onclick="contactSeller(${product.seller.id})" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg">
-                <i class="fas fa-comment ml-2"></i>تواصل مع البائع
+            <button onclick="contactSeller(${product.seller.id})" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-4 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-comment ml-2"></i>تواصل
+            </button>
+            <button onclick="viewProfile(${product.seller.id})" class="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-4 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-user ml-2"></i>الملف
             </button>
             <button onclick="toggleFollow(${product.seller.id})" class="bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 px-4 py-3 rounded-xl font-medium transition-all duration-300">
                 <i class="fas fa-user-plus"></i>
@@ -1135,8 +1142,36 @@ function formatDate(dateString) {
     return date.toLocaleDateString('ar-SA') + ' ' + date.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
 }
 
+// Follow/Unfollow functionality
+async function toggleFollow(userId) {
+    try {
+        // Check current follow status
+        const statusResponse = await apiCall(`/api/follow-status/${userId}`);
+        const isFollowing = statusResponse.isFollowing;
+        
+        let response;
+        if (isFollowing) {
+            response = await apiCall(`/api/unfollow/${userId}`, { method: 'POST' });
+            showToast('تم إلغاء المتابعة', 'success');
+        } else {
+            response = await apiCall(`/api/follow/${userId}`, { method: 'POST' });
+            showToast('تم المتابعة بنجاح', 'success');
+        }
+        
+    } catch (error) {
+        showToast(error.message || 'حدث خطأ أثناء المتابعة', 'error');
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
+    // Set current user ID for JavaScript functions
+    {% if user %}
+    window.currentUserId = {{ user.id }};
+    {% else %}
+    window.currentUserId = null;
+    {% endif %}
+    
     loadProducts();
     
     // Add filter input listeners

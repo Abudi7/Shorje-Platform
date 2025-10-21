@@ -97,12 +97,14 @@
                     
                     <!-- Social Action Buttons -->
                     <div class="flex justify-center lg:justify-start space-x-6">
+                        {% if not isOwnProfile %}
                         <button onclick="toggleFollow({{ user.id }})" 
                                 id="followBtn"
                                 class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
                             <i class="fas fa-user-plus ml-3 text-lg"></i>
                             <span id="followText">متابعة</span>
                         </button>
+                        {% endif %}
                         <button onclick="viewAllMessages()" 
                                 class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-10 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-2xl">
                             <i class="fas fa-comment ml-3 text-lg"></i>الرسائل
@@ -301,11 +303,11 @@ async function loadFollowStatus() {
         document.getElementById('followersCount').textContent = response.followersCount;
         document.getElementById('followingCount').textContent = response.followingCount;
         
-        // Update follow button state
+        // Update follow button state only if it exists (not own profile)
         const followBtn = document.getElementById('followBtn');
         const followText = document.getElementById('followText');
         
-        if (response.isFollowing) {
+        if (followBtn && followText && response.isFollowing) {
             followText.textContent = 'إلغاء المتابعة';
             followBtn.className = followBtn.className.replace('from-cyan-500 to-blue-600', 'from-red-500 to-red-600').replace('hover:from-cyan-600 hover:to-blue-700', 'hover:from-red-600 hover:to-red-700');
         }
