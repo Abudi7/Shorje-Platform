@@ -3,35 +3,154 @@
 {% block title %}الرئيسية - شورجي{% endblock %}
 
 {% block body %}
+<style>
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .category-btn {
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+    
+    .category-btn:hover {
+        transform: translateY(-2px);
+    }
+    
+    .category-btn:active {
+        transform: scale(0.95);
+    }
+    
+    /* Smooth scrolling for category slider */
+    #categorySlider {
+        scroll-behavior: smooth;
+    }
+</style>
+
 <div class="min-h-screen bg-gray-50 dark:bg-slate-900">
     <!-- Navigation -->
-    <nav class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-2xl border-b border-white/20 dark:border-slate-700/20 sticky top-0 z-40">
+    <!-- Professional Header -->
+    <nav class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl shadow-2xl border-b border-white/20 dark:border-slate-700/20 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo Section -->
                 <div class="flex items-center">
                     <div class="flex-shrink-0 flex items-center">
-                        <div class="h-10 w-10 bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500 rounded-2xl flex items-center justify-center mr-3 shadow-2xl">
-                            <i class="fas fa-shield-alt text-white text-lg"></i>
+                        <div class="h-12 w-12 bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500 rounded-2xl flex items-center justify-center mr-4 shadow-2xl">
+                            <i class="fas fa-shield-alt text-white text-xl"></i>
                         </div>
-                        <h1 class="text-2xl font-bold bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500 bg-clip-text text-transparent">شورجي</h1>
+                        <div>
+                            <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-500 to-blue-600 dark:from-cyan-400 dark:to-blue-500 bg-clip-text text-transparent">شورجي</h1>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">منصة التسوق الذكية</p>
+                        </div>
                     </div>
                 </div>
-                <div class="flex items-center space-x-3">
-                    {% if user %}
-                    <a href="/profile" class="bg-white/10 dark:bg-slate-800/10 hover:bg-white/20 dark:hover:bg-slate-800/20 text-slate-700 dark:text-slate-300 px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20">
-                        <i class="fas fa-user ml-2"></i>الملف الشخصي
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/home" class="text-gray-700 dark:text-gray-300 hover:text-cyan-600 dark:hover:text-cyan-400 font-medium transition-colors duration-200">
+                        <i class="fas fa-home ml-2"></i>الرئيسية
                     </a>
-                    <a href="/messages" class="bg-white/10 dark:bg-slate-800/10 hover:bg-white/20 dark:hover:bg-slate-800/20 text-slate-700 dark:text-slate-300 px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20">
+                    <a href="/users" class="text-gray-700 dark:text-gray-300 hover:text-cyan-600 dark:hover:text-cyan-400 font-medium transition-colors duration-200">
+                        <i class="fas fa-users ml-2"></i>المستخدمين
+                    </a>
+                    <a href="/messages" class="text-gray-700 dark:text-gray-300 hover:text-cyan-600 dark:hover:text-cyan-400 font-medium transition-colors duration-200">
                         <i class="fas fa-comment ml-2"></i>الرسائل
                     </a>
-                    <button onclick="logout()" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl">
-                        <i class="fas fa-sign-out-alt ml-2"></i>تسجيل الخروج
-                    </button>
+                </div>
+
+                <!-- User Section -->
+                <div class="flex items-center space-x-4">
+                    {% if user %}
+                    <!-- User Avatar with Dropdown -->
+                    <div class="relative" id="userDropdown">
+                        <button onclick="toggleUserDropdown()" class="flex items-center space-x-3 bg-white/10 dark:bg-slate-800/10 hover:bg-white/20 dark:hover:bg-slate-800/20 px-4 py-3 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-xl backdrop-blur-sm border border-white/20 dark:border-slate-700/20">
+                            <!-- User Avatar -->
+                            <div class="h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center overflow-hidden">
+                                {% if user.profilePicture %}
+                                <img src="/api/profile/image/{{ user.id }}/profile" 
+                                     alt="{{ user.getFullName() }}" 
+                                     class="w-full h-full object-cover"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                {% endif %}
+                                <div class="flex items-center justify-center text-white text-sm font-semibold" 
+                                     style="display: {{ user.profilePicture ? 'none' : 'flex' }};">
+                                    {{ user.firstName ? user.firstName|slice(0,1)|upper : 'U' }}
+                                </div>
+                            </div>
+                            <!-- User Name -->
+                            <div class="text-right">
+                                <div class="text-sm font-semibold text-gray-900 dark:text-white">{{ user.getFullName() }}</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ user.email }}</div>
+                            </div>
+                            <!-- Dropdown Arrow -->
+                            <i class="fas fa-chevron-down text-gray-500 dark:text-gray-400 text-sm transition-transform duration-200" id="dropdownArrow"></i>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="userDropdownMenu" class="absolute left-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 backdrop-blur-xl opacity-0 invisible transform scale-95 transition-all duration-200 origin-top-right">
+                            <div class="p-4">
+                                <!-- User Info Header -->
+                                <div class="flex items-center space-x-3 pb-4 border-b border-gray-200 dark:border-slate-700">
+                                    <div class="h-12 w-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center overflow-hidden">
+                                        {% if user.profilePicture %}
+                                        <img src="/api/profile/image/{{ user.id }}/profile" 
+                                             alt="{{ user.getFullName() }}" 
+                                             class="w-full h-full object-cover"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        {% endif %}
+                                        <div class="flex items-center justify-center text-white font-semibold" 
+                                             style="display: {{ user.profilePicture ? 'none' : 'flex' }};">
+                                            {{ user.firstName ? user.firstName|slice(0,1)|upper : 'U' }}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-gray-900 dark:text-white">{{ user.getFullName() }}</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">{{ user.email }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Menu Items -->
+                                <div class="py-2">
+                                    <a href="/profile" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors duration-200">
+                                        <i class="fas fa-user w-5"></i>
+                                        <span>الملف الشخصي</span>
+                                    </a>
+                                    <a href="/edit-profile" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors duration-200">
+                                        <i class="fas fa-edit w-5"></i>
+                                        <span>تعديل الملف</span>
+                                    </a>
+                                    <a href="/messages" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors duration-200">
+                                        <i class="fas fa-comment w-5"></i>
+                                        <span>الرسائل</span>
+                                    </a>
+                                    <a href="/users" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors duration-200">
+                                        <i class="fas fa-users w-5"></i>
+                                        <span>المستخدمين</span>
+                                    </a>
+                                </div>
+
+                                <!-- Divider -->
+                                <div class="border-t border-gray-200 dark:border-slate-700 my-2"></div>
+
+                                <!-- Logout -->
+                                <button onclick="logout()" class="flex items-center space-x-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors duration-200 w-full text-right">
+                                    <i class="fas fa-sign-out-alt w-5"></i>
+                                    <span>تسجيل الخروج</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     {% else %}
-                    <a href="/login" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl">
+                    <!-- Guest User Buttons -->
+                    <a href="/login" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 shadow-xl">
                         <i class="fas fa-sign-in-alt ml-2"></i>تسجيل الدخول
                     </a>
-                    <a href="/register" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-6 py-2 rounded-2xl text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-xl">
+                    <a href="/register" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-6 py-3 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 shadow-xl">
                         <i class="fas fa-user-plus ml-2"></i>إنشاء حساب
                     </a>
                     {% endif %}
@@ -39,6 +158,120 @@
             </div>
         </div>
     </nav>
+
+    <!-- Category Slider Section -->
+    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl shadow-xl border-b border-white/20 dark:border-slate-700/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-6 text-center">
+                <i class="fas fa-th-large ml-3 text-purple-500"></i>تصفح حسب الفئة
+            </h2>
+            
+            <!-- Category Slider -->
+            <div class="relative">
+                <div class="flex space-x-4 overflow-x-auto scrollbar-hide pb-4" id="categorySlider">
+                    <!-- All Categories Button -->
+                    <button onclick="filterByCategory('all')" 
+                            class="category-btn flex-shrink-0 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-xl active:scale-95" 
+                            data-category="all">
+                        <i class="fas fa-th-large ml-3 text-lg"></i>
+                        <span>الكل</span>
+                    </button>
+                    
+                    <!-- Car Category -->
+                    <button onclick="filterByCategory('car')" 
+                            class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-200 dark:border-slate-600 active:scale-95" 
+                            data-category="car">
+                        <i class="fas fa-car ml-3 text-lg"></i>
+                        <span>سيارات</span>
+                    </button>
+                    
+                    <!-- Home Rental Category -->
+                    <button onclick="filterByCategory('home_rental')" 
+                            class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-200 dark:border-slate-600 active:scale-95" 
+                            data-category="home_rental">
+                        <i class="fas fa-home ml-3 text-lg"></i>
+                        <span>إيجار منازل</span>
+                    </button>
+                    
+                    <!-- Apartment Rental Category -->
+                    <button onclick="filterByCategory('apartment_rental')" 
+                            class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-200 dark:border-slate-600 active:scale-95" 
+                            data-category="apartment_rental">
+                        <i class="fas fa-building ml-3 text-lg"></i>
+                        <span>إيجار شقق</span>
+                    </button>
+                    
+                    <!-- Job Category -->
+                    <button onclick="filterByCategory('job')" 
+                            class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-200 dark:border-slate-600 active:scale-95" 
+                            data-category="job">
+                        <i class="fas fa-briefcase ml-3 text-lg"></i>
+                        <span>وظائف</span>
+                    </button>
+                    
+                    <!-- Laptop Category -->
+                    <button onclick="filterByCategory('laptop')" 
+                            class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-200 dark:border-slate-600 active:scale-95" 
+                            data-category="laptop">
+                        <i class="fas fa-laptop ml-3 text-lg"></i>
+                        <span>لابتوب</span>
+                    </button>
+                    
+                    <!-- Electronics Category -->
+                    <button onclick="filterByCategory('electronics')" 
+                            class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-200 dark:border-slate-600 active:scale-95" 
+                            data-category="electronics">
+                        <i class="fas fa-microchip ml-3 text-lg"></i>
+                        <span>إلكترونيات</span>
+                    </button>
+                    
+                    <!-- Fashion Category -->
+                    <button onclick="filterByCategory('fashion')" 
+                            class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-200 dark:border-slate-600 active:scale-95" 
+                            data-category="fashion">
+                        <i class="fas fa-tshirt ml-3 text-lg"></i>
+                        <span>أزياء</span>
+                    </button>
+                    
+                    <!-- Furniture Category -->
+                    <button onclick="filterByCategory('furniture')" 
+                            class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-200 dark:border-slate-600 active:scale-95" 
+                            data-category="furniture">
+                        <i class="fas fa-couch ml-3 text-lg"></i>
+                        <span>أثاث</span>
+                    </button>
+                    
+                    <!-- Books Category -->
+                    <button onclick="filterByCategory('books')" 
+                            class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-200 dark:border-slate-600 active:scale-95" 
+                            data-category="books">
+                        <i class="fas fa-book ml-3 text-lg"></i>
+                        <span>كتب</span>
+                    </button>
+                    
+                    <!-- Sports Category -->
+                    <button onclick="filterByCategory('sports')" 
+                            class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-200 dark:border-slate-600 active:scale-95" 
+                            data-category="sports">
+                        <i class="fas fa-futbol ml-3 text-lg"></i>
+                        <span>رياضة</span>
+                    </button>
+                    
+                    <!-- Other Category -->
+                    <button onclick="filterByCategory('other')" 
+                            class="category-btn flex-shrink-0 bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 px-8 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-200 dark:border-slate-600 active:scale-95" 
+                            data-category="other">
+                        <i class="fas fa-ellipsis-h ml-3 text-lg"></i>
+                        <span>أخرى</span>
+                    </button>
+                </div>
+                
+                <!-- Scroll Indicators -->
+                <div class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-white dark:from-slate-800 to-transparent w-8 h-full pointer-events-none"></div>
+                <div class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gradient-to-l from-white dark:from-slate-800 to-transparent w-8 h-full pointer-events-none"></div>
+            </div>
+        </div>
+    </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -588,6 +821,59 @@
 let currentPage = 1;
 let isLoading = false;
 
+// User Dropdown Toggle
+function toggleUserDropdown() {
+    const dropdown = document.getElementById('userDropdownMenu');
+    const arrow = document.getElementById('dropdownArrow');
+    
+    if (dropdown.classList.contains('opacity-0')) {
+        // Show dropdown
+        dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+        dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+        arrow.classList.add('rotate-180');
+    } else {
+        // Hide dropdown
+        dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+        dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+        arrow.classList.remove('rotate-180');
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('userDropdown');
+    const dropdownMenu = document.getElementById('userDropdownMenu');
+    
+    if (dropdown && !dropdown.contains(event.target)) {
+        dropdownMenu.classList.add('opacity-0', 'invisible', 'scale-95');
+        dropdownMenu.classList.remove('opacity-100', 'visible', 'scale-100');
+        document.getElementById('dropdownArrow').classList.remove('rotate-180');
+    }
+});
+
+// Logout function
+async function logout() {
+    try {
+        showLoading();
+        const response = await apiCall('/api/logout', { method: 'POST' });
+        
+        if (response.success) {
+            localStorage.removeItem('jwt_token');
+            showToast('تم تسجيل الخروج بنجاح', 'success');
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 1000);
+        } else {
+            showToast('حدث خطأ أثناء تسجيل الخروج', 'error');
+        }
+    } catch (error) {
+        console.error('Logout error:', error);
+        showToast('حدث خطأ أثناء تسجيل الخروج: ' + error.message, 'error');
+    } finally {
+        hideLoading();
+    }
+}
+
 // Post Product Modal Functions
 function openPostProductModal() {
     document.getElementById('postProductModal').classList.remove('hidden');
@@ -773,10 +1059,17 @@ async function loadProducts() {
     const minPrice = document.getElementById('minPrice').value;
     const maxPrice = document.getElementById('maxPrice').value;
 
-    console.log('Filter values:', { search, category, city, minPrice, maxPrice });
+    console.log('Filter values:', { search, category, city, minPrice, maxPrice, selectedCategory });
 
     if (search) params.append('search', search);
-    if (category) params.append('category', category);
+    
+    // Use selected category from slider if not 'all', otherwise use sidebar filter
+    if (selectedCategory !== 'all') {
+        params.append('category', selectedCategory);
+    } else if (category) {
+        params.append('category', category);
+    }
+    
     if (city) params.append('city', city);
     if (minPrice) params.append('min_price', minPrice);
     if (maxPrice) params.append('max_price', maxPrice);
@@ -1328,6 +1621,58 @@ async function toggleFollow(userId) {
         console.error('Follow toggle error:', error);
         showToast(error.message || 'حدث خطأ أثناء المتابعة', 'error');
     }
+}
+
+// Category Filtering
+let selectedCategory = 'all';
+
+function filterByCategory(category) {
+    selectedCategory = category;
+    
+    // Update button styles
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        const btnCategory = btn.getAttribute('data-category');
+        if (btnCategory === category) {
+            // Active state
+            btn.className = btn.className.replace('bg-white dark:bg-slate-700', 'bg-gradient-to-r from-purple-500 to-pink-500')
+                .replace('text-gray-700 dark:text-gray-300', 'text-white')
+                .replace('border border-gray-200 dark:border-slate-600', '')
+                .replace('hover:bg-gray-50 dark:hover:bg-slate-600', 'hover:from-purple-600 hover:to-pink-600');
+        } else {
+            // Inactive state
+            btn.className = btn.className.replace('bg-gradient-to-r from-purple-500 to-pink-500', 'bg-white dark:bg-slate-700')
+                .replace('text-white', 'text-gray-700 dark:text-gray-300')
+                .replace('hover:from-purple-600 hover:to-pink-600', 'hover:bg-gray-50 dark:hover:bg-slate-600');
+            if (!btn.className.includes('border')) {
+                btn.className += ' border border-gray-200 dark:border-slate-600';
+            }
+        }
+    });
+    
+    // Reset pagination and load products
+    currentPage = 1;
+    loadProducts();
+    
+    // Show loading state
+    showToast(`جاري تحميل منتجات ${category === 'all' ? 'الكل' : getCategoryName(category)}...`, 'info');
+}
+
+function getCategoryName(category) {
+    const names = {
+        'all': 'الكل',
+        'car': 'سيارات',
+        'home_rental': 'إيجار منازل',
+        'apartment_rental': 'إيجار شقق',
+        'job': 'وظائف',
+        'laptop': 'لابتوب',
+        'electronics': 'إلكترونيات',
+        'fashion': 'أزياء',
+        'furniture': 'أثاث',
+        'books': 'كتب',
+        'sports': 'رياضة',
+        'other': 'أخرى'
+    };
+    return names[category] || category;
 }
 
 // Initialize
