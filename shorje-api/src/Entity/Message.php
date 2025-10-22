@@ -46,6 +46,9 @@ class Message
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isDelivered = false;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
@@ -163,6 +166,17 @@ class Message
     public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
         $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    public function isDelivered(): bool
+    {
+        return $this->isDelivered;
+    }
+
+    public function setIsDelivered(bool $isDelivered): static
+    {
+        $this->isDelivered = $isDelivered;
         return $this;
     }
 }

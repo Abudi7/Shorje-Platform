@@ -90,6 +90,20 @@
                         <i class="fas fa-home"></i>
                         <span>الرئيسية</span>
                     </a>
+                    <a href="/products" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-th-large"></i>
+                        <span>المنتجات</span>
+                    </a>
+                    <a href="/users" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-users"></i>
+                        <span>البائعين</span>
+                    </a>
+                    {% if user %}
+                    <a href="/products/my" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-box"></i>
+                        <span>منتجاتي</span>
+                    </a>
+                    {% endif %}
                     <a href="/messages" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50 relative">
                         <i class="fas fa-comments"></i>
                         <span>الرسائل</span>
@@ -119,222 +133,7 @@
         </div>
 
         <!-- Advanced Search and Filters -->
-        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-4 sm:p-6 lg:p-8 mb-8">
-            <!-- Mobile Layout (Stacked) -->
-            <div class="block lg:hidden space-y-4">
-                <!-- Search Input -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        <i class="fas fa-search ml-2"></i>البحث
-                    </label>
-                    <input type="text" id="searchInput" 
-                           placeholder="ابحث عن المنتجات..."
-                           class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300">
-                </div>
-
-                <!-- Filters Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Category Filter -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-tag ml-2"></i>الفئة
-                        </label>
-                        <select id="categoryFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
-                            <option value="">جميع الفئات</option>
-                            <option value="car">سيارات</option>
-                            <option value="home_rental">إيجار منازل</option>
-                            <option value="apartment_rental">إيجار شقق</option>
-                            <option value="job">وظائف</option>
-                            <option value="laptop">لابتوب</option>
-                            <option value="electronics">إلكترونيات</option>
-                            <option value="fashion">أزياء</option>
-                            <option value="furniture">أثاث</option>
-                            <option value="books">كتب</option>
-                            <option value="sports">رياضة</option>
-                            <option value="other">أخرى</option>
-                        </select>
-                    </div>
-
-                    <!-- City Filter -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-map-marker-alt ml-2"></i>المدينة
-                        </label>
-                        <select id="cityFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
-                            <option value="">جميع المدن</option>
-                            <option value="بغداد">بغداد</option>
-                            <option value="البصرة">البصرة</option>
-                            <option value="الموصل">الموصل</option>
-                            <option value="أربيل">أربيل</option>
-                            <option value="السليمانية">السليمانية</option>
-                            <option value="كربلاء">كربلاء</option>
-                            <option value="النجف">النجف</option>
-                            <option value="بابل">بابل</option>
-                            <option value="الأنبار">الأنبار</option>
-                            <option value="ديالى">ديالى</option>
-                            <option value="واسط">واسط</option>
-                            <option value="ميسان">ميسان</option>
-                            <option value="ذي قار">ذي قار</option>
-                            <option value="المثنى">المثنى</option>
-                            <option value="صلاح الدين">صلاح الدين</option>
-                            <option value="دهوك">دهوك</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Price Range -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        <i class="fas fa-dollar-sign ml-2"></i>السعر
-                    </label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="number" id="minPrice" placeholder="الحد الأدنى" 
-                               class="w-full px-3 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300">
-                        <input type="number" id="maxPrice" placeholder="الحد الأقصى" 
-                               class="w-full px-3 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300">
-                    </div>
-                </div>
-
-                <!-- Sort Options -->
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">ترتيب حسب:</label>
-                    <select id="sortBy" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
-                        <option value="newest">الأحدث</option>
-                        <option value="oldest">الأقدم</option>
-                        <option value="price_low">السعر: من الأقل للأعلى</option>
-                        <option value="price_high">السعر: من الأعلى للأقل</option>
-                        <option value="title">الاسم: أ-ي</option>
-                    </select>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="grid grid-cols-2 gap-3 pt-2">
-                    <button onclick="clearFilters()" class="group relative px-4 py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border border-gray-400/20">
-                        <div class="flex items-center justify-center space-x-2">
-                            <div class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
-                                <i class="fas fa-times text-xs"></i>
-                            </div>
-                            <span class="text-sm">مسح الفلاتر</span>
-                        </div>
-                    </button>
-                    <button onclick="applyFilters()" class="group relative px-4 py-3 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 hover:from-emerald-600 hover:via-blue-600 hover:to-purple-600 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl border border-emerald-400/20">
-                        <div class="flex items-center justify-center space-x-2">
-                            <div class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
-                                <i class="fas fa-filter text-xs"></i>
-                            </div>
-                            <span class="text-sm">تطبيق الفلاتر</span>
-                        </div>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Desktop Layout (Grid) -->
-            <div class="hidden lg:block">
-                <div class="grid grid-cols-12 gap-4 mb-6">
-                    <!-- Search Input -->
-                    <div class="col-span-12 lg:col-span-4">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-search ml-2"></i>البحث
-                        </label>
-                        <input type="text" id="searchInput" 
-                               placeholder="ابحث عن المنتجات..."
-                               class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300">
-                    </div>
-
-                    <!-- Category Filter -->
-                    <div class="col-span-12 sm:col-span-6 lg:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-tag ml-2"></i>الفئة
-                        </label>
-                        <select id="categoryFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
-                            <option value="">جميع الفئات</option>
-                            <option value="car">سيارات</option>
-                            <option value="home_rental">إيجار منازل</option>
-                            <option value="apartment_rental">إيجار شقق</option>
-                            <option value="job">وظائف</option>
-                            <option value="laptop">لابتوب</option>
-                            <option value="electronics">إلكترونيات</option>
-                            <option value="fashion">أزياء</option>
-                            <option value="furniture">أثاث</option>
-                            <option value="books">كتب</option>
-                            <option value="sports">رياضة</option>
-                            <option value="other">أخرى</option>
-                        </select>
-                    </div>
-
-                    <!-- City Filter -->
-                    <div class="col-span-12 sm:col-span-6 lg:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-map-marker-alt ml-2"></i>المدينة
-                        </label>
-                        <select id="cityFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
-                            <option value="">جميع المدن</option>
-                            <option value="بغداد">بغداد</option>
-                            <option value="البصرة">البصرة</option>
-                            <option value="الموصل">الموصل</option>
-                            <option value="أربيل">أربيل</option>
-                            <option value="السليمانية">السليمانية</option>
-                            <option value="كربلاء">كربلاء</option>
-                            <option value="النجف">النجف</option>
-                            <option value="بابل">بابل</option>
-                            <option value="الأنبار">الأنبار</option>
-                            <option value="ديالى">ديالى</option>
-                            <option value="واسط">واسط</option>
-                            <option value="ميسان">ميسان</option>
-                            <option value="ذي قار">ذي قار</option>
-                            <option value="المثنى">المثنى</option>
-                            <option value="صلاح الدين">صلاح الدين</option>
-                            <option value="دهوك">دهوك</option>
-                        </select>
-                    </div>
-
-                    <!-- Price Range -->
-                    <div class="col-span-12 sm:col-span-6 lg:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-dollar-sign ml-2"></i>السعر
-                        </label>
-                        <div class="grid grid-cols-2 gap-1">
-                            <input type="number" id="minPrice" placeholder="الحد الأدنى" 
-                                   class="w-full px-2 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300 text-sm">
-                            <input type="number" id="maxPrice" placeholder="الحد الأقصى" 
-                                   class="w-full px-2 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300 text-sm">
-                        </div>
-                    </div>
-
-                    <!-- Sort Options -->
-                    <div class="col-span-12 sm:col-span-6 lg:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">ترتيب حسب:</label>
-                        <select id="sortBy" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
-                            <option value="newest">الأحدث</option>
-                            <option value="oldest">الأقدم</option>
-                            <option value="price_low">السعر: من الأقل للأعلى</option>
-                            <option value="price_high">السعر: من الأعلى للأقل</option>
-                            <option value="title">الاسم: أ-ي</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <!-- Action Buttons -->
-                <div class="flex items-center justify-center space-x-4">
-                    <button onclick="clearFilters()" class="group relative px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border border-gray-400/20">
-                        <div class="flex items-center justify-center space-x-2">
-                            <div class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
-                                <i class="fas fa-times text-sm"></i>
-                            </div>
-                            <span>مسح الفلاتر</span>
-                        </div>
-                    </button>
-                    <button onclick="applyFilters()" class="group relative px-6 py-3 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 hover:from-emerald-600 hover:via-blue-600 hover:to-purple-600 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl border border-emerald-400/20">
-                        <div class="flex items-center justify-center space-x-2">
-                            <div class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
-                                <i class="fas fa-filter text-sm"></i>
-                            </div>
-                            <span>تطبيق الفلاتر</span>
-                        </div>
-                    </button>
-                </div>
-            </div>
-        </div>
+        {% include 'products/advanced-filters.html.twig' %}
 
         <!-- Products Grid -->
         <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
@@ -399,38 +198,97 @@ document.addEventListener('DOMContentLoaded', function() {
     loadMessagesCount();
     startRealTimeUpdates();
     
-    // Test function for debugging
-    window.testMessagesBadge = function(count) {
-        console.log('Testing messages badge with count:', count);
-        updateMessagesBadge(count);
-    };
-    
-    // Add test button for debugging (remove in production)
-    const testButton = document.createElement('button');
-    testButton.textContent = 'Test Badge';
-    testButton.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-2 rounded z-50';
-    testButton.onclick = () => {
-        const count = prompt('Enter badge count:');
-        if (count !== null) {
-            updateMessagesBadge(parseInt(count) || 0);
+    // Sound notification functions
+    function playNotificationSound() {
+        try {
+            // Create a simple notification sound using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        } catch (error) {
+            console.log('Could not play notification sound:', error);
         }
-    };
-    document.body.appendChild(testButton);
+    }
+    
+    function playMessageSound() {
+        try {
+            // Create a different sound for messages
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Two-tone message sound
+            oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.05);
+            oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+            
+            gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.15);
+        } catch (error) {
+            console.log('Could not play message sound:', error);
+        }
+    }
     
     // Add filter input listeners
     const searchInput = document.getElementById('searchInput');
     const categoryFilter = document.getElementById('categoryFilter');
     const cityFilter = document.getElementById('cityFilter');
+    const priceRangeFilter = document.getElementById('priceRangeFilter');
+    const dateFilter = document.getElementById('dateFilter');
     const minPrice = document.getElementById('minPrice');
     const maxPrice = document.getElementById('maxPrice');
     const sortBy = document.getElementById('sortBy');
 
-    if (searchInput) searchInput.addEventListener('input', debounce(applyFilters, 500));
-    if (categoryFilter) categoryFilter.addEventListener('change', applyFilters);
-    if (cityFilter) cityFilter.addEventListener('change', applyFilters);
-    if (minPrice) minPrice.addEventListener('input', debounce(applyFilters, 500));
-    if (maxPrice) maxPrice.addEventListener('input', debounce(applyFilters, 500));
-    if (sortBy) sortBy.addEventListener('change', applyFilters);
+    if (searchInput) {
+        searchInput.addEventListener('input', debounce(applyAdvancedFilters, 500));
+        console.log('Search input listener added');
+    }
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', applyAdvancedFilters);
+        console.log('Category filter listener added');
+    }
+    if (cityFilter) {
+        cityFilter.addEventListener('change', applyAdvancedFilters);
+        console.log('City filter listener added');
+    }
+    if (priceRangeFilter) {
+        priceRangeFilter.addEventListener('change', applyAdvancedFilters);
+        console.log('Price range filter listener added');
+    }
+    if (dateFilter) {
+        dateFilter.addEventListener('change', applyAdvancedFilters);
+        console.log('Date filter listener added');
+    }
+    if (minPrice) {
+        minPrice.addEventListener('input', debounce(applyAdvancedFilters, 500));
+        console.log('Min price listener added');
+    }
+    if (maxPrice) {
+        maxPrice.addEventListener('input', debounce(applyAdvancedFilters, 500));
+        console.log('Max price listener added');
+    }
+    if (sortBy) {
+        sortBy.addEventListener('change', applyAdvancedFilters);
+        console.log('Sort by listener added');
+    }
 });
 
 // Load products with filters
@@ -446,22 +304,78 @@ async function loadProducts() {
     const search = document.getElementById('searchInput').value;
     const category = document.getElementById('categoryFilter').value;
     const city = document.getElementById('cityFilter').value;
+    const priceRange = document.getElementById('priceRangeFilter').value;
+    const dateFilter = document.getElementById('dateFilter').value;
     const minPriceValue = document.getElementById('minPrice').value;
     const maxPriceValue = document.getElementById('maxPrice').value;
     const sortByValue = document.getElementById('sortBy').value;
     
+    // Basic filters
     if (search) params.append('search', search);
     if (category) params.append('category', category);
     if (city) params.append('city', city);
+    if (sortByValue) params.append('sort', sortByValue);
+    
+    // Price range filter
+    if (priceRange) {
+        const [min, max] = priceRange.split('-');
+        if (min) params.append('min_price', min);
+        if (max && max !== '+') params.append('max_price', max);
+    }
+    
+    // Custom price range (overrides price range filter)
     if (minPriceValue) params.append('min_price', minPriceValue);
     if (maxPriceValue) params.append('max_price', maxPriceValue);
-    if (sortByValue) params.append('sort', sortByValue);
+    
+    // Date filter
+    if (dateFilter) {
+        const now = new Date();
+        let dateFrom;
+        
+        switch (dateFilter) {
+            case 'today':
+                dateFrom = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                break;
+            case 'week':
+                dateFrom = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                break;
+            case 'month':
+                dateFrom = new Date(now.getFullYear(), now.getMonth(), 1);
+                break;
+            case '3months':
+                dateFrom = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+                break;
+            case '6months':
+                dateFrom = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate());
+                break;
+            case 'year':
+                dateFrom = new Date(now.getFullYear(), 0, 1);
+                break;
+        }
+        
+        if (dateFrom) {
+            params.append('date_from', dateFrom.toISOString().split('T')[0]);
+        }
+    }
     
     params.append('page', currentPage);
     params.append('limit', 12);
 
     try {
-        const response = await apiCall(`/api/products?${params.toString()}`);
+        console.log('Loading products with filters:', params.toString());
+        console.log('Filter values:', {
+            search: document.getElementById('searchInput').value,
+            category: document.getElementById('categoryFilter').value,
+            city: document.getElementById('cityFilter').value,
+            minPrice: document.getElementById('minPrice').value,
+            maxPrice: document.getElementById('maxPrice').value,
+            sortBy: document.getElementById('sortBy').value
+        });
+        
+        const url = `/web/products?${params.toString()}`;
+        console.log('API URL:', url);
+        
+        const response = await apiCall(url);
         console.log('Products API response:', response);
         
         if (response.products && response.products.length > 0) {
@@ -470,10 +384,22 @@ async function loadProducts() {
             renderProducts(response.products);
             updatePagination(response.pagination);
             document.getElementById('emptyState').classList.add('hidden');
+            
+            // Show success message if filters are applied
+            const hasFilters = search || category || city || minPriceValue || maxPriceValue || sortByValue !== 'newest';
+            if (hasFilters) {
+                showToast(`تم العثور على ${response.products.length} منتج`, 'success');
+            }
         } else {
             document.getElementById('productsGrid').innerHTML = '';
             document.getElementById('emptyState').classList.remove('hidden');
             document.getElementById('pagination').classList.add('hidden');
+            
+            // Show no results message if filters are applied
+            const hasFilters = search || category || city || minPriceValue || maxPriceValue || sortByValue !== 'newest';
+            if (hasFilters) {
+                showToast('لم يتم العثور على منتجات تطابق الفلاتر المحددة', 'warning');
+            }
         }
         
         document.getElementById('productsCount').textContent = `${response.pagination.total} منتج`;
@@ -587,6 +513,11 @@ function renderProducts(products) {
     `).join('');
 }
 
+// View product function
+function viewProduct(productId) {
+    window.location.href = `/product/${productId}`;
+}
+
 // Get status color
 function getStatusColor(status) {
     switch (status) {
@@ -689,39 +620,99 @@ function previousPage() {
     }
 }
 
-// Apply filters
-function applyFilters() {
+// Apply advanced filters
+function applyAdvancedFilters() {
+    console.log('Applying advanced filters...');
+    console.log('Current filter values:', {
+        search: document.getElementById('searchInput')?.value || '',
+        category: document.getElementById('categoryFilter')?.value || '',
+        city: document.getElementById('cityFilter')?.value || '',
+        priceRange: document.getElementById('priceRangeFilter')?.value || '',
+        dateFilter: document.getElementById('dateFilter')?.value || '',
+        minPrice: document.getElementById('minPrice')?.value || '',
+        maxPrice: document.getElementById('maxPrice')?.value || '',
+        sortBy: document.getElementById('sortBy')?.value || ''
+    });
     currentPage = 1;
     loadProducts();
 }
 
-// Clear filters
-function clearFilters() {
+// Apply filters (legacy function for compatibility)
+function applyFilters() {
+    applyAdvancedFilters();
+}
+
+// Clear all filters
+function clearAllFilters() {
     document.getElementById('searchInput').value = '';
     document.getElementById('categoryFilter').value = '';
     document.getElementById('cityFilter').value = '';
+    document.getElementById('priceRangeFilter').value = '';
+    document.getElementById('dateFilter').value = '';
     document.getElementById('minPrice').value = '';
     document.getElementById('maxPrice').value = '';
     document.getElementById('sortBy').value = 'newest';
     
-    applyFilters();
+    applyAdvancedFilters();
 }
 
-// API call function
+// Clear filters (legacy function for compatibility)
+function clearFilters() {
+    clearAllFilters();
+}
+
+// Save filter preset
+function saveFilterPreset() {
+    const filters = {
+        search: document.getElementById('searchInput').value,
+        category: document.getElementById('categoryFilter').value,
+        city: document.getElementById('cityFilter').value,
+        priceRange: document.getElementById('priceRangeFilter').value,
+        dateFilter: document.getElementById('dateFilter').value,
+        minPrice: document.getElementById('minPrice').value,
+        maxPrice: document.getElementById('maxPrice').value,
+        sortBy: document.getElementById('sortBy').value
+    };
+    
+    const presetName = prompt('أدخل اسم للفلاتر المحفوظة:');
+    if (presetName) {
+        localStorage.setItem(`filter_preset_${presetName}`, JSON.stringify(filters));
+        showToast(`تم حفظ الفلاتر باسم: ${presetName}`, 'success');
+    }
+}
+
+// API call function (using the one from base template)
 async function apiCall(url, options = {}) {
     const defaultOptions = {
         headers: {
             'Content-Type': 'application/json',
+            ...options.headers
         },
+        credentials: 'same-origin' // Include cookies for session authentication
     };
+    
+    // Only use JWT token for /api endpoints, not for /web endpoints
+    if (url.startsWith('/api/')) {
+        const token = localStorage.getItem('jwt_token');
+        if (token) {
+            defaultOptions.headers['Authorization'] = `Bearer ${token}`;
+        }
+    }
     
     const response = await fetch(url, { ...defaultOptions, ...options });
     
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    // Handle redirect responses (authentication required)
+    if (response.redirected || response.status === 302) {
+        throw new Error('Authentication required');
     }
     
-    return await response.json();
+    const data = await response.json();
+    
+    if (!response.ok) {
+        throw new Error(data.error || 'An error occurred');
+    }
+    
+    return data;
 }
 
 // Debounce function
@@ -849,10 +840,17 @@ function updateMessagesBadge(count) {
     console.log('Badge element found:', badge);
     
     if (badge) {
+        const previousCount = parseInt(badge.textContent) || 0;
+        
         if (count > 0) {
             badge.textContent = count > 99 ? '99+' : count;
             badge.classList.remove('hidden');
             console.log('Badge shown with count:', count);
+            
+            // Play sound if count increased (new message)
+            if (count > previousCount) {
+                playMessageSound();
+            }
         } else {
             badge.classList.add('hidden');
             console.log('Badge hidden (count is 0)');
@@ -861,6 +859,7 @@ function updateMessagesBadge(count) {
         console.error('Messages badge element not found!');
     }
 }
+
 
 // Real-time updates using polling
 let lastMessageCount = 0;

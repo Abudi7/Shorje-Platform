@@ -1,0 +1,172 @@
+<!-- Advanced Filter Section -->
+<div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-4 sm:p-6 lg:p-8 mb-8">
+    <!-- Filter Header -->
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
+            <i class="fas fa-filter ml-2 text-emerald-500"></i>
+            فلاتر البحث المتقدمة
+        </h2>
+        <div class="flex items-center space-x-2">
+            <span class="text-sm text-gray-500 dark:text-gray-400">نتائج البحث:</span>
+            <span id="resultsCount" class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">0</span>
+        </div>
+    </div>
+
+    <!-- Search by Product Name -->
+    <div class="mb-6">
+        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <i class="fas fa-search ml-2"></i>البحث بالاسم
+        </label>
+        <div class="relative">
+            <input type="text" id="searchInput" placeholder="ابحث عن منتج بالاسم..." 
+                   class="w-full px-4 py-3 pr-12 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300">
+            <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                <i class="fas fa-search text-gray-400"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <!-- Product Category Filter -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <i class="fas fa-tag ml-2"></i>نوع المنتج
+            </label>
+            <select id="categoryFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
+                <option value="">جميع المنتجات</option>
+                <option value="car">🚗 سيارات</option>
+                <option value="home_rental">🏠 إيجار منازل</option>
+                <option value="apartment_rental">🏢 إيجار شقق</option>
+                <option value="job">💼 وظائف</option>
+                <option value="laptop">💻 لابتوب</option>
+                <option value="electronics">📱 إلكترونيات</option>
+                <option value="fashion">👕 أزياء</option>
+                <option value="furniture">🪑 أثاث</option>
+                <option value="books">📚 كتب</option>
+                <option value="sports">⚽ رياضة</option>
+                <option value="other">🔧 أخرى</option>
+            </select>
+        </div>
+
+        <!-- Location Filter -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <i class="fas fa-map-marker-alt ml-2"></i>الموقع
+            </label>
+            <select id="cityFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
+                <option value="">جميع المواقع</option>
+                <option value="بغداد">🏛️ بغداد</option>
+                <option value="البصرة">🌊 البصرة</option>
+                <option value="الموصل">🏰 الموصل</option>
+                <option value="أربيل">🏔️ أربيل</option>
+                <option value="السليمانية">🌄 السليمانية</option>
+                <option value="كربلاء">🕌 كربلاء</option>
+                <option value="النجف">🕋 النجف</option>
+                <option value="بابل">🏛️ بابل</option>
+                <option value="الأنبار">🏜️ الأنبار</option>
+                <option value="ديالى">🌾 ديالى</option>
+                <option value="واسط">🏞️ واسط</option>
+                <option value="ميسان">🌾 ميسان</option>
+                <option value="ذي قار">🏛️ ذي قار</option>
+                <option value="المثنى">🏜️ المثنى</option>
+                <option value="صلاح الدين">🏰 صلاح الدين</option>
+                <option value="دهوك">🏔️ دهوك</option>
+            </select>
+        </div>
+
+        <!-- Price Range Filter -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <i class="fas fa-dollar-sign ml-2"></i>نطاق السعر
+            </label>
+            <select id="priceRangeFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
+                <option value="">جميع الأسعار</option>
+                <option value="0-50000">💰 حتى 50,000 دينار</option>
+                <option value="50000-100000">💵 50,000 - 100,000 دينار</option>
+                <option value="100000-200000">💸 100,000 - 200,000 دينار</option>
+                <option value="200000-500000">💎 200,000 - 500,000 دينار</option>
+                <option value="500000-1000000">💎 500,000 - 1,000,000 دينار</option>
+                <option value="1000000+">💎 أكثر من 1,000,000 دينار</option>
+            </select>
+        </div>
+
+        <!-- New Posted Filter -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <i class="fas fa-clock ml-2"></i>تاريخ النشر
+            </label>
+            <select id="dateFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
+                <option value="">جميع التواريخ</option>
+                <option value="today">📅 اليوم</option>
+                <option value="week">📆 هذا الأسبوع</option>
+                <option value="month">📅 هذا الشهر</option>
+                <option value="3months">📆 آخر 3 أشهر</option>
+                <option value="6months">📅 آخر 6 أشهر</option>
+                <option value="year">📆 هذا العام</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Custom Price Range -->
+    <div class="mb-6">
+        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <i class="fas fa-sliders-h ml-2"></i>نطاق سعر مخصص
+        </label>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">الحد الأدنى</label>
+                <input type="number" id="minPrice" placeholder="0" 
+                       class="w-full px-3 py-2 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">الحد الأقصى</label>
+                <input type="number" id="maxPrice" placeholder="1000000" 
+                       class="w-full px-3 py-2 border-2 border-gray-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300">
+            </div>
+        </div>
+    </div>
+
+    <!-- Sort Options -->
+    <div class="mb-6">
+        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <i class="fas fa-sort ml-2"></i>ترتيب النتائج
+        </label>
+        <select id="sortBy" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
+            <option value="newest">🕒 الأحدث أولاً</option>
+            <option value="oldest">🕐 الأقدم أولاً</option>
+            <option value="price_low">💰 السعر: من الأقل للأعلى</option>
+            <option value="price_high">💎 السعر: من الأعلى للأقل</option>
+            <option value="name_asc">🔤 الاسم: أ-ي</option>
+            <option value="name_desc">🔤 الاسم: ي-أ</option>
+        </select>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <button onclick="clearAllFilters()" class="group relative px-4 py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border border-gray-400/20">
+            <div class="flex items-center justify-center space-x-2">
+                <div class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
+                    <i class="fas fa-times text-xs"></i>
+                </div>
+                <span class="text-sm">مسح جميع الفلاتر</span>
+            </div>
+        </button>
+        <button onclick="applyAdvancedFilters()" class="group relative px-4 py-3 bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 hover:from-emerald-600 hover:via-blue-600 hover:to-purple-600 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-2xl border border-emerald-400/20">
+            <div class="flex items-center justify-center space-x-2">
+                <div class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
+                    <i class="fas fa-filter text-xs"></i>
+                </div>
+                <span class="text-sm">تطبيق الفلاتر</span>
+            </div>
+        </button>
+        <button onclick="saveFilterPreset()" class="group relative px-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border border-blue-400/20">
+            <div class="flex items-center justify-center space-x-2">
+                <div class="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
+                    <i class="fas fa-save text-xs"></i>
+                </div>
+                <span class="text-sm">حفظ الفلاتر</span>
+            </div>
+        </button>
+    </div>
+</div>
