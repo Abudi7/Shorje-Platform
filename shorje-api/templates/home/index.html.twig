@@ -1293,9 +1293,9 @@ document.getElementById('postProductForm').addEventListener('submit', async func
 
     try {
         showLoading();
-        console.log('Sending request to /api/products');
+        console.log('Sending request to /web/products');
         
-        const response = await apiCall('/api/products', {
+        const response = await apiCall('/web/products', {
             method: 'POST',
             body: JSON.stringify(formData)
         });
@@ -2582,17 +2582,10 @@ async function loadMessagesCount() {
     try {
         console.log('Loading messages count from home page...');
         const response = await apiCall('/web/conversations');
-        const data = await response.json();
-        
-        let totalUnread = 0;
-        if (data.conversations) {
-            data.conversations.forEach(conversation => {
-                totalUnread += conversation.unreadCount || 0;
-            });
-        }
-        
-        console.log('Messages count received:', totalUnread);
-        updateMessagesBadge(totalUnread);
+        const count = response.unreadCount || 0;
+        console.log('Messages count received:', count);
+        lastMessageCount = count; // Set initial count
+        updateMessagesBadge(count);
     } catch (error) {
         console.error('Error loading messages count:', error);
         updateMessagesBadge(0);
@@ -2656,18 +2649,10 @@ function openNotifications() {
 async function goToMyProducts() {
     try {
         // Check if user is authenticated by making a simple API call
-        const response = await apiCall('/web/conversations');
+        await apiCall('/web/conversations');
         
-        if (response.ok) {
-            // User is authenticated, redirect to My Products page
-            window.location.href = '/products/my';
-        } else {
-            // User is not authenticated, redirect to login
-            showToast('يجب تسجيل الدخول أولاً', 'warning');
-            setTimeout(() => {
-                window.location.href = '/login';
-            }, 2000);
-        }
+        // If we get here, user is authenticated, redirect to My Products page
+        window.location.href = '/products/my';
     } catch (error) {
         console.error('Authentication check failed:', error);
         showToast('يجب تسجيل الدخول أولاً', 'warning');
@@ -2701,15 +2686,7 @@ async function checkForNewMessages() {
     try {
         console.log('Checking for new messages (home page)');
         const response = await apiCall('/web/conversations');
-        const data = await response.json();
-        
-        let totalUnread = 0;
-        if (data.conversations) {
-            data.conversations.forEach(conversation => {
-                totalUnread += conversation.unreadCount || 0;
-            });
-        }
-        const currentCount = totalUnread;
+        const currentCount = response.unreadCount || 0;
         console.log('Current message count:', currentCount, 'Last count:', lastMessageCount);
         
         // If there are new messages (count increased)

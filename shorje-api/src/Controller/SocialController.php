@@ -17,6 +17,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class SocialController extends AbstractController
 {
+    #[Route('/api/follow/{userId}', name: 'api_follow_user', methods: ['POST'])]
     #[Route('/web/follow/{userId}', name: 'web_follow_user', methods: ['POST'])]
     public function followUser(int $userId, EntityManagerInterface $em, FollowRepository $followRepo): JsonResponse
     {
@@ -58,6 +59,7 @@ class SocialController extends AbstractController
         }
     }
 
+    #[Route('/api/unfollow/{userId}', name: 'api_unfollow_user', methods: ['POST'])]
     #[Route('/web/unfollow/{userId}', name: 'web_unfollow_user', methods: ['POST'])]
     public function unfollowUser(int $userId, EntityManagerInterface $em, FollowRepository $followRepo): JsonResponse
     {
@@ -99,6 +101,7 @@ class SocialController extends AbstractController
         }
     }
 
+    #[Route('/api/follow-status/{userId}', name: 'api_follow_status', methods: ['GET'])]
     #[Route('/web/follow-status/{userId}', name: 'web_follow_status', methods: ['GET'])]
     public function getFollowStatus(int $userId, EntityManagerInterface $em, FollowRepository $followRepo): JsonResponse
     {
@@ -282,6 +285,143 @@ class SocialController extends AbstractController
         return new JsonResponse(['count' => $unreadCount]);
     }
 
+    #[Route('/web/send-message', name: 'web_send_message', methods: ['POST'])]
+    public function webSendMessage(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $receiverId = $data['receiverId'] ?? null;
+        $content = $data['content'] ?? null;
+        $isHTML = $data['isHTML'] ?? false;
+        $attachment = $data['attachment'] ?? null;
+        $attachmentMimeType = $data['attachmentMimeType'] ?? null;
+        $attachmentName = $data['attachmentName'] ?? null;
+
+        if (!$receiverId || !$content) {
+            return new JsonResponse(['error' => 'المعرف والمحتوى مطلوبان'], 400);
+        }
+
+        $receiver = $em->getRepository(User::class)->find($receiverId);
+        if (!$receiver) {
+            return new JsonResponse(['error' => 'المستخدم غير موجود'], 404);
+        }
+
+        if ($currentUser->getId() === $receiverId) {
+            return new JsonResponse(['error' => 'لا يمكنك إرسال رسالة لنفسك'], 400);
+        }
+
+        $message = new Message();
+        $message->setSender($currentUser);
+        $message->setReceiver($receiver);
+        $message->setContent($content);
+        
+        // Store HTML flag if provided
+        if ($isHTML) {
+            $message->setIsHtml(true);
+        }
+        
+        // Store attachment if provided
+        if ($attachment && $attachmentMimeType) {
+            $message->setAttachment(base64_decode($attachment));
+            $message->setAttachmentMimeType($attachmentMimeType);
+            $message->setAttachmentName($attachmentName);
+        }
+
+        $em->persist($message);
+        $em->flush();
+
+        return new JsonResponse([
+            'message' => 'تم إرسال الرسالة بنجاح',
+            'messageId' => $message->getId(),
+            'createdAt' => $message->getCreatedAt()->format('Y-m-d H:i:s'),
+            'isHTML' => $isHTML
+        ]);
+    }
+
+    #[Route('/web/conversation/{userId}', name: 'web_get_conversation', methods: ['GET'])]
+    public function webGetConversation(int $userId, EntityManagerInterface $em, MessageRepository $messageRepo): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $otherUser = $em->getRepository(User::class)->find($userId);
+        if (!$otherUser) {
+            return new JsonResponse(['error' => 'المستخدم غير موجود'], 404);
+        }
+
+        $messages = $messageRepo->findConversation($currentUser, $otherUser);
+        $messageRepo->markMessagesAsRead($currentUser, $otherUser);
+
+        $messagesData = [];
+        foreach ($messages as $message) {
+            $messagesData[] = [
+                'id' => $message->getId(),
+                'content' => $message->getContent(),
+                'senderId' => $message->getSender()->getId(),
+                'senderName' => $message->getSender()->getFullName(),
+                'isRead' => $message->isRead(),
+                'isHtml' => $message->isHtml(),
+                'hasAttachment' => $message->getAttachment() !== null,
+                'attachmentMimeType' => $message->getAttachmentMimeType(),
+                'attachmentName' => $message->getAttachmentName(),
+                'seenAt' => $message->getSeenAt() ? $message->getSeenAt()->format('Y-m-d H:i:s') : null,
+                'createdAt' => $message->getCreatedAt()->format('Y-m-d H:i:s')
+            ];
+        }
+
+        return new JsonResponse([
+            'messages' => $messagesData,
+            'otherUser' => [
+                'id' => $otherUser->getId(),
+                'name' => $otherUser->getFullName(),
+                'email' => $otherUser->getEmail(),
+                'isOnline' => $otherUser->isOnline(),
+                'lastSeenAt' => $otherUser->getLastSeenAt() ? $otherUser->getLastSeenAt()->format('Y-m-d H:i:s') : null
+            ]
+        ]);
+    }
+
+    #[Route('/web/conversation/{userId}/mark-read', name: 'web_mark_conversation_read', methods: ['POST'])]
+    public function webMarkConversationRead(int $userId, EntityManagerInterface $em, MessageRepository $messageRepo): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $otherUser = $em->getRepository(User::class)->find($userId);
+        if (!$otherUser) {
+            return new JsonResponse(['error' => 'المستخدم غير موجود'], 404);
+        }
+
+        $messageRepo->markMessagesAsRead($currentUser, $otherUser);
+
+        return new JsonResponse(['message' => 'تم تمييز الرسائل كمقروءة']);
+    }
+
+    #[Route('/web/conversations', name: 'web_get_conversations', methods: ['GET'])]
+    public function webGetConversations(MessageRepository $messageRepo): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $conversations = $messageRepo->findRecentConversations($currentUser);
+        $unreadCount = $messageRepo->getUnreadMessagesCount($currentUser);
+
+        return new JsonResponse([
+            'conversations' => $conversations,
+            'unreadCount' => $unreadCount
+        ]);
+    }
+
     #[Route('/web/notifications/unread-count', name: 'web_notifications_unread_count', methods: ['GET'])]
     public function getUnreadNotificationsCount(MessageRepository $messageRepo): JsonResponse
     {
@@ -343,6 +483,7 @@ class SocialController extends AbstractController
     }
 
     #[Route('/api/users/search', name: 'api_users_search', methods: ['GET'])]
+    #[Route('/web/users/search', name: 'web_users_search', methods: ['GET'])]
     public function searchUsers(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $search = $request->query->get('search');
@@ -587,7 +728,8 @@ class SocialController extends AbstractController
 
         return $this->render('social/users.html.twig', [
             'users' => $users,
-            'currentUser' => $currentUser
+            'currentUser' => $currentUser,
+            'user' => $currentUser
         ]);
     }
 
@@ -615,6 +757,7 @@ class SocialController extends AbstractController
     }
 
     #[Route('/api/search-sellers', name: 'api_search_sellers', methods: ['GET'])]
+    #[Route('/web/search-sellers', name: 'web_search_sellers', methods: ['GET'])]
     public function searchSellers(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $currentUser = $this->getUser();
@@ -691,5 +834,99 @@ class SocialController extends AbstractController
             'seller' => $seller,
             'product' => $product,
         ]);
+    }
+
+    #[Route('/web/notifications', name: 'web_notifications', methods: ['GET'])]
+    public function notifications(): Response
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('notifications/index.html.twig', [
+            'currentUser' => $currentUser,
+        ]);
+    }
+
+    #[Route('/web/notifications/unread-count', name: 'web_notifications_unread_count', methods: ['GET'])]
+    public function getNotificationsUnreadCount(EntityManagerInterface $em): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $notificationRepo = $em->getRepository(\App\Entity\Notification::class);
+        $count = $notificationRepo->getUnreadCount($currentUser);
+
+        return new JsonResponse(['count' => $count]);
+    }
+
+    #[Route('/web/notifications/list', name: 'web_notifications_list', methods: ['GET'])]
+    public function getNotifications(EntityManagerInterface $em, Request $request): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $page = (int) $request->query->get('page', 1);
+        $limit = (int) $request->query->get('limit', 20);
+        $offset = ($page - 1) * $limit;
+
+        $notificationRepo = $em->getRepository(\App\Entity\Notification::class);
+        $notifications = $notificationRepo->getNotifications($currentUser, $limit, $offset);
+
+        $notificationsData = [];
+        foreach ($notifications as $notification) {
+            $notificationsData[] = [
+                'id' => $notification->getId(),
+                'title' => $notification->getTitle(),
+                'message' => $notification->getMessage(),
+                'type' => $notification->getType(),
+                'isRead' => $notification->isRead(),
+                'createdAt' => $notification->getCreatedAt()->format('Y-m-d H:i:s'),
+                'readAt' => $notification->getReadAt() ? $notification->getReadAt()->format('Y-m-d H:i:s') : null,
+                'productId' => $notification->getProduct() ? $notification->getProduct()->getId() : null,
+                'productTitle' => $notification->getProduct() ? $notification->getProduct()->getTitle() : null,
+                'sellerId' => $notification->getSeller() ? $notification->getSeller()->getId() : null,
+                'sellerName' => $notification->getSeller() ? $notification->getSeller()->getFullName() : null,
+            ];
+        }
+
+        return new JsonResponse(['notifications' => $notificationsData]);
+    }
+
+    #[Route('/web/notifications/{id}/mark-read', name: 'web_notification_mark_read', methods: ['POST'])]
+    public function markNotificationAsRead(int $id, EntityManagerInterface $em): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $notificationRepo = $em->getRepository(\App\Entity\Notification::class);
+        $success = $notificationRepo->markAsRead($currentUser, $id);
+
+        if ($success) {
+            return new JsonResponse(['message' => 'تم تمييز الإشعار كمقروء']);
+        } else {
+            return new JsonResponse(['error' => 'الإشعار غير موجود'], 404);
+        }
+    }
+
+    #[Route('/web/notifications/mark-all-read', name: 'web_notifications_mark_all_read', methods: ['POST'])]
+    public function markAllNotificationsAsRead(EntityManagerInterface $em): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $notificationRepo = $em->getRepository(\App\Entity\Notification::class);
+        $count = $notificationRepo->markAllAsRead($currentUser);
+
+        return new JsonResponse(['message' => "تم تمييز {$count} إشعار كمقروء"]);
     }
 }

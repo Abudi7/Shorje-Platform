@@ -651,22 +651,17 @@ document.getElementById('addProductForm').addEventListener('submit', async funct
     try {
         showLoading();
         
-        const response = await apiCall('/web/products', {
+        const result = await apiCall('/web/products', {
             method: 'POST',
             body: JSON.stringify(productData)
         });
         
-        const result = await response.json();
-        
-        if (response.ok) {
-            showToast('تم إضافة المنتج بنجاح!', 'success');
-            closeAddProductModal();
-            loadMyProducts(); // Reload products
-        } else {
-            showToast(result.error || 'حدث خطأ أثناء إضافة المنتج', 'error');
-        }
+        showToast('تم إضافة المنتج بنجاح!', 'success');
+        closeAddProductModal();
+        loadMyProducts(); // Reload products
     } catch (error) {
-        showToast('حدث خطأ أثناء إضافة المنتج', 'error');
+        console.error('Product creation error:', error);
+        showToast(error.message || 'حدث خطأ أثناء إضافة المنتج', 'error');
     } finally {
         hideLoading();
     }

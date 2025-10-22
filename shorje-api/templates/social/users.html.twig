@@ -68,14 +68,31 @@
                         <i class="fas fa-home"></i>
                         <span>الرئيسية</span>
                     </a>
+                    <a href="/products" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-th-large"></i>
+                        <span>المنتجات</span>
+                    </a>
+                    <a href="/users" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-users"></i>
+                        <span>البائعين</span>
+                    </a>
+                    {% if user %}
+                    <a href="/products/my" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
+                        <i class="fas fa-box"></i>
+                        <span>منتجاتي</span>
+                    </a>
+                    {% endif %}
+                    <a href="/messages" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50 relative">
+                        <i class="fas fa-comments"></i>
+                        <span>الرسائل</span>
+                        <span id="messagesCount" class="absolute -top-1 -right-1 bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg hidden z-10">0</span>
+                    </a>
+                    {% if user %}
                     <a href="/profile" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
                         <i class="fas fa-user"></i>
                         <span>الملف الشخصي</span>
                     </a>
-                    <button onclick="logout()" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>تسجيل الخروج</span>
-                    </button>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -291,16 +308,16 @@ async function toggleFollow(userId) {
     
     try {
         // Check current follow status
-        const statusResponse = await apiCall(`/api/follow-status/${userId}`);
+        const statusResponse = await apiCall(`/web/follow-status/${userId}`);
         const isFollowing = statusResponse.isFollowing;
         
         let response;
         if (isFollowing) {
-            response = await apiCall(`/api/unfollow/${userId}`, { method: 'POST' });
+            response = await apiCall(`/web/unfollow/${userId}`, { method: 'POST' });
             followText.textContent = 'متابعة';
             followBtn.className = followBtn.className.replace('from-red-600 to-red-700', 'from-blue-600 to-indigo-600').replace('hover:from-red-700 hover:to-red-700', 'hover:from-blue-700 hover:to-indigo-700');
         } else {
-            response = await apiCall(`/api/follow/${userId}`, { method: 'POST' });
+            response = await apiCall(`/web/follow/${userId}`, { method: 'POST' });
             followText.textContent = 'إلغاء المتابعة';
             followBtn.className = followBtn.className.replace('from-blue-600 to-indigo-600', 'from-red-600 to-red-700').replace('hover:from-blue-700 hover:to-indigo-700', 'hover:from-red-700 hover:to-red-700');
         }
@@ -316,7 +333,7 @@ async function toggleFollow(userId) {
 
 // Start chat functionality
 function startChat(userId) {
-    window.location.href = `/chat/${userId}`;
+    window.location.href = `/messages/${userId}`;
 }
 
 // Load follow status for all users
@@ -325,7 +342,7 @@ async function loadFollowStatuses() {
     
     for (const userId of users) {
         try {
-            const response = await apiCall(`/api/follow-status/${userId}`);
+            const response = await apiCall(`/web/follow-status/${userId}`);
             document.getElementById(`followersCount${userId}`).textContent = response.followersCount;
             document.getElementById(`followingCount${userId}`).textContent = response.followingCount;
             
@@ -351,7 +368,7 @@ async function searchUsers(query) {
     }
     
     try {
-        const response = await apiCall(`/api/search-sellers?q=${encodeURIComponent(query)}`);
+        const response = await apiCall(`/web/search-sellers?q=${encodeURIComponent(query)}`);
         
         if (response.sellers && response.sellers.length > 0) {
             displayUserSearchResults(response.sellers);
@@ -464,7 +481,7 @@ function searchUsers() {
     if (gender) params.append('gender', gender);
     
     // Make API call to search users
-    fetch(`/api/users/search?${params.toString()}`)
+    fetch(`/web/users/search?${params.toString()}`)
         .then(response => response.json())
         .then(data => {
             if (data.users && data.users.length > 0) {
@@ -503,8 +520,140 @@ function performMainSearch() {
     searchUsers();
 }
 
+// Load messages count
+async function loadMessagesCount() {
+    try {
+        console.log('Loading messages count...');
+        const response = await apiCall('/web/conversations');
+        const count = response.unreadCount || 0;
+        console.log('Messages count received:', count);
+        lastMessageCount = count; // Set initial count
+        updateMessagesBadge(count);
+    } catch (error) {
+        console.error('Error loading messages count:', error);
+        updateMessagesBadge(0);
+    }
+}
+
+
+
+function updateMessagesBadge(count) {
+    console.log('Updating messages badge with count:', count);
+    const badge = document.getElementById('messagesCount');
+    console.log('Badge element found:', badge);
+    
+    if (badge) {
+        const previousCount = parseInt(badge.textContent) || 0;
+        
+        if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.classList.remove('hidden');
+            console.log('Badge shown with count:', count);
+            
+            // Play sound if count increased (new message)
+            if (count > previousCount) {
+                playMessageSound();
+            }
+        } else {
+            badge.classList.add('hidden');
+            console.log('Badge hidden (count is 0)');
+        }
+    } else {
+        console.error('Messages badge element not found!');
+    }
+}
+
+
+// Sound notification functions
+function playNotificationSound() {
+    try {
+        // Create a simple notification sound using Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.1);
+    } catch (error) {
+        console.log('Could not play notification sound:', error);
+    }
+}
+
+function playMessageSound() {
+    try {
+        // Create a different sound for messages
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // Two-tone message sound
+        oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.05);
+        oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+        
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.15);
+    } catch (error) {
+        console.log('Could not play message sound:', error);
+    }
+}
+
+// Real-time updates for messages
+let lastMessageCount = 0;
+
+function startRealTimeUpdates() {
+    // Update counts every 30 seconds
+    setInterval(() => {
+        loadMessagesCount();
+    }, 30000);
+    
+    // Check for new messages every 10 seconds for toast notifications
+    setInterval(() => {
+        checkForNewMessages();
+    }, 10000);
+}
+
+// Check for new messages and show toast notifications
+async function checkForNewMessages() {
+    try {
+        console.log('Checking for new messages (users page)');
+        const response = await apiCall('/web/conversations');
+        const currentCount = response.unreadCount || 0;
+        console.log('Current message count:', currentCount, 'Last count:', lastMessageCount);
+        
+        if (currentCount > lastMessageCount) {
+            const newMessages = currentCount - lastMessageCount;
+            showToast(`لديك ${newMessages} رسالة جديدة`, 'success');
+            playMessageSound();
+        }
+        
+        lastMessageCount = currentCount;
+        updateMessagesBadge(currentCount);
+    } catch (error) {
+        console.error('Error checking for new messages:', error);
+    }
+}
+
 // Auto-search on filter change
 document.addEventListener('DOMContentLoaded', function() {
+    // Load messages count
+    loadMessagesCount();
+    
     const locationFilter = document.getElementById('locationFilter');
     const ageFilter = document.getElementById('ageFilter');
     const genderFilter = document.getElementById('genderFilter');
@@ -526,6 +675,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // Start real-time updates
+    startRealTimeUpdates();
 });
 </script>
 

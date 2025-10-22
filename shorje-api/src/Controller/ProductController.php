@@ -53,6 +53,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/api/products', name: 'api_products_list', methods: ['GET'])]
+    #[Route('/web/products', name: 'web_products_list', methods: ['GET'])]
     public function listProducts(
         Request $request,
         EntityManagerInterface $em
@@ -62,6 +63,8 @@ class ProductController extends AbstractController
         $minPrice = $request->query->get('min_price');
         $maxPrice = $request->query->get('max_price');
         $search = $request->query->get('search');
+        $dateFrom = $request->query->get('date_from');
+        $sort = $request->query->get('sort', 'newest');
         $page = (int) $request->query->get('page', 1);
         $limit = (int) $request->query->get('limit', 10);
 
@@ -70,8 +73,30 @@ class ProductController extends AbstractController
             ->from(Product::class, 'p')
             ->join('p.seller', 's')
             ->where('p.status = :status')
-            ->setParameter('status', 'available')
-            ->orderBy('p.createdAt', 'DESC');
+            ->setParameter('status', 'available');
+
+        // Apply sorting
+        switch ($sort) {
+            case 'price_low':
+                $qb->orderBy('p.price', 'ASC');
+                break;
+            case 'price_high':
+                $qb->orderBy('p.price', 'DESC');
+                break;
+            case 'oldest':
+                $qb->orderBy('p.createdAt', 'ASC');
+                break;
+            case 'name_asc':
+                $qb->orderBy('p.title', 'ASC');
+                break;
+            case 'name_desc':
+                $qb->orderBy('p.title', 'DESC');
+                break;
+            case 'newest':
+            default:
+                $qb->orderBy('p.createdAt', 'DESC');
+                break;
+        }
 
         if ($category) {
             $qb->andWhere('p.category = :category')
@@ -96,6 +121,11 @@ class ProductController extends AbstractController
         if ($search) {
             $qb->andWhere('(p.title LIKE :search OR p.description LIKE :search)')
                ->setParameter('search', '%' . $search . '%');
+        }
+
+        if ($dateFrom) {
+            $qb->andWhere('p.createdAt >= :dateFrom')
+               ->setParameter('dateFrom', new \DateTime($dateFrom));
         }
 
         $totalQuery = clone $qb;
@@ -551,9 +581,17 @@ class ProductController extends AbstractController
             $follower = $follow->getFollower();
             
             // Create notification for each follower
-            // You can implement a notification system here
-            // For now, we'll just log it
-            error_log("Notification: {$follower->getFullName()} should be notified about new product: {$product->getTitle()}");
+            $notification = new \App\Entity\Notification();
+            $notification->setUser($follower);
+            $notification->setSeller($seller);
+            $notification->setProduct($product);
+            $notification->setType('new_product');
+            $notification->setTitle('منتج جديد من ' . $seller->getFullName());
+            $notification->setMessage($seller->getFullName() . ' نشر منتج جديد: ' . $product->getTitle());
+            
+            $em->persist($notification);
         }
+        
+        $em->flush();
     }
 }

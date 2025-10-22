@@ -384,6 +384,55 @@
 let currentChatUserId = null;
 let currentChatUserName = '';
 
+// Sound notification functions
+function playNotificationSound() {
+    try {
+        // Create a simple notification sound using Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.1);
+    } catch (error) {
+        console.log('Could not play notification sound:', error);
+    }
+}
+
+function playMessageSound() {
+    try {
+        // Create a different sound for messages
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // Two-tone message sound
+        oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.05);
+        oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+        
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.15);
+    } catch (error) {
+        console.log('Could not play message sound:', error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Check for product attachment in URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -1074,6 +1123,9 @@ async function checkForNewMessages() {
             console.log('New message detected!');
             // Update timestamp
             lastMessageTimestamp = new Date(latestMessage.createdAt).getTime();
+            
+            // Play sound for new message
+            playMessageSound();
             
             // Reload messages to show new ones
             displayMessages(messages);

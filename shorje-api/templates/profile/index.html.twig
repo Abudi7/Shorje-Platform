@@ -692,9 +692,10 @@ function showToast(message, type = 'info') {
 async function loadMessagesCount() {
     try {
         console.log('Loading messages count from profile page...');
-        const response = await apiCall('/api/messages/unread-count');
-        const count = response.count || 0;
+        const response = await apiCall('/web/conversations');
+        const count = response.unreadCount || 0;
         console.log('Messages count received:', count);
+        lastMessageCount = count; // Set initial count
         updateMessagesBadge(count);
     } catch (error) {
         console.error('Error loading messages count:', error);
@@ -756,8 +757,8 @@ let lastMessageCount = 0;
 async function checkForNewMessages() {
     try {
         console.log('Checking for new messages (profile page)');
-        const response = await apiCall('/api/messages/unread-count');
-        const currentCount = response.count || 0;
+        const response = await apiCall('/web/conversations');
+        const currentCount = response.unreadCount || 0;
         console.log('Current message count:', currentCount, 'Last count:', lastMessageCount);
         
         // If there are new messages (count increased)
