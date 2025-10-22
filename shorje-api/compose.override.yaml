@@ -16,3 +16,12 @@ services:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
 ###< symfony/mailer ###
+
+###> database admin ###
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+###< database admin ###

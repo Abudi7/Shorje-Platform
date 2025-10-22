@@ -43,6 +43,9 @@ class Message
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $seenAt = null;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $readAt = null;
+
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
 
@@ -51,7 +54,7 @@ class Message
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('Asia/Baghdad'));
     }
 
     public function getId(): ?int
@@ -155,6 +158,17 @@ class Message
     public function setSeenAt(?\DateTimeInterface $seenAt): static
     {
         $this->seenAt = $seenAt;
+        return $this;
+    }
+
+    public function getReadAt(): ?\DateTimeInterface
+    {
+        return $this->readAt;
+    }
+
+    public function setReadAt(?\DateTimeInterface $readAt): static
+    {
+        $this->readAt = $readAt;
         return $this;
     }
 

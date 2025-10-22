@@ -236,6 +236,7 @@ class SocialController extends AbstractController
                 'attachmentMimeType' => $message->getAttachmentMimeType(),
                 'attachmentName' => $message->getAttachmentName(),
                 'seenAt' => $message->getSeenAt() ? $message->getSeenAt()->format('Y-m-d H:i:s') : null,
+                'readAt' => $message->getReadAt() ? $message->getReadAt()->format('Y-m-d H:i:s') : null,
                 'createdAt' => $message->getCreatedAt()->format('Y-m-d H:i:s')
             ];
         }
@@ -371,6 +372,7 @@ class SocialController extends AbstractController
                 'attachmentMimeType' => $message->getAttachmentMimeType(),
                 'attachmentName' => $message->getAttachmentName(),
                 'seenAt' => $message->getSeenAt() ? $message->getSeenAt()->format('Y-m-d H:i:s') : null,
+                'readAt' => $message->getReadAt() ? $message->getReadAt()->format('Y-m-d H:i:s') : null,
                 'createdAt' => $message->getCreatedAt()->format('Y-m-d H:i:s')
             ];
         }
@@ -403,6 +405,37 @@ class SocialController extends AbstractController
         $messageRepo->markMessagesAsRead($currentUser, $otherUser);
 
         return new JsonResponse(['message' => 'تم تمييز الرسائل كمقروءة']);
+    }
+
+    #[Route('/web/conversation/{userId}/mark-seen', name: 'web_mark_conversation_seen', methods: ['POST'])]
+    public function webMarkConversationSeen(int $userId, EntityManagerInterface $em, MessageRepository $messageRepo): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $otherUser = $em->getRepository(User::class)->find($userId);
+        if (!$otherUser) {
+            return new JsonResponse(['error' => 'المستخدم غير موجود'], 404);
+        }
+
+        // Mark all messages from the other user to current user as seen
+        $messages = $em->getRepository(Message::class)->findBy([
+            'sender' => $otherUser,
+            'receiver' => $currentUser
+        ]);
+
+        $now = new \DateTime('now', new \DateTimeZone('Asia/Baghdad'));
+        foreach ($messages as $message) {
+            if (!$message->getSeenAt()) {
+                $message->setSeenAt($now);
+            }
+        }
+
+        $em->flush();
+
+        return new JsonResponse(['message' => 'تم تمييز الرسائل كمشاهدة']);
     }
 
     #[Route('/web/conversations', name: 'web_get_conversations', methods: ['GET'])]
@@ -682,7 +715,7 @@ class SocialController extends AbstractController
 
         $currentUser->setIsOnline($isOnline);
         if ($isOnline) {
-            $currentUser->setLastSeenAt(new \DateTime());
+            $currentUser->setLastSeenAt(new \DateTime('now', new \DateTimeZone('Asia/Baghdad')));
         }
         
         $em->flush();
