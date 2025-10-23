@@ -21,14 +21,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(),
         new GetCollection(),
-        new Post(),
-        new Put(),
-        new Delete(),
-        new Patch()
+        new Post(security: "is_granted('ROLE_USER')"),
+        new Put(security: "is_granted('ROLE_USER')"),
+        new Delete(security: "is_granted('ROLE_USER')"),
+        new Patch(security: "is_granted('ROLE_USER')")
     ],
     normalizationContext: ['groups' => ['user:read']],
-    denormalizationContext: ['groups' => ['user:write']],
-    security: "is_granted('ROLE_USER')"
+    denormalizationContext: ['groups' => ['user:write']]
 )]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]

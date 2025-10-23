@@ -19,14 +19,13 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new Get(),
         new GetCollection(),
-        new Post(),
-        new Put(),
-        new Delete(),
-        new Patch()
+        new Post(security: "is_granted('ROLE_USER')"),
+        new Put(security: "is_granted('ROLE_USER')"),
+        new Delete(security: "is_granted('ROLE_USER')"),
+        new Patch(security: "is_granted('ROLE_USER')")
     ],
     normalizationContext: ['groups' => ['product:read']],
-    denormalizationContext: ['groups' => ['product:write']],
-    security: "is_granted('ROLE_USER')"
+    denormalizationContext: ['groups' => ['product:write']]
 )]
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
