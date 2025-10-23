@@ -1395,17 +1395,39 @@ async function loadProducts() {
         document.getElementById('emptyState').classList.add('hidden');
         document.getElementById('pagination').classList.add('hidden');
         
-        const response = await apiCall(`/api/products?${params.toString()}`);
+        const response = await apiCall(`/web/products?${params.toString()}`);
+        
+        // Handle web endpoint response format
+        let products = [];
+        let total = 0;
+        
+        if (response.products && Array.isArray(response.products)) {
+            // Web endpoint format
+            products = response.products;
+            total = response.pagination?.total || response.products.length;
+        } else if (Array.isArray(response)) {
+            // Direct array response
+            products = response;
+            total = response.length;
+        } else if (response.member && Array.isArray(response.member)) {
+            // JSON-LD format with member array
+            products = response.member;
+            total = response.totalItems || response.member.length;
+        } else {
+            // Fallback
+            products = [];
+            total = 0;
+        }
         
         // Update pagination info
-        totalProducts = response.total || response.products.length;
+        totalProducts = total;
         totalPages = Math.ceil(totalProducts / 12);
         
         // Show loading state
         document.getElementById('loadingState').classList.add('hidden');
         
-        window.currentProducts = response.products;
-        renderProducts(response.products);
+        window.currentProducts = products;
+        renderProducts(products);
         
         // Show results count for filtered results
         const hasFilters = search || category || city || minPrice || maxPrice || selectedCategory !== 'all';
