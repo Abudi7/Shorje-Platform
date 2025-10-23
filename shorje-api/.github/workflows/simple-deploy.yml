@@ -1,0 +1,122 @@
+name: Deploy Shorje Platform
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, zip, curl, gd
+        
+    - name: Install dependencies
+      run: |
+        cd shorje-api
+        composer install --no-dev --optimize-autoloader --no-interaction
+        
+    - name: Clear cache
+      run: |
+        cd shorje-api
+        php bin/console cache:clear --env=prod --no-debug
+        php bin/console cache:warmup --env=prod --no-debug
+        
+    - name: Create deployment package
+      run: |
+        cd shorje-api
+        tar -czf ../shorje-deployment.tar.gz \
+          --exclude='.git' \
+          --exclude='node_modules' \
+          --exclude='var/cache' \
+          --exclude='var/log' \
+          --exclude='tests' \
+          --exclude='.env.local' \
+          --exclude='.env.test' \
+          --exclude='.github' \
+          .
+          
+    - name: Upload deployment package
+      uses: actions/upload-artifact@v3
+      with:
+        name: shorje-deployment-${{ github.sha }}
+        path: shorje-deployment.tar.gz
+        retention-days: 30
+        
+    - name: Create deployment status
+      uses: actions/github-script@v6
+      with:
+        script: |
+          // Create a deployment status
+          const deployment = await github.rest.repos.createDeployment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: context.sha,
+            environment: 'production',
+            description: 'Shorje Platform deployment',
+            auto_merge: false,
+            required_contexts: []
+          });
+          
+          // Update deployment status
+          await github.rest.repos.createDeploymentStatus({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            deployment_id: deployment.data.id,
+            state: 'success',
+            description: 'Deployment package created successfully',
+            environment_url: 'https://shorje-platform-production.up.railway.app'
+          });
+          
+          // Create a comment with deployment information
+          const comment = `🚀 **Shorje Platform Deployment Ready!**
+          
+          📦 **Deployment Package**: Created and uploaded as artifact
+          
+          🌐 **Deploy to Railway:**
+          1. Go to [Railway.app](https://railway.app)
+          2. Connect your GitHub repository
+          3. Select this repository and main branch
+          4. Railway will automatically deploy
+          
+          🔧 **Environment Variables to Set:**
+          \`\`\`
+          APP_ENV=prod
+          APP_SECRET=your-secret-key-here
+          DATABASE_URL=mysql://user:password@host:port/database
+          MAILER_FROM_EMAIL=shorje@abdulrhman-alshalal.com
+          MAILER_FROM_NAME="شورجي - Shorje"
+          TRUSTED_HOSTS=your-domain.railway.app
+          \`\`\`
+          
+          📋 **Features to Test:**
+          - ✅ Homepage with Arabic content
+          - ✅ User registration and login
+          - ✅ Contact form
+          - ✅ Admin dashboard
+          - ✅ Product management
+          - ✅ Messaging system
+          
+          🔧 **Admin Credentials:**
+          - Email: \`admin@shorje.com\`
+          - Password: Check your local .env file
+          
+          📱 **After deployment, share the Railway URL with friends for testing!**
+          
+          ⏰ **Deployed**: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Baghdad' })}`;
+          
+          // Post comment to the commit
+          await github.rest.repos.createCommitComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            commit_sha: context.sha,
+            body: comment
+          });

@@ -36,6 +36,12 @@ class OAuthController extends AbstractController
         $client = $clientRegistry->getClient('google');
         
         try {
+            // Check if we have the authorization code
+            if (!$request->query->has('code')) {
+                $this->addFlash('error', 'لم يتم الحصول على رمز التفويض من جوجل');
+                return $this->redirectToRoute('app_login');
+            }
+            
             $accessToken = $client->getAccessToken();
             $googleUser = $client->fetchUserFromToken($accessToken);
             
@@ -95,6 +101,12 @@ class OAuthController extends AbstractController
             
         } catch (IdentityProviderException $e) {
             $this->addFlash('error', 'حدث خطأ أثناء تسجيل الدخول مع جوجل: ' . $e->getMessage());
+            return $this->redirectToRoute('app_login');
+        } catch (\KnpU\OAuth2ClientBundle\Exception\InvalidStateException $e) {
+            $this->addFlash('error', 'انتهت صلاحية جلسة تسجيل الدخول. يرجى المحاولة مرة أخرى.');
+            return $this->redirectToRoute('app_login');
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'حدث خطأ غير متوقع: ' . $e->getMessage());
             return $this->redirectToRoute('app_login');
         }
     }

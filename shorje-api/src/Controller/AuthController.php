@@ -85,8 +85,11 @@ class AuthController extends AbstractController
         
         // Always return success to prevent email enumeration
         if (!$user) {
+            error_log('Password reset requested for non-existent email: ' . $email);
             return new JsonResponse(['message' => 'If the email exists, a reset link has been sent.'], 200);
         }
+
+        error_log('Password reset requested for user: ' . $user->getEmail() . ' (ID: ' . $user->getId() . ')');
 
         // Generate reset token
         $resetToken = Uuid::v4()->toRfc4122();
@@ -94,12 +97,15 @@ class AuthController extends AbstractController
         $user->setResetTokenExpiresAt(new \DateTime('+1 hour'));
 
         $em->flush();
+        error_log('Reset token generated and saved for user: ' . $user->getEmail());
 
         // Send reset email
         try {
+            error_log('Attempting to send password reset email to: ' . $user->getEmail());
             $emailService->sendPasswordResetEmail($user, $resetToken);
+            error_log('Password reset email sent successfully to: ' . $user->getEmail());
         } catch (\Exception $e) {
-            error_log('Failed to send password reset email: ' . $e->getMessage());
+            error_log('Failed to send password reset email to ' . $user->getEmail() . ': ' . $e->getMessage());
             return new JsonResponse(['error' => 'Failed to send reset email'], 500);
         }
 

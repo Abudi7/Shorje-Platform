@@ -1,0 +1,79 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, zip, curl, gd
+        
+    - name: Install dependencies
+      run: |
+        cd shorje-api
+        composer install --no-dev --optimize-autoloader --no-interaction
+        
+    - name: Clear cache
+      run: |
+        cd shorje-api
+        php bin/console cache:clear --env=prod --no-debug
+        
+    - name: Create Railway deployment
+      uses: railwayapp/railway-deploy@v1
+      with:
+        railway-token: ${{ secrets.RAILWAY_TOKEN }}
+        
+    - name: Get deployment URL
+      id: get-url
+      run: |
+        echo "url=https://shorje-platform-production.up.railway.app" >> $GITHUB_OUTPUT
+        
+    - name: Comment deployment status
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const deploymentUrl = '${{ steps.get-url.outputs.url }}';
+          
+          // Create a comment with deployment information
+          const comment = `🚀 **Shorje Platform Deployed Successfully!**
+          
+          🌐 **Live URL**: ${deploymentUrl}
+          
+          📋 **Features to Test:**
+          - ✅ **Homepage**: Arabic content with slider
+          - ✅ **User Registration**: Create new accounts
+          - ✅ **Login System**: JWT authentication
+          - ✅ **Contact Form**: Send messages
+          - ✅ **Admin Dashboard**: Manage content
+          - ✅ **Product Management**: Add/edit products
+          - ✅ **Messaging System**: Real-time chat
+          - ✅ **User Management**: Follow/unfollow users
+          
+          🔧 **Admin Access:**
+          - Email: \`admin@shorje.com\`
+          - Password: Check your local .env file
+          
+          📱 **Share this link with friends for testing!**
+          
+          ⏰ **Deployed**: ${new Date().toLocaleString('en-US', { timeZone: 'Asia/Baghdad' })}
+          
+          🔄 **Auto-deployment**: This will update automatically when you push to main branch`;
+          
+          // Post comment to the commit
+          await github.rest.repos.createCommitComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            commit_sha: context.sha,
+            body: comment
+          });
