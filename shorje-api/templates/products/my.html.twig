@@ -3,97 +3,8 @@
 {% block title %}منتجاتي - شورجي{% endblock %}
 
 {% block body %}
-<!-- Navigation Bar -->
-<nav class="bg-white dark:bg-slate-800 shadow-lg border-b border-gray-200 dark:border-slate-700 sticky top-0 z-50">
-    <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between h-16">
-            <!-- Logo -->
-            <div class="flex items-center space-x-4">
-                <a href="/home" class="flex items-center space-x-2">
-                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-store text-white text-sm"></i>
-                    </div>
-                    <span class="text-xl font-bold text-gray-900 dark:text-white">شورجي</span>
-                </a>
-            </div>
-
-            <!-- Navigation Links -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="/home" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                    <i class="fas fa-home ml-1"></i>
-                    <span>الرئيسية</span>
-                </a>
-                <a href="/products" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                    <i class="fas fa-box ml-1"></i>
-                    <span>المنتجات</span>
-                </a>
-                <a href="/sellers" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                    <i class="fas fa-users ml-1"></i>
-                    <span>البائعين</span>
-                </a>
-                <a href="/messages" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                    <i class="fas fa-comments ml-1"></i>
-                    <span>الرسائل</span>
-                </a>
-                <a href="/products/my" class="text-blue-600 dark:text-blue-400 font-medium">
-                    <i class="fas fa-box ml-1"></i>
-                    <span>منتجاتي</span>
-                </a>
-            </div>
-
-            <!-- User Menu -->
-            <div class="flex items-center space-x-4">
-                <!-- Notifications -->
-                <div class="relative">
-                    <button class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg">
-                        <i class="fas fa-bell text-xl"></i>
-                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
-                    </button>
-                </div>
-
-                <!-- Messages -->
-                <div class="relative">
-                    <a href="/messages" class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg">
-                        <i class="fas fa-comments text-xl"></i>
-                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
-                    </a>
-                </div>
-
-                <!-- User Dropdown -->
-                <div class="relative">
-                    <button id="userDropdown" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
-                        <img src="/api/user/avatar/{{ app.user.id }}" alt="Profile" class="w-8 h-8 rounded-full border-2 border-gray-200 dark:border-slate-600">
-                        <span class="text-gray-700 dark:text-gray-300 font-medium">{{ app.user.firstName }} {{ app.user.lastName }}</span>
-                        <i class="fas fa-chevron-down text-gray-400 text-sm" id="dropdownArrow"></i>
-                    </button>
-                    
-                    <!-- Dropdown Menu -->
-                    <div id="userDropdownMenu" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-600 opacity-0 invisible scale-95 transition-all duration-200">
-                        <div class="py-2">
-                            <a href="/profile" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
-                                <i class="fas fa-user text-gray-400"></i>
-                                <span>الملف الشخصي</span>
-                            </a>
-                            <a href="/products/my" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
-                                <i class="fas fa-box text-gray-400"></i>
-                                <span>منتجاتي</span>
-                            </a>
-                            <a href="/saved" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
-                                <i class="fas fa-heart text-gray-400"></i>
-                                <span>المحفوظات</span>
-                            </a>
-                            <hr class="my-2 border-gray-200 dark:border-slate-600">
-                            <a href="/logout" class="flex items-center space-x-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
-                                <i class="fas fa-sign-out-alt"></i>
-                                <span>تسجيل الخروج</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
+<!-- Include Navigation Component -->
+{% include 'components/navigation.html.twig' %}
 
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
     <!-- Header Section -->
@@ -294,35 +205,6 @@ function deleteProduct(productId) {
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
     loadMyProducts();
-    
-    // User dropdown functionality
-    const userDropdown = document.getElementById('userDropdown');
-    const userDropdownMenu = document.getElementById('userDropdownMenu');
-    const dropdownArrow = document.getElementById('dropdownArrow');
-    
-    if (userDropdown && userDropdownMenu) {
-        userDropdown.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (userDropdownMenu.classList.contains('opacity-0')) {
-                userDropdownMenu.classList.remove('opacity-0', 'invisible', 'scale-95');
-                userDropdownMenu.classList.add('opacity-100', 'visible', 'scale-100');
-                dropdownArrow.classList.add('rotate-180');
-            } else {
-                userDropdownMenu.classList.add('opacity-0', 'invisible', 'scale-95');
-                userDropdownMenu.classList.remove('opacity-100', 'visible', 'scale-100');
-                dropdownArrow.classList.remove('rotate-180');
-            }
-        });
-    }
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-        if (userDropdown && !userDropdown.contains(event.target)) {
-            userDropdownMenu.classList.add('opacity-0', 'invisible', 'scale-95');
-            userDropdownMenu.classList.remove('opacity-100', 'visible', 'scale-100');
-            dropdownArrow.classList.remove('rotate-180');
-        }
-    });
 });
 </script>
 {% endblock %}
