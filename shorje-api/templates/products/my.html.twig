@@ -3,479 +3,173 @@
 {% block title %}منتجاتي - شورجي{% endblock %}
 
 {% block body %}
-<style>
-    /* Custom animations and styles */
-    .glass {
-        background: rgba(255, 255, 255, 0.25);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.18);
-    }
-    
-    .glass-dark {
-        background: rgba(15, 23, 42, 0.25);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .gradient-text {
-        background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    
-    .product-card {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .product-card:hover {
-        transform: translateY(-4px) scale(1.02);
-    }
-    
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 6px;
-    }
-    
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.1);
-        border-radius: 3px;
-    }
-    
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-        border-radius: 3px;
-    }
-    
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(135deg, #2563eb, #7c3aed);
-    }
-    
-    .floating-animation {
-        animation: float 6s ease-in-out infinite;
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-    }
-    
-    .pulse-slow {
-        animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-    
-    .shimmer {
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-        background-size: 200% 100%;
-        animation: shimmer 2s infinite;
-    }
-    
-    @keyframes shimmer {
-        0% { background-position: -200% 0; }
-        100% { background-position: 200% 0; }
-    }
-</style>
-
-<div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-    <!-- Modern Arabic Marketplace Header -->
-    <nav class="glass sticky top-0 z-50 border-b border-white/20 dark:border-slate-700/30">
-        <!-- Top Promotional Bar -->
-        <div class="bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 text-white text-center py-3 text-sm relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
-            <div class="max-w-7xl mx-auto px-4 relative">
-                <div class="flex items-center justify-center space-x-4">
-                    <span class="font-bold text-lg animate-bounce">🎉</span>
-                    <span class="font-bold">إدارة منتجاتك بسهولة</span>
-                    <span class="mx-4 text-white/80">•</span>
-                    <span>📱 أضف، عدل، واحذف منتجاتك</span>
-                    <span class="font-bold text-lg animate-bounce">🎉</span>
-                </div>
+<!-- Navigation Bar -->
+<nav class="bg-white dark:bg-slate-800 shadow-lg border-b border-gray-200 dark:border-slate-700 sticky top-0 z-50">
+    <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <div class="flex items-center space-x-4">
+                <a href="/home" class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-store text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900 dark:text-white">شورجي</span>
+                </a>
             </div>
-        </div>
 
-        <!-- Main Navigation -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <!-- Logo -->
-                <div class="flex items-center space-x-3">
-                    <div class="h-10 w-10 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-store text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold gradient-text">شورجي</h1>
-                        <p class="text-xs text-gray-600 dark:text-gray-400">سوق متعدد البائعين</p>
-                    </div>
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="/home" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    <i class="fas fa-home ml-1"></i>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="/products" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    <i class="fas fa-box ml-1"></i>
+                    <span>المنتجات</span>
+                </a>
+                <a href="/sellers" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    <i class="fas fa-users ml-1"></i>
+                    <span>البائعين</span>
+                </a>
+                <a href="/messages" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    <i class="fas fa-comments ml-1"></i>
+                    <span>الرسائل</span>
+                </a>
+                <a href="/products/my" class="text-blue-600 dark:text-blue-400 font-medium">
+                    <i class="fas fa-box ml-1"></i>
+                    <span>منتجاتي</span>
+                </a>
+            </div>
+
+            <!-- User Menu -->
+            <div class="flex items-center space-x-4">
+                <!-- Notifications -->
+                <div class="relative">
+                    <button class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
                 </div>
 
-                <!-- Navigation Links -->
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="/home" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
-                        <i class="fas fa-home"></i>
-                        <span>الرئيسية</span>
-                    </a>
-                    <a href="/products" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
-                        <i class="fas fa-th-large"></i>
-                        <span>المنتجات</span>
-                    </a>
-                    <a href="/users" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
-                        <i class="fas fa-users"></i>
-                        <span>البائعين</span>
-                    </a>
-                    <a href="/messages" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors relative">
-                        <i class="fas fa-comments"></i>
-                        <span>الرسائل</span>
-                        <span id="messagesCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden z-10">0</span>
-                    </a>
-                    <a href="/products/my" class="flex items-center space-x-2 text-emerald-600 dark:text-emerald-400 font-medium transition-colors">
-                        <i class="fas fa-box"></i>
-                        <span>منتجاتي</span>
+                <!-- Messages -->
+                <div class="relative">
+                    <a href="/messages" class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg">
+                        <i class="fas fa-comments text-xl"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
                     </a>
                 </div>
 
-                <!-- User Actions -->
-                <div class="flex items-center space-x-4">
-                    {% if user %}
-                    <!-- User Profile Dropdown -->
-                    <div class="relative" id="userDropdown">
-                        <button onclick="toggleUserDropdown()" class="flex items-center space-x-3 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm px-4 py-2 rounded-2xl border border-white/20 dark:border-slate-600/20 hover:bg-white dark:hover:bg-slate-700 transition-all duration-300 shadow-lg">
-                            <div class="w-8 h-8 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center overflow-hidden">
-                                <img src="/api/user/avatar/{{ user.id }}" 
-                                     alt="{{ user.fullName }}" 
-                                     class="w-full h-full object-cover"
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                <i class="fas fa-user text-white text-sm" style="display: none;"></i>
-                            </div>
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ user.fullName }}</span>
-                            <i class="fas fa-chevron-down text-gray-500 text-xs"></i>
-                        </button>
-                        
-                        <!-- Dropdown Menu -->
-                        <div id="userDropdownMenu" class="absolute right-0 mt-2 w-64 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/20 py-2 hidden z-50">
-                            <div class="px-4 py-3 border-b border-gray-200 dark:border-slate-700">
-                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ user.fullName }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ user.email }}</p>
-                            </div>
-                            <div class="py-2">
-                                <a href="/profile" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
-                                    <i class="fas fa-user text-gray-500"></i>
-                                    <span>الملف الشخصي</span>
-                                </a>
-                                <a href="/products/my" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
-                                    <i class="fas fa-box text-gray-500"></i>
-                                    <span>منتجاتي</span>
-                                </a>
-                                <a href="/messages" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
-                                    <i class="fas fa-comments text-gray-500"></i>
-                                    <span>الرسائل</span>
-                                </a>
-                                <a href="/logout" class="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                    <span>تسجيل الخروج</span>
-                                </a>
-                            </div>
+                <!-- User Dropdown -->
+                <div class="relative">
+                    <button id="userDropdown" class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                        <img src="/api/user/avatar/{{ app.user.id }}" alt="Profile" class="w-8 h-8 rounded-full border-2 border-gray-200 dark:border-slate-600">
+                        <span class="text-gray-700 dark:text-gray-300 font-medium">{{ app.user.firstName }} {{ app.user.lastName }}</span>
+                        <i class="fas fa-chevron-down text-gray-400 text-sm" id="dropdownArrow"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div id="userDropdownMenu" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-600 opacity-0 invisible scale-95 transition-all duration-200">
+                        <div class="py-2">
+                            <a href="/profile" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                                <i class="fas fa-user text-gray-400"></i>
+                                <span>الملف الشخصي</span>
+                            </a>
+                            <a href="/products/my" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                                <i class="fas fa-box text-gray-400"></i>
+                                <span>منتجاتي</span>
+                            </a>
+                            <a href="/saved" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                                <i class="fas fa-heart text-gray-400"></i>
+                                <span>المحفوظات</span>
+                            </a>
+                            <hr class="my-2 border-gray-200 dark:border-slate-600">
+                            <a href="/logout" class="flex items-center space-x-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>تسجيل الخروج</span>
+                            </a>
                         </div>
                     </div>
-                    {% else %}
-                    <a href="/login" class="bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-6 py-2 rounded-2xl font-semibold hover:from-emerald-600 hover:to-blue-600 transition-all duration-300 shadow-lg">
-                        تسجيل الدخول
-                    </a>
-                    {% endif %}
                 </div>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <!-- Header Section -->
+    <div class="relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-emerald-600/10"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        
+        <div class="relative z-10 container mx-auto px-4 py-12">
+            <!-- Page Header -->
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-6 shadow-lg">
+                    <i class="fas fa-box text-3xl text-white"></i>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                    <span class="gradient-text">منتجاتي</span>
+                </h1>
+                <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    إدارة منتجاتك وتتبع أدائها في منصة شورجي
+                </p>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header Section -->
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-3xl mb-6 floating-animation shadow-2xl">
-                <i class="fas fa-box text-white text-3xl"></i>
-            </div>
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                منتجاتي
-            </h1>
-            <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                أضف منتجاتك، عدلها، واحذفها بسهولة. إدارة شاملة لمنتجاتك في مكان واحد
-            </p>
-        </div>
-
-        <!-- Add Product Button -->
-        <div class="text-center mb-8">
-            <button onclick="openAddProductModal()" class="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl">
-                <i class="fas fa-plus ml-2"></i>
-                إضافة منتج جديد
-            </button>
-        </div>
-
-        <!-- Products Grid -->
-        <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <!-- Products will be loaded here -->
-        </div>
-
+    <div class="container mx-auto px-4 pb-12">
         <!-- Loading State -->
         <div id="loadingState" class="text-center py-12">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-2xl mb-4 animate-pulse">
-                <i class="fas fa-spinner fa-spin text-white text-2xl"></i>
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
+                <i class="fas fa-spinner fa-spin text-2xl text-white"></i>
             </div>
-            <p class="text-gray-600 dark:text-gray-400">جاري تحميل منتجاتك...</p>
+            <p class="text-gray-600 dark:text-gray-300">جاري تحميل منتجاتك...</p>
         </div>
 
         <!-- Empty State -->
         <div id="emptyState" class="text-center py-12 hidden">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-gray-400 to-gray-500 rounded-3xl mb-6">
-                <i class="fas fa-box-open text-white text-3xl"></i>
+            <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-gray-200 to-gray-300 dark:from-slate-700 dark:to-slate-600 rounded-full mb-6">
+                <i class="fas fa-box-open text-4xl text-gray-400 dark:text-gray-500"></i>
             </div>
             <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">لا توجد منتجات بعد</h3>
-            <p class="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
+            <p class="text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto">
                 ابدأ ببيع منتجاتك! أضف منتجك الأول وابدأ رحلتك في البيع
             </p>
-            <button onclick="openAddProductModal()" class="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl">
-                <i class="fas fa-plus ml-2"></i>
-                إضافة منتج جديد
+            <button onclick="window.location.href='/products/add'" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-8 py-3 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                <i class="fas fa-plus ml-2"></i>إضافة منتج جديد
             </button>
         </div>
-    </div>
 
-    <!-- Add Product Modal -->
-    <div id="addProductModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-                <div class="p-6 border-b border-gray-200 dark:border-slate-700">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
-                            <i class="fas fa-plus ml-2 text-emerald-500"></i>
-                            إضافة منتج جديد
-                        </h3>
-                        <button onclick="closeAddProductModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <form id="addProductForm" class="p-6 space-y-6">
-                    <!-- Product Title -->
-                    <div>
-                        <label for="productTitle" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-tag ml-2 text-emerald-500"></i>عنوان المنتج
-                        </label>
-                        <input type="text" id="productTitle" name="title" required
-                               class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-gray-900 dark:text-white"
-                               placeholder="أدخل عنوان المنتج">
-                    </div>
-
-                    <!-- Product Description -->
-                    <div>
-                        <label for="productDescription" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-align-right ml-2 text-emerald-500"></i>وصف المنتج
-                        </label>
-                        <textarea id="productDescription" name="description" required rows="4"
-                                  class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-gray-900 dark:text-white resize-none"
-                                  placeholder="أدخل وصف مفصل للمنتج"></textarea>
-                    </div>
-
-                    <!-- Price and Currency -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="productPrice" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                <i class="fas fa-dollar-sign ml-2 text-emerald-500"></i>السعر
-                            </label>
-                            <input type="number" id="productPrice" name="price" required min="0" step="0.01"
-                                   class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-gray-900 dark:text-white"
-                                   placeholder="0.00">
-                        </div>
-                        <div>
-                            <label for="productCurrency" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                <i class="fas fa-coins ml-2 text-emerald-500"></i>العملة
-                            </label>
-                            <select id="productCurrency" name="currency" required
-                                    class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-gray-900 dark:text-white">
-                                <option value="IQD">دينار عراقي (IQD)</option>
-                                <option value="USD">دولار أمريكي (USD)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Category and City -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="productCategory" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                <i class="fas fa-th-large ml-2 text-emerald-500"></i>الفئة
-                            </label>
-                            <select id="productCategory" name="category" required
-                                    class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-gray-900 dark:text-white">
-                                <option value="">اختر الفئة</option>
-                                <option value="car">سيارات</option>
-                                <option value="home_rental">إيجار منازل</option>
-                                <option value="apartment_rental">إيجار شقق</option>
-                                <option value="job">وظائف</option>
-                                <option value="laptop">لابتوب</option>
-                                <option value="electronics">إلكترونيات</option>
-                                <option value="fashion">أزياء</option>
-                                <option value="furniture">أثاث</option>
-                                <option value="books">كتب</option>
-                                <option value="sports">رياضة</option>
-                                <option value="other">أخرى</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="productCity" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                <i class="fas fa-map-marker-alt ml-2 text-emerald-500"></i>المدينة
-                            </label>
-                            <input type="text" id="productCity" name="city" required
-                                   class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-gray-900 dark:text-white"
-                                   placeholder="أدخل المدينة">
-                        </div>
-                    </div>
-
-                    <!-- Location -->
-                    <div>
-                        <label for="productLocation" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-map ml-2 text-emerald-500"></i>الموقع التفصيلي
-                        </label>
-                        <input type="text" id="productLocation" name="location"
-                               class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-gray-900 dark:text-white"
-                               placeholder="أدخل الموقع التفصيلي (اختياري)">
-                    </div>
-
-                    <!-- Color and Condition -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="productColor" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                <i class="fas fa-palette ml-2 text-emerald-500"></i>اللون
-                            </label>
-                            <input type="text" id="productColor" name="color"
-                                   class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-gray-900 dark:text-white"
-                                   placeholder="أدخل اللون (اختياري)">
-                        </div>
-                        <div>
-                            <label for="productCondition" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                <i class="fas fa-star ml-2 text-emerald-500"></i>الحالة
-                            </label>
-                            <select id="productCondition" name="condition"
-                                    class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-300 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-gray-900 dark:text-white">
-                                <option value="">اختر الحالة</option>
-                                <option value="new">جديد</option>
-                                <option value="like_new">كالجديد</option>
-                                <option value="good">جيد</option>
-                                <option value="fair">مقبول</option>
-                                <option value="poor">ضعيف</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Product Images -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-images ml-2 text-emerald-500"></i>صور المنتج
-                        </label>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="text-center">
-                                <label for="productImage1" class="cursor-pointer">
-                                    <div id="image1Preview" class="w-full h-32 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-2xl flex items-center justify-center hover:border-emerald-500 transition-colors">
-                                        <div class="text-center">
-                                            <i class="fas fa-camera text-gray-400 text-2xl mb-2"></i>
-                                            <p class="text-sm text-gray-500">الصورة الأولى</p>
-                                        </div>
-                                    </div>
-                                </label>
-                                <input type="file" id="productImage1" name="image1" accept="image/*" class="hidden" onchange="previewImage(this, 'image1Preview')">
-                            </div>
-                            <div class="text-center">
-                                <label for="productImage2" class="cursor-pointer">
-                                    <div id="image2Preview" class="w-full h-32 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-2xl flex items-center justify-center hover:border-emerald-500 transition-colors">
-                                        <div class="text-center">
-                                            <i class="fas fa-camera text-gray-400 text-2xl mb-2"></i>
-                                            <p class="text-sm text-gray-500">الصورة الثانية</p>
-                                        </div>
-                                    </div>
-                                </label>
-                                <input type="file" id="productImage2" name="image2" accept="image/*" class="hidden" onchange="previewImage(this, 'image2Preview')">
-                            </div>
-                            <div class="text-center">
-                                <label for="productImage3" class="cursor-pointer">
-                                    <div id="image3Preview" class="w-full h-32 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-2xl flex items-center justify-center hover:border-emerald-500 transition-colors">
-                                        <div class="text-center">
-                                            <i class="fas fa-camera text-gray-400 text-2xl mb-2"></i>
-                                            <p class="text-sm text-gray-500">الصورة الثالثة</p>
-                                        </div>
-                                    </div>
-                                </label>
-                                <input type="file" id="productImage3" name="image3" accept="image/*" class="hidden" onchange="previewImage(this, 'image3Preview')">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="flex justify-end space-x-4 pt-6">
-                        <button type="button" onclick="closeAddProductModal()" 
-                                class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-2xl font-semibold transition-all duration-300">
-                            إلغاء
-                        </button>
-                        <button type="submit" 
-                                class="px-8 py-3 bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 text-white rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg">
-                            <i class="fas fa-plus ml-2"></i>
-                            إضافة المنتج
-                        </button>
-                    </div>
-                </form>
-            </div>
+        <!-- Products Grid -->
+        <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+            <!-- Products will be loaded here -->
         </div>
     </div>
 </div>
 
 <script>
-// Global variables
 let currentProducts = [];
 
-// Load messages count on page load
-document.addEventListener('DOMContentLoaded', function() {
-    loadMessagesCount();
-    loadMyProducts();
-    startRealTimeUpdates();
-});
-
-// Load messages count
-async function loadMessagesCount() {
+// Load my products - SIMPLE VERSION
+async function loadMyProducts() {
+    console.log('Loading my products with simple API...');
+    
     try {
-        const response = await apiCall('/web/conversations');
+        const response = await apiCall('/web/products/my-simple');
         const data = await response.json();
         
-        let totalUnread = 0;
-        if (data.conversations) {
-            data.conversations.forEach(conversation => {
-                totalUnread += conversation.unreadCount || 0;
-            });
+        if (data.error) {
+            showToast(data.error, 'error');
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('emptyState').classList.remove('hidden');
+            return;
         }
         
-        updateMessagesBadge(totalUnread);
-    } catch (error) {
-        console.error('Error loading messages count:', error);
-    }
-}
-
-// Update messages badge
-function updateMessagesBadge(count) {
-    const badge = document.getElementById('messagesCount');
-    if (count > 0) {
-        badge.textContent = count;
-        badge.classList.remove('hidden');
-    } else {
-        badge.classList.add('hidden');
-    }
-}
-
-// Start real-time updates
-function startRealTimeUpdates() {
-    setInterval(loadMessagesCount, 30000); // Update every 30 seconds
-}
-
-// Load my products
-async function loadMyProducts() {
-    try {
-        const response = await apiCall('/web/products/my');
-        const data = await response.json();
-        
         currentProducts = data.products || [];
+        console.log('Found products:', currentProducts.length);
+        
         displayMyProducts(currentProducts);
         
         // Hide loading state
@@ -484,246 +178,151 @@ async function loadMyProducts() {
         // Show empty state if no products
         if (currentProducts.length === 0) {
             document.getElementById('emptyState').classList.remove('hidden');
+        } else {
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('productsGrid').classList.remove('hidden');
         }
     } catch (error) {
         console.error('Error loading products:', error);
-        showToast('حدث خطأ أثناء تحميل المنتجات', 'error');
+        showToast('حدث خطأ أثناء تحميل المنتجات: ' + error.message, 'error');
         document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('emptyState').classList.remove('hidden');
     }
 }
 
-// Display my products
+// Display my products - SIMPLE VERSION
 function displayMyProducts(products) {
     const grid = document.getElementById('productsGrid');
     
     if (products.length === 0) {
-        grid.innerHTML = '';
+        grid.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-gray-500 dark:text-gray-400">لا توجد منتجات</p></div>';
         return;
     }
     
-    const productsHtml = products.map(product => `
-        <div class="product-card bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 overflow-hidden">
-            <!-- Product Image -->
-            <div class="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-800">
+    grid.innerHTML = products.map(product => `
+        <div class="product-card bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-slate-600 overflow-hidden transition-all duration-300 hover:scale-105">
+            <div class="relative">
                 ${product.hasImages?.image1 ? 
-                    `<img src="/api/products/${product.id}/image1" alt="${product.title}" class="w-full h-full object-cover">` :
-                    `<div class="w-full h-full flex items-center justify-center">
-                        <i class="fas fa-image text-gray-400 text-4xl"></i>
+                    `<img src="/api/products/image/${product.id}/1" alt="${product.title}" class="w-full h-48 object-cover">` :
+                    `<div class="w-full h-48 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center">
+                        <i class="fas fa-image text-4xl text-gray-400 dark:text-gray-500"></i>
                     </div>`
                 }
-                <div class="absolute top-3 right-3">
-                    <span class="bg-emerald-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                        ${product.statusDisplay}
+                <div class="absolute top-4 right-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(product.status)}">
+                        ${product.status}
                     </span>
                 </div>
             </div>
             
-            <!-- Product Info -->
             <div class="p-6">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
-                    ${product.title}
-                </h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">
-                    ${product.description}
-                </p>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">${product.title}</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">${product.description}</p>
                 
-                <!-- Price -->
                 <div class="flex items-center justify-between mb-4">
-                    <span class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                    <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                         ${product.price} ${product.currency}
-                    </span>
-                    <span class="text-sm text-gray-500 dark:text-gray-400">
-                        ${product.categoryDisplay}
-                    </span>
-                </div>
-                
-                <!-- Location and Date -->
-                <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
-                    <div class="flex items-center">
-                        <i class="fas fa-map-marker-alt ml-1"></i>
-                        <span>${product.city}</span>
                     </div>
-                    <div class="flex items-center">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
                         <i class="fas fa-calendar ml-1"></i>
-                        <span>${formatDate(product.createdAt)}</span>
+                        ${new Date(product.createdAt).toLocaleDateString('ar-SA')}
                     </div>
                 </div>
                 
-                <!-- Actions -->
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-tag text-gray-400"></i>
+                        <span class="text-sm text-gray-600 dark:text-gray-300">${product.category}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-map-marker-alt text-gray-400"></i>
+                        <span class="text-sm text-gray-600 dark:text-gray-300">${product.city}</span>
+                    </div>
+                </div>
+                
                 <div class="flex space-x-2">
-                    <button onclick="editProduct(${product.id})" 
-                            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300">
-                        <i class="fas fa-edit ml-1"></i>
-                        تعديل
+                    <button onclick="editProduct(${product.id})" class="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105">
+                        <i class="fas fa-edit ml-1"></i>تعديل
                     </button>
-                    <button onclick="deleteProduct(${product.id})" 
-                            class="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300">
-                        <i class="fas fa-trash ml-1"></i>
-                        حذف
+                    <button onclick="deleteProduct(${product.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg font-medium transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105">
+                        <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </div>
         </div>
     `).join('');
-    
-    grid.innerHTML = productsHtml;
 }
 
-// Format date
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ar-SA');
-}
-
-// Open add product modal
-function openAddProductModal() {
-    document.getElementById('addProductModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-// Close add product modal
-function closeAddProductModal() {
-    document.getElementById('addProductModal').classList.add('hidden');
-    document.body.style.overflow = 'auto';
-    document.getElementById('addProductForm').reset();
-    clearImagePreviews();
-}
-
-// Clear image previews
-function clearImagePreviews() {
-    ['image1Preview', 'image2Preview', 'image3Preview'].forEach(id => {
-        const preview = document.getElementById(id);
-        preview.innerHTML = `
-            <div class="text-center">
-                <i class="fas fa-camera text-gray-400 text-2xl mb-2"></i>
-                <p class="text-sm text-gray-500">${id === 'image1Preview' ? 'الصورة الأولى' : id === 'image2Preview' ? 'الصورة الثانية' : 'الصورة الثالثة'}</p>
-            </div>
-        `;
-    });
-}
-
-// Preview image
-function previewImage(input, previewId) {
-    const file = input.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const preview = document.getElementById(previewId);
-            preview.innerHTML = `
-                <img src="${e.target.result}" alt="Preview" class="w-full h-full object-cover rounded-2xl">
-            `;
-        };
-        reader.readAsDataURL(file);
+// Get status color class
+function getStatusColor(status) {
+    switch(status) {
+        case 'available':
+            return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+        case 'sold':
+            return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+        case 'reserved':
+            return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+        default:
+            return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
     }
-}
-
-// Handle add product form submission
-document.getElementById('addProductForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    const productData = {
-        title: formData.get('title'),
-        description: formData.get('description'),
-        price: formData.get('price'),
-        currency: formData.get('currency'),
-        category: formData.get('category'),
-        city: formData.get('city'),
-        location: formData.get('location'),
-        color: formData.get('color'),
-        condition: formData.get('condition')
-    };
-    
-    // Handle images
-    const imageFiles = [
-        document.getElementById('productImage1').files[0],
-        document.getElementById('productImage2').files[0],
-        document.getElementById('productImage3').files[0]
-    ];
-    
-    for (let i = 0; i < imageFiles.length; i++) {
-        if (imageFiles[i]) {
-            const base64 = await convertToBase64(imageFiles[i]);
-            productData[`image${i + 1}`] = base64;
-        }
-    }
-    
-    try {
-        showLoading();
-        
-        const result = await apiCall('/web/products', {
-            method: 'POST',
-            body: JSON.stringify(productData)
-        });
-        
-        showToast('تم إضافة المنتج بنجاح!', 'success');
-        closeAddProductModal();
-        loadMyProducts(); // Reload products
-    } catch (error) {
-        console.error('Product creation error:', error);
-        showToast(error.message || 'حدث خطأ أثناء إضافة المنتج', 'error');
-    } finally {
-        hideLoading();
-    }
-});
-
-// Convert file to base64
-function convertToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
 }
 
 // Edit product
 function editProduct(productId) {
-    // TODO: Implement edit product functionality
+    const product = currentProducts.find(p => p.id === productId);
+    if (!product) {
+        showToast('المنتج غير موجود', 'error');
+        return;
+    }
+    
     showToast('ميزة التعديل قيد التطوير', 'info');
 }
 
 // Delete product
-async function deleteProduct(productId) {
-    if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+function deleteProduct(productId) {
+    const product = currentProducts.find(p => p.id === productId);
+    if (!product) {
+        showToast('المنتج غير موجود', 'error');
         return;
     }
     
-    try {
-        showLoading();
-        
-        const response = await apiCall(`/web/products/${productId}`, {
-            method: 'DELETE'
-        });
-        
-        if (response.ok) {
-            showToast('تم حذف المنتج بنجاح!', 'success');
-            loadMyProducts(); // Reload products
-        } else {
-            const result = await response.json();
-            showToast(result.error || 'حدث خطأ أثناء حذف المنتج', 'error');
-        }
-    } catch (error) {
-        showToast('حدث خطأ أثناء حذف المنتج', 'error');
-    } finally {
-        hideLoading();
+    if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+        showToast('ميزة الحذف قيد التطوير', 'info');
     }
 }
 
-// Toggle user dropdown
-function toggleUserDropdown() {
-    const dropdown = document.getElementById('userDropdownMenu');
-    dropdown.classList.toggle('hidden');
-}
-
-// Close dropdown when clicking outside
-document.addEventListener('click', function(event) {
-    const dropdown = document.getElementById('userDropdownMenu');
-    const button = document.querySelector('[onclick="toggleUserDropdown()"]');
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadMyProducts();
     
-    if (!button.contains(event.target) && !dropdown.contains(event.target)) {
-        dropdown.classList.add('hidden');
+    // User dropdown functionality
+    const userDropdown = document.getElementById('userDropdown');
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
+    const dropdownArrow = document.getElementById('dropdownArrow');
+    
+    if (userDropdown && userDropdownMenu) {
+        userDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (userDropdownMenu.classList.contains('opacity-0')) {
+                userDropdownMenu.classList.remove('opacity-0', 'invisible', 'scale-95');
+                userDropdownMenu.classList.add('opacity-100', 'visible', 'scale-100');
+                dropdownArrow.classList.add('rotate-180');
+            } else {
+                userDropdownMenu.classList.add('opacity-0', 'invisible', 'scale-95');
+                userDropdownMenu.classList.remove('opacity-100', 'visible', 'scale-100');
+                dropdownArrow.classList.remove('rotate-180');
+            }
+        });
     }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (userDropdown && !userDropdown.contains(event.target)) {
+            userDropdownMenu.classList.add('opacity-0', 'invisible', 'scale-95');
+            userDropdownMenu.classList.remove('opacity-100', 'visible', 'scale-100');
+            dropdownArrow.classList.remove('rotate-180');
+        }
+    });
 });
 </script>
 {% endblock %}
