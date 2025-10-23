@@ -96,7 +96,7 @@ class EmailService
 
     public function sendContactFormEmail(string $name, string $email, string $subject, string $message): void
     {
-        $email = (new Email())
+        $emailMessage = (new Email())
             ->from(new Address($this->fromEmail, $this->fromName))
             ->to('shorje@abdulrhman-alshalal.com') // Send to admin email
             ->subject('رسالة جديدة من نموذج الاتصال: ' . $subject)
@@ -107,6 +107,6 @@ class EmailService
                 'message' => $message
             ]));
 
-        $this->mailer->send($email);
+        $this->mailer->send($emailMessage);
     }
 }

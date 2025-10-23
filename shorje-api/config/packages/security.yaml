@@ -53,6 +53,7 @@ security:
         - { path: ^/api/messages/unread-count, roles: PUBLIC_ACCESS }
         - { path: ^/api/notifications/unread-count, roles: PUBLIC_ACCESS }
         - { path: ^/api/user/avatar, roles: PUBLIC_ACCESS }
+        - { path: ^/api/contact, roles: PUBLIC_ACCESS }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
         - { path: ^/forgot-password, roles: PUBLIC_ACCESS }
