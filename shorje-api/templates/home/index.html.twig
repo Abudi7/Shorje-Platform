@@ -1553,7 +1553,13 @@ function renderProducts(products) {
 
 function createProductElement(product) {
     const div = document.createElement('div');
-    div.className = 'product-card bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-slate-600 overflow-hidden transition-all duration-300';
+    div.className = 'product-card bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-slate-600 overflow-hidden transition-all duration-300 cursor-pointer hover:scale-105';
+    div.onclick = function(e) {
+        // Don't trigger if clicking on buttons
+        if (e.target.closest('button')) return;
+        // Open product details
+        viewProduct(product.id);
+    };
     
     // Get product images
     const images = [];
@@ -1630,7 +1636,7 @@ function createProductElement(product) {
             </p>
             
             <!-- Seller Info -->
-            <div class="flex items-center space-x-3 mb-4">
+            <div class="flex items-center space-x-3 mb-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 p-2 rounded-lg transition-colors duration-200" onclick="event.stopPropagation(); viewProfile(${product.seller.id})" title="عرض ملف البائع">
                 <div class="h-8 w-8 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center overflow-hidden">
                     <img src="/api/user/avatar/${product.seller.id}" 
                          alt="${product.seller.name}" 
@@ -1639,7 +1645,7 @@ function createProductElement(product) {
                     <i class="fas fa-user text-white text-xs" style="display: none;"></i>
                 </div>
                 <div class="flex-1">
-                    <p class="text-sm font-medium text-gray-900 dark:text-white">${product.seller.name}</p>
+                    <p class="text-sm font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">${product.seller.name}</p>
                     <p class="text-xs text-gray-500 dark:text-gray-500">${product.city}</p>
                 </div>
                 <span class="text-xs text-gray-500 dark:text-gray-500">${formatDate(product.createdAt)}</span>
@@ -1662,8 +1668,22 @@ function createProductElement(product) {
             </div>
             
             <!-- Action Buttons -->
-            <div class="flex space-x-2">
+            <div class="flex space-x-2 mt-4">
                 ${getProductButtons(product)}
+            </div>
+            
+            <!-- Quick Actions for Visitors -->
+            <div class="mt-3 pt-3 border-t border-gray-200 dark:border-slate-600">
+                <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                    <span class="flex items-center space-x-1">
+                        <i class="fas fa-eye"></i>
+                        <span>انقر لعرض التفاصيل</span>
+                    </span>
+                    <span class="flex items-center space-x-1">
+                        <i class="fas fa-user"></i>
+                        <span>انقر على البائع</span>
+                    </span>
+                </div>
             </div>
         </div>
     `;
@@ -1696,7 +1716,9 @@ function contactSellerWithProduct(productId, sellerId) {
         productPrice: `${product.price} ${product.currencyDisplay || product.currency}`,
         productImage: product.hasImages?.image1 ? `/api/products/image/${product.id}/1` : null,
         productCategory: product.categoryDisplay || product.category,
-        productCity: product.city
+        productCity: product.city,
+        sellerName: product.seller.name,
+        productDescription: product.description
     };
     
     // Encode the product data as URL parameter
@@ -1708,20 +1730,35 @@ function contactSellerWithProduct(productId, sellerId) {
 
 // View seller profile function
 function viewSellerProfile(sellerId) {
-    if (sellerId && sellerId !== 0) {
-        window.location.href = `/profile/${sellerId}`;
-    } else {
+    if (!sellerId || sellerId === 0) {
         showToast('معلومات البائع غير متوفرة', 'warning');
+        return;
     }
+    
+    // Open seller profile in a new tab
+    window.open(`/profile/${sellerId}`, '_blank');
 }
 
-function viewProfile(userId) {
-    window.location.href = `/profile/${userId}`;
-}
-
-// View single product page
+// View product details function
 function viewProduct(productId) {
-    window.location.href = `/product/${productId}`;
+    if (!productId || productId === 0) {
+        showToast('معلومات المنتج غير متوفرة', 'warning');
+        return;
+    }
+    
+    // Open product details page in a new tab
+    window.open(`/products/${productId}`, '_blank');
+}
+
+// View seller profile function (unified)
+function viewProfile(userId) {
+    if (!userId || userId === 0) {
+        showToast('معلومات المستخدم غير متوفرة', 'warning');
+        return;
+    }
+    
+    // Open profile in a new tab
+    window.open(`/profile/${userId}`, '_blank');
 }
 
 // Get status badge class
@@ -1758,15 +1795,15 @@ function getProductButtons(product) {
             </button>
         `;
     } else {
-        // Show contact button for other users
+        // Enhanced buttons for visitors - more interactive and user-friendly
         return `
-            <button onclick="contactSellerWithProduct(${product.id}, ${product.seller.id})" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200 text-sm">
+            <button onclick="contactSellerWithProduct(${product.id}, ${product.seller.id})" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105">
                 <i class="fas fa-comments ml-1"></i>رسالة
             </button>
-            <button onclick="viewSellerProfile(${product.seller.id})" class="px-4 py-2 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors duration-200 text-sm">
+            <button onclick="viewProfile(${product.seller.id})" class="px-4 py-2 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 transition-all duration-300 text-sm hover:shadow-md" title="عرض ملف البائع">
                 <i class="fas fa-user"></i>
             </button>
-            <button onclick="viewProduct(${product.id})" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors duration-200 text-sm">
+            <button onclick="viewProduct(${product.id})" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105" title="عرض تفاصيل المنتج">
                 <i class="fas fa-eye"></i>
             </button>
         `;

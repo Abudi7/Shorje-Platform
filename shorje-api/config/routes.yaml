@@ -61,6 +61,23 @@ app_notifications:
     path: /notifications
     controller: App\Controller\NotificationController::index
 
+# Product pages
+app_product_show:
+    path: /products/{id}
+    controller: App\Controller\ProductController::show
+    methods: [GET]
+
+app_products:
+    path: /products
+    controller: App\Controller\ProductController::index
+    methods: [GET]
+
+# Profile pages
+app_profile_show:
+    path: /profile/{id}
+    controller: App\Controller\ProfileController::show
+    methods: [GET]
+
 # Web-specific API endpoints (session-based auth)
 web_conversation:
     path: /web/conversation/{userId}

@@ -78,6 +78,26 @@ class Message
     #[ORM\Column(type: 'boolean')]
     private bool $isDelivered = false;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['message:read', 'message:write'])]
+    private ?string $attachmentPath = null;
+
+    #[ORM\Column(type: 'boolean')]
+    #[Groups(['message:read'])]
+    private bool $isVoice = false;
+
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['message:read'])]
+    private ?int $voiceDuration = null;
+
+    #[ORM\Column(type: 'boolean')]
+    #[Groups(['message:read'])]
+    private bool $isVideoCall = false;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['message:read', 'message:write'])]
+    private ?string $callId = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('Asia/Baghdad'));
@@ -217,6 +237,61 @@ class Message
     public function setIsDelivered(bool $isDelivered): static
     {
         $this->isDelivered = $isDelivered;
+        return $this;
+    }
+
+    public function getAttachmentPath(): ?string
+    {
+        return $this->attachmentPath;
+    }
+
+    public function setAttachmentPath(?string $attachmentPath): static
+    {
+        $this->attachmentPath = $attachmentPath;
+        return $this;
+    }
+
+    public function getIsVoice(): bool
+    {
+        return $this->isVoice;
+    }
+
+    public function setIsVoice(bool $isVoice): static
+    {
+        $this->isVoice = $isVoice;
+        return $this;
+    }
+
+    public function getVoiceDuration(): ?int
+    {
+        return $this->voiceDuration;
+    }
+
+    public function setVoiceDuration(?int $voiceDuration): static
+    {
+        $this->voiceDuration = $voiceDuration;
+        return $this;
+    }
+
+    public function getIsVideoCall(): bool
+    {
+        return $this->isVideoCall;
+    }
+
+    public function setIsVideoCall(bool $isVideoCall): static
+    {
+        $this->isVideoCall = $isVideoCall;
+        return $this;
+    }
+
+    public function getCallId(): ?string
+    {
+        return $this->callId;
+    }
+
+    public function setCallId(?string $callId): static
+    {
+        $this->callId = $callId;
         return $this;
     }
 }

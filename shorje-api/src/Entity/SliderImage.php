@@ -2,11 +2,31 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Patch;
 use App\Repository\SliderImageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[ApiResource(
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(security: "is_granted('ROLE_ADMIN')"),
+        new Put(security: "is_granted('ROLE_ADMIN')"),
+        new Delete(security: "is_granted('ROLE_ADMIN')"),
+        new Patch(security: "is_granted('ROLE_ADMIN')")
+    ],
+    normalizationContext: ['groups' => ['slider_image:read']],
+    denormalizationContext: ['groups' => ['slider_image:write']]
+)]
 #[ORM\Entity(repositoryClass: SliderImageRepository::class)]
 #[ORM\Table(name: 'slider_images')]
 class SliderImage
@@ -14,44 +34,57 @@ class SliderImage
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['slider_image:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'عنوان الصورة مطلوب')]
     #[Assert\Length(max: 255, maxMessage: 'العنوان يجب أن يكون أقل من 255 حرف')]
+    #[Groups(['slider_image:read', 'slider_image:write'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['slider_image:read', 'slider_image:write'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::BLOB, nullable: true)]
+    #[Groups(['slider_image:read', 'slider_image:write'])]
     private $image = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Groups(['slider_image:read', 'slider_image:write'])]
     private ?string $imageMimeType = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['slider_image:read', 'slider_image:write'])]
     private ?string $buttonText = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['slider_image:read', 'slider_image:write'])]
     private ?string $buttonUrl = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['slider_image:read', 'slider_image:write'])]
     private ?string $buttonText2 = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['slider_image:read', 'slider_image:write'])]
     private ?string $buttonUrl2 = null;
 
     #[ORM\Column]
+    #[Groups(['slider_image:read', 'slider_image:write'])]
     private bool $isActive = true;
 
     #[ORM\Column]
+    #[Groups(['slider_image:read', 'slider_image:write'])]
     private int $sortOrder = 0;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['slider_image:read'])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['slider_image:read'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     public function __construct()

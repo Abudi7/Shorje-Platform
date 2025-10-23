@@ -1,11 +1,13 @@
 api_platform:
     title: Shorje Platform API
-    description: 'API documentation for Shorje Platform - Local marketplace for buying and selling'
+    description: 'Complete API documentation for Shorje Platform - Local marketplace for buying and selling products'
     version: 1.0.0
     defaults:
         stateless: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']
+        pagination_items_per_page: 20
+        pagination_maximum_items_per_page: 100
     mapping:
         paths: ['%kernel.project_dir%/src/Entity']
     formats:
