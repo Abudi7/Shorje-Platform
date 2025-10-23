@@ -472,7 +472,7 @@ function startRealTimeUpdates() {
 // Load my products
 async function loadMyProducts() {
     try {
-        const response = await apiCall('/api/products/my');
+        const response = await apiCall('/web/products/my');
         const data = await response.json();
         
         currentProducts = data.products || [];

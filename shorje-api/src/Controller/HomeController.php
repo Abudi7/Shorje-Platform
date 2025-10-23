@@ -45,4 +45,22 @@ class HomeController extends AbstractController
             'sliderImages' => $sliderImages
         ]);
     }
+
+    #[Route('/help', name: 'app_help')]
+    public function help(): Response
+    {
+        return $this->render('home/help.html.twig');
+    }
+
+    #[Route('/contact', name: 'app_contact')]
+    public function contact(): Response
+    {
+        return $this->render('home/contact.html.twig');
+    }
+
+    #[Route('/terms', name: 'app_terms')]
+    public function terms(): Response
+    {
+        return $this->render('home/terms.html.twig');
+    }
 }

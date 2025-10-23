@@ -138,7 +138,7 @@
     
     {% block stylesheets %}{% endblock %}
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 font-arabic transition-colors duration-300">
+<body class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 font-arabic transition-colors duration-300{% if app.user %} authenticated{% endif %}">
     <!-- Theme Toggle Button -->
     {% block theme_toggle %}
     <button id="theme-toggle" class="fixed top-4 left-4 z-50 bg-white/10 dark:bg-slate-800/10 backdrop-blur-md hover:bg-white/20 dark:hover:bg-slate-800/20 text-slate-700 dark:text-slate-300 p-3 rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/20 transition-all duration-300 transform hover:scale-110">
@@ -577,6 +577,53 @@
             return time.toLocaleDateString('ar-SA');
         }
         
+        // User status tracking functions
+        async function updateUserStatus(isOnline) {
+            try {
+                await apiCall('/web/user/update-status', {
+                    method: 'POST',
+                    body: JSON.stringify({ isOnline: isOnline })
+                });
+                console.log(`User status updated to: ${isOnline ? 'online' : 'offline'}`);
+            } catch (error) {
+                console.error('Failed to update user status:', error);
+            }
+        }
+
+        function initializeUserStatusTracking() {
+            // Set user as online when page loads (if authenticated)
+            if (document.body.classList.contains('authenticated')) {
+                updateUserStatus(true);
+            }
+
+            // Update status when page becomes visible/hidden
+            document.addEventListener('visibilitychange', function() {
+                if (document.body.classList.contains('authenticated')) {
+                    if (document.hidden) {
+                        updateUserStatus(false);
+                    } else {
+                        updateUserStatus(true);
+                    }
+                }
+            });
+
+            // Update status before page unload
+            window.addEventListener('beforeunload', function() {
+                if (document.body.classList.contains('authenticated')) {
+                    // Use sendBeacon for reliable status update on page unload
+                    navigator.sendBeacon('/web/user/update-status', 
+                        JSON.stringify({ isOnline: false }));
+                }
+            });
+
+            // Periodic status update (every 30 seconds)
+            if (document.body.classList.contains('authenticated')) {
+                setInterval(function() {
+                    updateUserStatus(true);
+                }, 30000);
+            }
+        }
+
         // Initialize theme
         document.addEventListener('DOMContentLoaded', function() {
             const themeIcon = document.getElementById('theme-icon');
@@ -588,6 +635,9 @@
             
             // Initialize notification system
             requestNotificationPermission();
+            
+            // Initialize user status tracking
+            initializeUserStatusTracking();
             
             // Check notifications immediately (only if user is authenticated)
             checkNotifications();

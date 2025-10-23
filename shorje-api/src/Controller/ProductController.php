@@ -304,6 +304,70 @@ class ProductController extends AbstractController
         ]);
     }
 
+    #[Route('/web/products/my', name: 'web_products_my', methods: ['GET'])]
+    public function getMyProductsWeb(
+        Request $request,
+        EntityManagerInterface $em
+    ): JsonResponse {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $page = (int) $request->query->get('page', 1);
+        $limit = (int) $request->query->get('limit', 20);
+
+        $qb = $em->createQueryBuilder()
+            ->select('p')
+            ->from(Product::class, 'p')
+            ->where('p.seller = :seller')
+            ->setParameter('seller', $user)
+            ->orderBy('p.createdAt', 'DESC');
+
+        $totalQuery = clone $qb;
+        $total = $totalQuery->select('COUNT(p.id)')->getQuery()->getSingleScalarResult();
+
+        $products = $qb->setFirstResult(($page - 1) * $limit)
+                      ->setMaxResults($limit)
+                      ->getQuery()
+                      ->getResult();
+
+        $productsData = [];
+        foreach ($products as $product) {
+            $productsData[] = [
+                'id' => $product->getId(),
+                'title' => $product->getTitle(),
+                'description' => $product->getDescription(),
+                'price' => $product->getPrice(),
+                'currency' => $product->getCurrency(),
+                'category' => $product->getCategory(),
+                'categoryDisplay' => $product->getCategoryDisplayName(),
+                'city' => $product->getCity(),
+                'location' => $product->getLocation(),
+                'color' => $product->getColor(),
+                'condition' => $product->getCondition(),
+                'status' => $product->getStatus(),
+                'statusDisplay' => $product->getStatusDisplayName(),
+                'createdAt' => $product->getCreatedAt()->format('Y-m-d H:i:s'),
+                'hasImages' => [
+                    'image1' => $product->getImage1() !== null,
+                    'image2' => $product->getImage2() !== null,
+                    'image3' => $product->getImage3() !== null
+                ]
+            ];
+        }
+
+        return new JsonResponse([
+            'products' => $productsData,
+            'pagination' => [
+                'page' => $page,
+                'limit' => $limit,
+                'total' => $total,
+                'pages' => ceil($total / $limit)
+            ]
+        ]);
+    }
+
     #[Route('/web/products/{id}', name: 'web_products_delete', methods: ['DELETE'])]
     public function deleteProductWeb(
         int $id,

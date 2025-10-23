@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}الشروط والأحكام - شورجي{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+                الشروط والأحكام
+            </h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400">
+                آخر تحديث: {{ "now"|date("Y-m-d") }}
+            </p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg">
+            <div class="prose prose-lg max-w-none dark:prose-invert">
+                
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">1. قبول الشروط</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">
+                    باستخدامك لمنصة شورجي، فإنك توافق على الالتزام بهذه الشروط والأحكام. إذا كنت لا توافق على أي من هذه الشروط، يرجى عدم استخدام المنصة.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">2. وصف الخدمة</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">
+                    شورجي هي منصة محلية تربط بين البائعين والمشترين في نفس المنطقة. نحن نسهل التواصل المباشر بين المستخدمين ولا نتدخل في المعاملات المالية.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">3. مسؤوليات المستخدم</h2>
+                <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 mb-6 space-y-2">
+                    <li>توفير معلومات صحيحة ودقيقة عند التسجيل</li>
+                    <li>الالتزام بالقوانين المحلية والدولية</li>
+                    <li>عدم نشر محتوى مخالف أو مسيء</li>
+                    <li>احترام خصوصية المستخدمين الآخرين</li>
+                    <li>عدم استخدام المنصة لأغراض غير قانونية</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">4. المنتجات والخدمات</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">
+                    المستخدمون مسؤولون عن دقة وصف منتجاتهم وخدماتهم. شورجي لا تتحمل مسؤولية جودة المنتجات أو الخدمات المقدمة من قبل المستخدمين.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">5. الخصوصية</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">
+                    نحن نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية وفقاً لسياسة الخصوصية الخاصة بنا. لا نشارك معلوماتك الشخصية مع أطراف ثالثة دون موافقتك.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">6. الأمان</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">
+                    ننصح المستخدمين بالحذر عند التعامل مع البائعين والمشترين. نوصي باللقاء في أماكن عامة آمنة وإجراء المعاملات بحذر.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">7. إيقاف الحساب</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">
+                    نحتفظ بالحق في إيقاف أو حذف أي حساب ينتهك هذه الشروط والأحكام أو يسيء استخدام المنصة.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">8. التعديلات</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">
+                    نحتفظ بالحق في تعديل هذه الشروط والأحكام في أي وقت. سيتم إشعار المستخدمين بأي تغييرات مهمة.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">9. الاتصال</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">
+                    إذا كان لديك أي أسئلة حول هذه الشروط والأحكام، يرجى الاتصال بنا عبر:
+                </p>
+                <ul class="list-disc list-inside text-gray-600 dark:text-gray-400 mb-6 space-y-2">
+                    <li>البريد الإلكتروني: info@shorje.com</li>
+                    <li>الهاتف: +964 770 123 4567</li>
+                    <li>العنوان: بغداد، العراق</li>
+                </ul>
+
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mt-8">
+                    <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">ملاحظة مهمة</h3>
+                    <p class="text-blue-800 dark:text-blue-200">
+                        منصة شورجي مجانية تماماً. لا توجد رسوم أو عمولات على استخدام المنصة. جميع المعاملات تتم مباشرة بين المستخدمين.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,203 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}اتصل بنا - شورجي{% endblock %}
+
+{% block body %}
+<!-- Navigation Bar -->
+<nav class="bg-white dark:bg-slate-800 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center space-x-8 rtl:space-x-reverse">
+                <a href="/home" class="flex items-center space-x-2 rtl:space-x-reverse text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                    <i class="fas fa-home"></i>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="/products" class="flex items-center space-x-2 rtl:space-x-reverse text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                    <i class="fas fa-box"></i>
+                    <span>المنتجات</span>
+                </a>
+                <a href="/users" class="flex items-center space-x-2 rtl:space-x-reverse text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                    <i class="fas fa-users"></i>
+                    <span>البائعين</span>
+                </a>
+                <a href="/help" class="flex items-center space-x-2 rtl:space-x-reverse text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                    <i class="fas fa-question-circle"></i>
+                    <span>كيف يعمل</span>
+                </a>
+            </div>
+            <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                <a href="/terms" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+                    الشروط والأحكام
+                </a>
+                {% if app.user %}
+                    <a href="/profile" class="flex items-center space-x-2 rtl:space-x-reverse text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-user"></i>
+                        <span>الملف الشخصي</span>
+                    </a>
+                {% else %}
+                    <a href="/login" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        تسجيل الدخول
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+                اتصل بنا
+            </h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                نحن هنا لمساعدتك. تواصل معنا عبر أي من الطرق التالية
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Contact Information -->
+            <div class="space-y-8">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        معلومات التواصل
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4 rtl:space-x-reverse">
+                            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                                <i class="fas fa-phone text-blue-600 dark:text-blue-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">الهاتف</h3>
+                                <p class="text-gray-600 dark:text-gray-400">+964 770 123 4567</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4 rtl:space-x-reverse">
+                            <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                                <i class="fas fa-envelope text-green-600 dark:text-green-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">البريد الإلكتروني</h3>
+                                <p class="text-gray-600 dark:text-gray-400">info@shorje.com</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4 rtl:space-x-reverse">
+                            <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
+                                <i class="fas fa-map-marker-alt text-purple-600 dark:text-purple-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">العنوان</h3>
+                                <p class="text-gray-600 dark:text-gray-400">بغداد، العراق</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4 rtl:space-x-reverse">
+                            <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center">
+                                <i class="fas fa-clock text-yellow-600 dark:text-yellow-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">ساعات العمل</h3>
+                                <p class="text-gray-600 dark:text-gray-400">24/7 - متاح دائماً</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Media -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                        تابعنا على وسائل التواصل
+                    </h2>
+                    
+                    <div class="flex space-x-4 rtl:space-x-reverse">
+                        <a href="#" class="w-12 h-12 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center text-white transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-blue-400 hover:bg-blue-500 rounded-full flex items-center justify-center text-white transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-pink-600 hover:bg-pink-700 rounded-full flex items-center justify-center text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-green-600 hover:bg-green-700 rounded-full flex items-center justify-center text-white transition-colors">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Google Maps -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                    موقعنا على الخريطة
+                </h2>
+                
+                <!-- Google Maps Embed -->
+                <div class="w-full h-96 rounded-lg overflow-hidden">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3348.123456789!2d44.3661!3d33.3152!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15577d4b8b4b4b4b%3A0x4b4b4b4b4b4b4b4b!2sBaghdad%2C%20Iraq!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus"
+                        width="100%" 
+                        height="100%" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <a href="https://www.google.com/maps/place/Baghdad,+Iraq" 
+                       target="_blank" 
+                       class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                        <i class="fas fa-external-link-alt ml-2"></i>
+                        افتح في خرائط جوجل
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="mt-16">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+                    أرسل لنا رسالة
+                </h2>
+                
+                <form class="max-w-2xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">الاسم</label>
+                            <input type="text" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">البريد الإلكتروني</label>
+                            <input type="email" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">الموضوع</label>
+                        <input type="text" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">الرسالة</label>
+                        <textarea rows="5" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-700 dark:text-white"></textarea>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                            <i class="fas fa-paper-plane ml-2"></i>
+                            إرسال الرسالة
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

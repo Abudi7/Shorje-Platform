@@ -515,6 +515,31 @@ class SocialController extends AbstractController
         return $response;
     }
 
+    #[Route('/web/users/{userId}', name: 'web_get_user', methods: ['GET'])]
+    public function getUserById(int $userId, EntityManagerInterface $em): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $user = $em->getRepository(User::class)->find($userId);
+        if (!$user) {
+            return new JsonResponse(['error' => 'المستخدم غير موجود'], 404);
+        }
+
+        return new JsonResponse([
+            'user' => [
+                'id' => $user->getId(),
+                'firstName' => $user->getFirstName(),
+                'lastName' => $user->getLastName(),
+                'email' => $user->getEmail(),
+                'isOnline' => $user->isOnline(),
+                'lastSeenAt' => $user->getLastSeenAt() ? $user->getLastSeenAt()->format('Y-m-d H:i:s') : null
+            ]
+        ]);
+    }
+
     #[Route('/api/users/search', name: 'api_users_search', methods: ['GET'])]
     #[Route('/web/users/search', name: 'web_users_search', methods: ['GET'])]
     public function searchUsers(Request $request, EntityManagerInterface $em): JsonResponse

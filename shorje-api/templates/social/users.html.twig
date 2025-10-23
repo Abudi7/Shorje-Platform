@@ -333,7 +333,7 @@ async function toggleFollow(userId) {
 
 // Start chat functionality
 function startChat(userId) {
-    window.location.href = `/messages/${userId}`;
+    window.location.href = `/messages?user=${userId}`;
 }
 
 // Load follow status for all users
