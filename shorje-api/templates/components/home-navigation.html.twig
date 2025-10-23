@@ -118,13 +118,8 @@
                         </a>
                     </div>
                     
-                    <!-- Notifications -->
-                    <div class="relative">
-                        <button class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg">
-                            <i class="fas fa-bell text-xl"></i>
-                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
-                        </button>
-                    </div>
+                    <!-- Notification Dropdown -->
+                    {% include 'components/notification_dropdown.html.twig' %}
                     
                     <!-- Theme Toggle -->
                     <div class="relative">
@@ -252,6 +247,9 @@ document.addEventListener('DOMContentLoaded', function() {
             updateThemeIcon(newTheme);
         });
     }
+
+    // Load message count
+    loadMessageCount();
 });
 
 function updateThemeIcon(theme) {
@@ -291,6 +289,27 @@ function toggleLanguageSwitcher() {
 function logout() {
     if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
         window.location.href = '/logout';
+    }
+}
+
+// Load message count
+async function loadMessageCount() {
+    try {
+        const response = await fetch('/api/messages/unread-count');
+        const data = await response.json();
+        const messageCount = data.unread_count || 0;
+        
+        const messagesCountElement = document.getElementById('messagesCount');
+        if (messagesCountElement) {
+            if (messageCount > 0) {
+                messagesCountElement.classList.remove('hidden');
+                messagesCountElement.textContent = messageCount > 99 ? '99+' : messageCount;
+            } else {
+                messagesCountElement.classList.add('hidden');
+            }
+        }
+    } catch (error) {
+        console.error('Error loading message count:', error);
     }
 }
 </script>
