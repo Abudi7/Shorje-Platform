@@ -296,4 +296,29 @@ class ProfileController extends AbstractController
 
         return $response;
     }
+
+    // Add method for /profile/{id} route
+    public function show(int $id, EntityManagerInterface $em): Response
+    {
+        $user = $em->getRepository(User::class)->find($id);
+        
+        if (!$user) {
+            throw $this->createNotFoundException('المستخدم غير موجود');
+        }
+
+        // Get user's products
+        $products = $em->getRepository(Product::class)->findBy(
+            ['seller' => $user],
+            ['createdAt' => 'DESC']
+        );
+
+        $currentUser = $this->getUser();
+        $isOwnProfile = $currentUser && $currentUser->getId() === $user->getId();
+
+        return $this->render('profile/index.html.twig', [
+            'user' => $user,
+            'isOwnProfile' => $isOwnProfile,
+            'products' => $products
+        ]);
+    }
 }

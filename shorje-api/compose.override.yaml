@@ -46,5 +46,11 @@ services:
       - mysql_data:/var/lib/mysql
 ###< MySQL Database ###
 
+###> symfony/mercure-bundle ###
+  mercure:
+    ports:
+      - "80"
+###< symfony/mercure-bundle ###
+
 volumes:
   mysql_data:

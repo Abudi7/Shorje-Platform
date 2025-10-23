@@ -1,0 +1,80 @@
+# English Translations
+app:
+  title: "Shorje - Local Marketplace"
+  description: "Local platform for buying and selling products"
+  welcome: "Welcome to Shorje"
+  
+navigation:
+  home: "Home"
+  products: "Products"
+  messages: "Messages"
+  notifications: "Notifications"
+  profile: "Profile"
+  settings: "Settings"
+  logout: "Logout"
+  login: "Login"
+  register: "Register"
+  
+auth:
+  login: "Login"
+  register: "Register"
+  logout: "Logout"
+  email: "Email"
+  password: "Password"
+  confirm_password: "Confirm Password"
+  forgot_password: "Forgot Password?"
+  reset_password: "Reset Password"
+  remember_me: "Remember Me"
+  
+profile:
+  edit_profile: "Edit Profile"
+  first_name: "First Name"
+  last_name: "Last Name"
+  age: "Age"
+  phone: "Phone Number"
+  avatar: "Profile Picture"
+  cover: "Cover Photo"
+  save: "Save"
+  cancel: "Cancel"
+  
+products:
+  add_product: "Add Product"
+  edit_product: "Edit Product"
+  delete_product: "Delete Product"
+  title: "Product Title"
+  description: "Product Description"
+  price: "Price"
+  category: "Category"
+  condition: "Condition"
+  images: "Images"
+  location: "Location"
+  
+messages:
+  send_message: "Send Message"
+  type_message: "Type your message here..."
+  online: "Online"
+  offline: "Offline"
+  last_seen: "Last seen"
+  
+notifications:
+  mark_all_read: "Mark All as Read"
+  settings: "Notification Settings"
+  new_message: "New Message"
+  new_follower: "New Follower"
+  product_sold: "Product Sold"
+  
+common:
+  save: "Save"
+  cancel: "Cancel"
+  delete: "Delete"
+  edit: "Edit"
+  view: "View"
+  search: "Search"
+  filter: "Filter"
+  sort: "Sort"
+  loading: "Loading..."
+  error: "An error occurred"
+  success: "Success"
+  confirm: "Confirm"
+  yes: "Yes"
+  no: "No"

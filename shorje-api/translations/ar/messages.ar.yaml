@@ -1,0 +1,80 @@
+# Arabic Translations
+app:
+  title: "شورجي - منصة التسوق المحلي"
+  description: "منصة محلية لبيع وشراء المنتجات"
+  welcome: "مرحباً بك في شورجي"
+  
+navigation:
+  home: "الرئيسية"
+  products: "المنتجات"
+  messages: "الرسائل"
+  notifications: "الإشعارات"
+  profile: "الملف الشخصي"
+  settings: "الإعدادات"
+  logout: "تسجيل الخروج"
+  login: "تسجيل الدخول"
+  register: "إنشاء حساب"
+  
+auth:
+  login: "تسجيل الدخول"
+  register: "إنشاء حساب"
+  logout: "تسجيل الخروج"
+  email: "البريد الإلكتروني"
+  password: "كلمة المرور"
+  confirm_password: "تأكيد كلمة المرور"
+  forgot_password: "نسيت كلمة المرور؟"
+  reset_password: "إعادة تعيين كلمة المرور"
+  remember_me: "تذكرني"
+  
+profile:
+  edit_profile: "تعديل الملف الشخصي"
+  first_name: "الاسم الأول"
+  last_name: "الاسم الأخير"
+  age: "العمر"
+  phone: "رقم الهاتف"
+  avatar: "الصورة الشخصية"
+  cover: "صورة الغلاف"
+  save: "حفظ"
+  cancel: "إلغاء"
+  
+products:
+  add_product: "إضافة منتج"
+  edit_product: "تعديل المنتج"
+  delete_product: "حذف المنتج"
+  title: "عنوان المنتج"
+  description: "وصف المنتج"
+  price: "السعر"
+  category: "الفئة"
+  condition: "الحالة"
+  images: "الصور"
+  location: "الموقع"
+  
+messages:
+  send_message: "إرسال رسالة"
+  type_message: "اكتب رسالتك هنا..."
+  online: "متصل"
+  offline: "غير متصل"
+  last_seen: "آخر ظهور"
+  
+notifications:
+  mark_all_read: "تعيين الكل كمقروء"
+  settings: "إعدادات الإشعارات"
+  new_message: "رسالة جديدة"
+  new_follower: "متابع جديد"
+  product_sold: "تم بيع منتج"
+  
+common:
+  save: "حفظ"
+  cancel: "إلغاء"
+  delete: "حذف"
+  edit: "تعديل"
+  view: "عرض"
+  search: "بحث"
+  filter: "تصفية"
+  sort: "ترتيب"
+  loading: "جاري التحميل..."
+  error: "حدث خطأ"
+  success: "تم بنجاح"
+  confirm: "تأكيد"
+  yes: "نعم"
+  no: "لا"

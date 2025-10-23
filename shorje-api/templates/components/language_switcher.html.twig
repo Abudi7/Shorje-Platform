@@ -1,0 +1,164 @@
+<!-- Language Switcher Component -->
+<div class="relative" id="languageSwitcher">
+    <!-- Language Button -->
+    <button 
+        id="languageButton" 
+        class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg"
+        onclick="toggleLanguageDropdown()"
+    >
+        <i class="fas fa-globe text-lg"></i>
+        <span id="currentLanguage">{{ app.request.locale == 'ar' ? 'العربية' : 'English' }}</span>
+        <i class="fas fa-chevron-down text-sm transition-transform duration-200" id="languageArrow"></i>
+    </button>
+
+    <!-- Language Dropdown -->
+    <div 
+        id="languageDropdown" 
+        class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-600 z-50 hidden"
+    >
+        <!-- Arabic Option -->
+        <button 
+            class="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+            onclick="switchLanguage('ar')"
+            data-locale="ar"
+        >
+            <span class="text-lg">🇸🇦</span>
+            <div class="flex-1 text-right">
+                <div class="font-medium">العربية</div>
+                <div class="text-sm text-gray-500">Arabic</div>
+            </div>
+            <i class="fas fa-check text-primary-600 hidden" id="check-ar"></i>
+        </button>
+
+        <!-- English Option -->
+        <button 
+            class="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+            onclick="switchLanguage('en')"
+            data-locale="en"
+        >
+            <span class="text-lg">🇺🇸</span>
+            <div class="flex-1 text-right">
+                <div class="font-medium">English</div>
+                <div class="text-sm text-gray-500">English</div>
+            </div>
+            <i class="fas fa-check text-primary-600 hidden" id="check-en"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+// Language Switcher JavaScript
+let languageDropdownOpen = false;
+
+// Toggle language dropdown
+function toggleLanguageDropdown() {
+    const dropdown = document.getElementById('languageDropdown');
+    const arrow = document.getElementById('languageArrow');
+    
+    if (languageDropdownOpen) {
+        dropdown.classList.add('hidden');
+        arrow.classList.remove('rotate-180');
+    } else {
+        dropdown.classList.remove('hidden');
+        arrow.classList.add('rotate-180');
+    }
+    
+    languageDropdownOpen = !languageDropdownOpen;
+}
+
+// Switch language
+async function switchLanguage(locale) {
+    try {
+        const response = await fetch('/api/language/set', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ locale: locale })
+        });
+        
+        if (response.ok) {
+            // Update UI immediately
+            updateLanguageUI(locale);
+            
+            // Reload page to apply new language
+            setTimeout(() => {
+                window.location.reload();
+            }, 300);
+        } else {
+            console.error('Failed to switch language');
+        }
+    } catch (error) {
+        console.error('Error switching language:', error);
+        // Fallback to page reload
+        window.location.href = `/language/${locale}`;
+    }
+}
+
+// Update language UI
+function updateLanguageUI(locale) {
+    const currentLanguage = document.getElementById('currentLanguage');
+    const checkAr = document.getElementById('check-ar');
+    const checkEn = document.getElementById('check-en');
+    
+    if (locale === 'ar') {
+        currentLanguage.textContent = 'العربية';
+        checkAr.classList.remove('hidden');
+        checkEn.classList.add('hidden');
+    } else {
+        currentLanguage.textContent = 'English';
+        checkEn.classList.remove('hidden');
+        checkAr.classList.add('hidden');
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const switcher = document.getElementById('languageSwitcher');
+    if (!switcher.contains(event.target)) {
+        const dropdown = document.getElementById('languageDropdown');
+        const arrow = document.getElementById('languageArrow');
+        dropdown.classList.add('hidden');
+        arrow.classList.remove('rotate-180');
+        languageDropdownOpen = false;
+    }
+});
+
+// Initialize current language
+document.addEventListener('DOMContentLoaded', function() {
+    const currentLocale = '{{ app.request.locale }}';
+    updateLanguageUI(currentLocale);
+});
+</script>
+
+<style>
+/* Language Switcher Styles */
+#languageDropdown {
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
+}
+
+/* RTL Support for language switcher */
+[dir="rtl"] #languageDropdown {
+    right: auto;
+    left: 0;
+}
+
+[dir="rtl"] .flex-1.text-right {
+    text-align: left;
+}
+</style>

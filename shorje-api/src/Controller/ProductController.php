@@ -52,6 +52,29 @@ class ProductController extends AbstractController
         ]);
     }
 
+    // Add method for /products/{id} route
+    public function show(int $id, EntityManagerInterface $em): Response
+    {
+        $product = $em->getRepository(Product::class)->find($id);
+        
+        if (!$product) {
+            throw $this->createNotFoundException('المنتج غير موجود');
+        }
+
+        return $this->render('products/single.html.twig', [
+            'product' => $product,
+            'user' => $this->getUser()
+        ]);
+    }
+
+    // Add method for /products route
+    public function index(): Response
+    {
+        return $this->render('products/index.html.twig', [
+            'user' => $this->getUser()
+        ]);
+    }
+
     #[Route('/api/products', name: 'api_products_list', methods: ['GET'])]
     #[Route('/web/products', name: 'web_products_list', methods: ['GET'])]
     public function listProducts(
