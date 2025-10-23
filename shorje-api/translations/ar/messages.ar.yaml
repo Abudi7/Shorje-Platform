@@ -3,10 +3,18 @@ app:
   title: "شورجي - منصة التسوق المحلي"
   description: "منصة محلية لبيع وشراء المنتجات"
   welcome: "مرحباً بك في شورجي"
+  hero_title: "سوقك المحلي"
+  hero_subtitle: "للبيع والشراء"
+  hero_description: "اكتشف المنتجات المحلية من البائعين في منطقتك. تواصل مباشرة، اتفق على السعر، والتقاط من الموقع"
   
 navigation:
   home: "الرئيسية"
   products: "المنتجات"
+  sellers: "البائعين"
+  my_products: "منتجاتي"
+  saved: "المحفوظات"
+  how_it_works: "كيف يعمل"
+  contact: "اتصل بنا"
   messages: "الرسائل"
   notifications: "الإشعارات"
   profile: "الملف الشخصي"

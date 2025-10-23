@@ -30,6 +30,49 @@
         border-right: 4px solid #3b82f6;
     }
     
+    .conversation-item.unread {
+        animation: unreadPulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes unreadPulse {
+        0%, 100% {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+        }
+        50% {
+            box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.1);
+        }
+    }
+    
+    .unread-badge {
+        animation: badgeBounce 1s ease-in-out infinite;
+    }
+    
+    @keyframes badgeBounce {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+    }
+    
+    .unread-message-alert {
+        animation: alertPulse 1.5s ease-in-out infinite;
+        background: linear-gradient(45deg, #ef4444, #dc2626);
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+    }
+    
+    @keyframes alertPulse {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+        }
+    }
+    
     .message-bubble {
         animation: messageSlide 0.3s ease-out;
     }
@@ -271,7 +314,7 @@
                     <div class="flex-1 overflow-y-auto custom-scrollbar p-2" id="conversationsList">
                         {% if conversations|length > 0 %}
                             {% for conversation in conversations %}
-                            <div class="conversation-item p-4 mb-2 {% if conversation.unreadCount > 0 %}bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-900/20 dark:to-blue-900/20 border-l-4 border-emerald-500{% else %}bg-white/60 dark:bg-slate-700/60{% endif %} backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-slate-600/50 hover:bg-white/80 dark:hover:bg-slate-700/80 cursor-pointer transition-all duration-300" 
+                            <div class="conversation-item p-4 mb-2 {% if conversation.unreadCount > 0 %}unread bg-gradient-to-r from-emerald-100 to-blue-100 dark:from-emerald-900/30 dark:to-blue-900/30 border-l-4 border-emerald-500 shadow-lg ring-2 ring-emerald-200 dark:ring-emerald-800/50{% else %}bg-white/60 dark:bg-slate-700/60{% endif %} backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-slate-600/50 hover:bg-white/80 dark:hover:bg-slate-700/80 cursor-pointer transition-all duration-300" 
                                  data-user-id="{{ conversation.otherUserId }}" 
                                  onclick="selectConversation({{ conversation.otherUserId }}, '{{ conversation.otherUserName|e('js') }}')">
                                 <div class="flex items-center space-x-4">
@@ -292,16 +335,27 @@
                                     
                                     <!-- Conversation Info -->
                                     <div class="flex-1 min-w-0">
+                                        <!-- Unread Message Count Badge Above Name -->
+                                        {% if conversation.unreadCount > 0 %}
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="unread-message-alert text-xs text-white px-3 py-1 rounded-full font-bold shadow-lg">
+                                                    {{ conversation.unreadCount }} رسالة جديدة
+                                                </span>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
                                         <div class="flex items-center justify-between mb-1">
                                             <div class="flex items-center space-x-2">
                                                 <h3 class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ conversation.otherUserName }}</h3>
                                                 {% if conversation.unreadCount > 0 %}
-                                                <span class="text-xs bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-2 py-1 rounded-full font-bold animate-pulse">جديد</span>
+                                                <span class="unread-badge text-xs bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-2 py-1 rounded-full font-bold animate-pulse shadow-lg">{{ conversation.unreadCount }}</span>
                                                 {% endif %}
                                             </div>
                                             <span class="text-xs text-gray-500 dark:text-slate-400 font-medium">{{ conversation.lastMessageSentAt|date('H:i') }}</span>
                                         </div>
-                                        <p class="text-sm {% if conversation.unreadCount > 0 %}text-gray-900 dark:text-white font-semibold{% else %}text-gray-600 dark:text-slate-300{% endif %} truncate leading-relaxed">{{ conversation.lastMessageContent }}</p>
+                                        <p class="text-sm {% if conversation.unreadCount > 0 %}text-gray-900 dark:text-white font-bold{% else %}text-gray-600 dark:text-slate-300{% endif %} truncate leading-relaxed">{{ conversation.lastMessageContent }}</p>
                                     </div>
                                     
                                     <!-- Unread Badge -->
@@ -1065,7 +1119,7 @@ function renderConversations(conversations) {
     }
     
     conversationsList.innerHTML = conversations.map(conversation => `
-        <div class="conversation-item p-4 border-b border-gray-200 dark:border-slate-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
+        <div class="conversation-item p-4 mb-2 ${conversation.unreadCount > 0 ? 'unread bg-gradient-to-r from-emerald-100 to-blue-100 dark:from-emerald-900/30 dark:to-blue-900/30 border-l-4 border-emerald-500 shadow-lg ring-2 ring-emerald-200 dark:ring-emerald-800/50' : 'bg-white/60 dark:bg-slate-700/60'} backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-slate-600/50 hover:bg-white/80 dark:hover:bg-slate-700/80 cursor-pointer transition-all duration-300"
              data-user-id="${conversation.user.id}" onclick="selectConversation(${conversation.user.id}, '${conversation.user.firstName} ${conversation.user.lastName}')">
             <div class="flex items-center space-x-3 rtl:space-x-reverse">
                 <div class="relative">
@@ -1077,10 +1131,20 @@ function renderConversations(conversations) {
                          style="background-color: ${conversation.user.isOnline ? '#10b981' : '#6b7280'};"></div>
                 </div>
                 <div class="flex-1 min-w-0">
+                    ${conversation.unreadCount > 0 ? `
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="unread-message-alert text-xs text-white px-3 py-1 rounded-full font-bold shadow-lg">
+                                    ${conversation.unreadCount} رسالة جديدة
+                                </span>
+                            </div>
+                        </div>
+                    ` : ''}
+                    
                     <h3 class="text-sm font-semibold text-gray-900 dark:text-white truncate">
                         ${conversation.user.firstName} ${conversation.user.lastName}
                     </h3>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    <p class="text-sm ${conversation.unreadCount > 0 ? 'text-gray-900 dark:text-white font-bold' : 'text-gray-600 dark:text-slate-300'} truncate leading-relaxed">
                         ${conversation.lastMessage ? conversation.lastMessage.content : 'لا توجد رسائل'}
                     </p>
                 </div>
@@ -1089,7 +1153,7 @@ function renderConversations(conversations) {
                         ${conversation.lastMessage ? formatMessageTime(conversation.lastMessage.createdAt) : ''}
                     </span>
                     ${conversation.unreadCount > 0 ? `
-                        <div class="mt-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
+                        <div class="unread-badge mt-1 w-6 h-6 bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg animate-pulse">
                             ${conversation.unreadCount}
                         </div>
                     ` : ''}

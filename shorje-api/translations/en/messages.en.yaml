@@ -3,10 +3,18 @@ app:
   title: "Shorje - Local Marketplace"
   description: "Local platform for buying and selling products"
   welcome: "Welcome to Shorje"
+  hero_title: "Your Local Marketplace"
+  hero_subtitle: "Buy & Sell"
+  hero_description: "Discover local products from sellers in your area. Connect directly, agree on price, and pick up from location"
   
 navigation:
   home: "Home"
   products: "Products"
+  sellers: "Sellers"
+  my_products: "My Products"
+  saved: "Saved"
+  how_it_works: "How It Works"
+  contact: "Contact Us"
   messages: "Messages"
   notifications: "Notifications"
   profile: "Profile"
