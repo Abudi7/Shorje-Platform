@@ -391,6 +391,159 @@ class ProductController extends AbstractController
         ]);
     }
 
+    /**
+     * Simple My Products API - fetches products where seller_id = logged_in_user_id
+     */
+    #[Route('/web/products/my-simple', name: 'web_products_my_simple', methods: ['GET'])]
+    public function getMyProductsSimple(
+        Request $request,
+        EntityManagerInterface $em
+    ): JsonResponse {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+        
+        try {
+            // Simple query: get products where seller_id = logged_in_user_id
+            $products = $em->createQueryBuilder()
+                ->select('p')
+                ->from(Product::class, 'p')
+                ->where('p.seller = :sellerId')
+                ->setParameter('sellerId', $user->getId())
+                ->orderBy('p.createdAt', 'DESC')
+                ->getQuery()
+                ->getResult();
+
+            $productsData = [];
+            foreach ($products as $product) {
+                $productsData[] = [
+                    'id' => $product->getId(),
+                    'title' => $product->getTitle(),
+                    'description' => $product->getDescription(),
+                    'price' => $product->getPrice(),
+                    'currency' => $product->getCurrency(),
+                    'category' => $product->getCategory(),
+                    'city' => $product->getCity(),
+                    'status' => $product->getStatus(),
+                    'createdAt' => $product->getCreatedAt()->format('Y-m-d H:i:s'),
+                    'hasImages' => [
+                        'image1' => $product->getImage1() !== null,
+                        'image2' => $product->getImage2() !== null,
+                        'image3' => $product->getImage3() !== null
+                    ]
+                ];
+            }
+
+            return new JsonResponse([
+                'success' => true,
+                'products' => $productsData,
+                'total' => count($productsData)
+            ]);
+
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'حدث خطأ: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Helper method to get category display name safely
+     */
+    private function getCategoryDisplayName(?string $category): string
+    {
+        if (!$category) {
+            return 'غير محدد';
+        }
+
+        $categories = [
+            'car' => 'سيارات',
+            'home_rental' => 'إيجار منازل',
+            'apartment_rental' => 'إيجار شقق',
+            'job' => 'وظائف',
+            'laptop' => 'لابتوب',
+            'electronics' => 'إلكترونيات',
+            'fashion' => 'أزياء',
+            'furniture' => 'أثاث',
+            'books' => 'كتب',
+            'sports' => 'رياضة',
+            'other' => 'أخرى'
+        ];
+
+        return $categories[$category] ?? $category;
+    }
+
+    /**
+     * Helper method to get status display name safely
+     */
+    private function getStatusDisplayName(?string $status): string
+    {
+        if (!$status) {
+            return 'غير محدد';
+        }
+
+        $statuses = [
+            'available' => 'متاح',
+            'sold' => 'مباع',
+            'reserved' => 'محجوز'
+        ];
+
+        return $statuses[$status] ?? $status;
+    }
+
+    /**
+     * Ultra-safe category display name method
+     */
+    private function getCategoryDisplayNameSafe(?string $category): string
+    {
+        try {
+            if (!$category) {
+                return 'غير محدد';
+            }
+
+            $categories = [
+                'car' => 'سيارات',
+                'home_rental' => 'إيجار منازل',
+                'apartment_rental' => 'إيجار شقق',
+                'job' => 'وظائف',
+                'laptop' => 'لابتوب',
+                'electronics' => 'إلكترونيات',
+                'fashion' => 'أزياء',
+                'furniture' => 'أثاث',
+                'books' => 'كتب',
+                'sports' => 'رياضة',
+                'other' => 'أخرى'
+            ];
+
+            return $categories[$category] ?? $category;
+        } catch (\Exception $e) {
+            error_log('Error in getCategoryDisplayNameSafe: ' . $e->getMessage());
+            return $category ?? 'غير محدد';
+        }
+    }
+
+    /**
+     * Ultra-safe status display name method
+     */
+    private function getStatusDisplayNameSafe(?string $status): string
+    {
+        try {
+            if (!$status) {
+                return 'غير محدد';
+            }
+
+            $statuses = [
+                'available' => 'متاح',
+                'sold' => 'مباع',
+                'reserved' => 'محجوز'
+            ];
+
+            return $statuses[$status] ?? $status;
+        } catch (\Exception $e) {
+            error_log('Error in getStatusDisplayNameSafe: ' . $e->getMessage());
+            return $status ?? 'غير محدد';
+        }
+    }
+
     #[Route('/web/products/{id}', name: 'web_products_delete', methods: ['DELETE'])]
     public function deleteProductWeb(
         int $id,
@@ -680,5 +833,89 @@ class ProductController extends AbstractController
         }
         
         $em->flush();
+    }
+
+    #[Route('/web/products/{id}', name: 'web_products_update', methods: ['PUT'])]
+    public function updateProductWeb  (
+        int $id,
+        Request $request,
+        EntityManagerInterface $em
+    ): JsonResponse {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
+        }
+
+        $product = $em->getRepository(Product::class)->find($id);
+        if (!$product) {
+            return new JsonResponse(['error' => 'المنتج غير موجود'], 404);
+        }
+
+        // Check if user owns the product
+        if ($product->getSeller() !== $user) {
+            return new JsonResponse(['error' => 'ليس لديك صلاحية لتعديل هذا المنتج'], 403);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        // Update product fields
+        if (isset($data['title'])) {
+            $product->setTitle($data['title']);
+        }
+        if (isset($data['description'])) {
+            $product->setDescription($data['description']);
+        }
+        if (isset($data['price'])) {
+            $product->setPrice((float) $data['price']);
+        }
+        if (isset($data['currency'])) {
+            $product->setCurrency($data['currency']);
+        }
+        if (isset($data['category'])) {
+            $product->setCategory($data['category']);
+        }
+        if (isset($data['city'])) {
+            $product->setCity($data['city']);
+        }
+        if (isset($data['location'])) {
+            $product->setLocation($data['location']);
+        }
+        if (isset($data['color'])) {
+            $product->setColor($data['color']);
+        }
+        if (isset($data['condition'])) {
+            $product->setCondition($data['condition']);
+        }
+
+        $product->setUpdatedAt(new \DateTime());
+
+        $em->flush();
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => 'تم تحديث المنتج بنجاح',
+            'product' => [
+                'id' => $product->getId(),
+                'title' => $product->getTitle(),
+                'description' => $product->getDescription(),
+                'price' => $product->getPrice(),
+                'currency' => $product->getCurrency(),
+                'category' => $product->getCategory(),
+                'categoryDisplay' => $product->getCategoryDisplayName(),
+                'city' => $product->getCity(),
+                'location' => $product->getLocation(),
+                'color' => $product->getColor(),
+                'condition' => $product->getCondition(),
+                'status' => $product->getStatus(),
+                'statusDisplay' => $product->getStatusDisplayName(),
+                'createdAt' => $product->getCreatedAt()->format('Y-m-d H:i:s'),
+                'updatedAt' => $product->getUpdatedAt()->format('Y-m-d H:i:s'),
+                'hasImages' => [
+                    'image1' => $product->getImage1() !== null,
+                    'image2' => $product->getImage2() !== null,
+                    'image3' => $product->getImage3() !== null
+                ]
+            ]
+        ]);
     }
 }
