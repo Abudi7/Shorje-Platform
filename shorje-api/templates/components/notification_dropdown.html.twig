@@ -1,0 +1,419 @@
+<!-- Notification Dropdown Component -->
+<div class="relative" id="notificationDropdown">
+    <!-- Notification Bell Button -->
+    <button 
+        id="notificationBell" 
+        class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg"
+        onclick="toggleNotificationDropdown()"
+    >
+        <i class="fas fa-bell text-xl"></i>
+        <!-- Unread Badge -->
+        <span 
+            id="notificationBadge" 
+            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden"
+        >
+            <span id="notificationCount">0</span>
+        </span>
+    </button>
+
+    <!-- Notification Dropdown -->
+    <div 
+        id="notificationPanel" 
+        class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 hidden"
+    >
+        <!-- Header -->
+        <div class="p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-gray-900">الإشعارات</h3>
+                <div class="flex items-center space-x-2 space-x-reverse">
+                    <button 
+                        id="markAllReadBtn" 
+                        class="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                        onclick="markAllNotificationsAsRead()"
+                    >
+                        تعيين الكل كمقروء
+                    </button>
+                    <button 
+                        class="text-sm text-gray-500 hover:text-gray-700"
+                        onclick="openNotificationSettings()"
+                    >
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications List -->
+        <div id="notificationsList" class="max-h-96 overflow-y-auto">
+            <!-- Loading State -->
+            <div id="notificationsLoading" class="p-4 text-center">
+                <div class="inline-flex items-center">
+                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
+                    <span class="mr-2 text-gray-600">جاري التحميل...</span>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="notificationsEmpty" class="p-8 text-center hidden">
+                <i class="fas fa-bell-slash text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500">لا توجد إشعارات جديدة</p>
+            </div>
+
+            <!-- Notifications will be loaded here -->
+        </div>
+
+        <!-- Footer -->
+        <div class="p-3 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+            <a 
+                href="/notifications" 
+                class="block text-center text-sm text-primary-600 hover:text-primary-700 font-medium"
+            >
+                عرض جميع الإشعارات
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Notification Item Template (Hidden) -->
+<template id="notificationItemTemplate">
+    <div class="notification-item p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200 cursor-pointer" data-notification-id="">
+        <div class="flex items-start space-x-3 space-x-reverse">
+            <!-- Icon -->
+            <div class="flex-shrink-0">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center text-white">
+                    <i class="notification-icon text-sm"></i>
+                </div>
+            </div>
+            
+            <!-- Content -->
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                    <h4 class="notification-title text-sm font-medium text-gray-900 truncate"></h4>
+                    <div class="flex items-center space-x-2 space-x-reverse">
+                        <span class="notification-time text-xs text-gray-500"></span>
+                        <div class="notification-status">
+                            <span class="unread-dot w-2 h-2 bg-primary-500 rounded-full"></span>
+                        </div>
+                    </div>
+                </div>
+                <p class="notification-message text-sm text-gray-600 mt-1 line-clamp-2"></p>
+                <div class="notification-actions mt-2">
+                    <button class="notification-action-btn text-xs text-primary-600 hover:text-primary-700 font-medium hidden">
+                        <span class="action-text"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+/* Notification Styles */
+.notification-item.unread {
+    background-color: #f8fafc;
+    border-left: 3px solid #3b82f6;
+}
+
+.notification-item.important {
+    background-color: #fef2f2;
+    border-left: 3px solid #ef4444;
+}
+
+.notification-item.read {
+    opacity: 0.7;
+}
+
+.notification-item.read .unread-dot {
+    display: none;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Animation for new notifications */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification-item.new {
+    animation: slideInRight 0.3s ease-out;
+}
+
+/* Notification type colors */
+.notification-icon.message { background-color: #3b82f6; }
+.notification-icon.follow { background-color: #10b981; }
+.notification-icon.product { background-color: #06b6d4; }
+.notification-icon.order { background-color: #f59e0b; }
+.notification-icon.review { background-color: #10b981; }
+.notification-icon.system { background-color: #6b7280; }
+.notification-icon.security { background-color: #ef4444; }
+.notification-icon.promotion { background-color: #10b981; }
+</style>
+
+<script>
+// Notification Dropdown JavaScript
+let notificationDropdownOpen = false;
+let notifications = [];
+let unreadCount = 0;
+
+// Toggle notification dropdown
+function toggleNotificationDropdown() {
+    const panel = document.getElementById('notificationPanel');
+    const bell = document.getElementById('notificationBell');
+    
+    if (notificationDropdownOpen) {
+        panel.classList.add('hidden');
+        bell.classList.remove('ring-2', 'ring-primary-500');
+    } else {
+        panel.classList.remove('hidden');
+        bell.classList.add('ring-2', 'ring-primary-500');
+        loadNotifications();
+    }
+    
+    notificationDropdownOpen = !notificationDropdownOpen;
+}
+
+// Load notifications
+async function loadNotifications() {
+    try {
+        const response = await fetch('/api/notifications/unread?limit=10');
+        const data = await response.json();
+        
+        notifications = data.notifications || [];
+        unreadCount = data.unread_count || 0;
+        
+        updateNotificationBadge();
+        renderNotifications();
+        
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+        showNotificationError();
+    }
+}
+
+// Render notifications
+function renderNotifications() {
+    const container = document.getElementById('notificationsList');
+    const loading = document.getElementById('notificationsLoading');
+    const empty = document.getElementById('notificationsEmpty');
+    
+    loading.classList.add('hidden');
+    
+    if (notifications.length === 0) {
+        empty.classList.remove('hidden');
+        return;
+    }
+    
+    empty.classList.add('hidden');
+    
+    // Clear existing notifications
+    container.innerHTML = '';
+    
+    notifications.forEach(notification => {
+        const item = createNotificationItem(notification);
+        container.appendChild(item);
+    });
+}
+
+// Create notification item
+function createNotificationItem(notification) {
+    const template = document.getElementById('notificationItemTemplate');
+    const item = template.content.cloneNode(true);
+    
+    const itemElement = item.querySelector('.notification-item');
+    const icon = item.querySelector('.notification-icon');
+    const title = item.querySelector('.notification-title');
+    const message = item.querySelector('.notification-message');
+    const time = item.querySelector('.notification-time');
+    const actionBtn = item.querySelector('.notification-action-btn');
+    const actionText = item.querySelector('.action-text');
+    
+    // Set notification data
+    itemElement.setAttribute('data-notification-id', notification.id);
+    itemElement.onclick = () => handleNotificationClick(notification);
+    
+    // Set content
+    icon.className = `notification-icon ${notification.icon || 'fas fa-bell'} ${notification.type}`;
+    title.textContent = notification.title;
+    message.textContent = notification.message;
+    time.textContent = formatNotificationTime(notification.createdAt);
+    
+    // Set action button
+    if (notification.actionUrl && notification.actionText) {
+        actionBtn.classList.remove('hidden');
+        actionText.textContent = notification.actionText;
+        actionBtn.onclick = (e) => {
+            e.stopPropagation();
+            window.location.href = notification.actionUrl;
+        };
+    }
+    
+    // Set status classes
+    if (!notification.isRead) {
+        itemElement.classList.add('unread');
+    } else {
+        itemElement.classList.add('read');
+    }
+    
+    if (notification.isImportant) {
+        itemElement.classList.add('important');
+    }
+    
+    return item;
+}
+
+// Handle notification click
+function handleNotificationClick(notification) {
+    // Mark as read
+    markNotificationAsRead(notification.id);
+    
+    // Navigate to action URL if available
+    if (notification.actionUrl) {
+        window.location.href = notification.actionUrl;
+    }
+}
+
+// Mark notification as read
+async function markNotificationAsRead(notificationId) {
+    try {
+        await fetch(`/api/notifications/${notificationId}/read`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        // Update local state
+        const notification = notifications.find(n => n.id === notificationId);
+        if (notification) {
+            notification.isRead = true;
+            unreadCount = Math.max(0, unreadCount - 1);
+            updateNotificationBadge();
+            renderNotifications();
+        }
+        
+    } catch (error) {
+        console.error('Error marking notification as read:', error);
+    }
+}
+
+// Mark all notifications as read
+async function markAllNotificationsAsRead() {
+    try {
+        await fetch('/api/notifications/mark-all-read', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        // Update local state
+        notifications.forEach(notification => {
+            notification.isRead = true;
+        });
+        unreadCount = 0;
+        updateNotificationBadge();
+        renderNotifications();
+        
+    } catch (error) {
+        console.error('Error marking all notifications as read:', error);
+    }
+}
+
+// Update notification badge
+function updateNotificationBadge() {
+    const badge = document.getElementById('notificationBadge');
+    const count = document.getElementById('notificationCount');
+    
+    if (unreadCount > 0) {
+        badge.classList.remove('hidden');
+        count.textContent = unreadCount > 99 ? '99+' : unreadCount;
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
+// Format notification time
+function formatNotificationTime(createdAt) {
+    const now = new Date();
+    const notificationTime = new Date(createdAt);
+    const diffInMinutes = Math.floor((now - notificationTime) / (1000 * 60));
+    
+    if (diffInMinutes < 1) {
+        return 'الآن';
+    } else if (diffInMinutes < 60) {
+        return `منذ ${diffInMinutes} دقيقة`;
+    } else if (diffInMinutes < 1440) {
+        const hours = Math.floor(diffInMinutes / 60);
+        return `منذ ${hours} ساعة`;
+    } else {
+        const days = Math.floor(diffInMinutes / 1440);
+        return `منذ ${days} يوم`;
+    }
+}
+
+// Show notification error
+function showNotificationError() {
+    const container = document.getElementById('notificationsList');
+    const loading = document.getElementById('notificationsLoading');
+    
+    loading.classList.add('hidden');
+    container.innerHTML = `
+        <div class="p-4 text-center text-red-600">
+            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+            <p>حدث خطأ في تحميل الإشعارات</p>
+        </div>
+    `;
+}
+
+// Open notification settings
+function openNotificationSettings() {
+    // TODO: Implement notification settings
+    console.log('Opening notification settings...');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('notificationDropdown');
+    if (!dropdown.contains(event.target)) {
+        const panel = document.getElementById('notificationPanel');
+        panel.classList.add('hidden');
+        notificationDropdownOpen = false;
+    }
+});
+
+// Auto-refresh notifications every 30 seconds
+setInterval(() => {
+    if (notificationDropdownOpen) {
+        loadNotifications();
+    }
+}, 30000);
+
+// Load initial notification count
+document.addEventListener('DOMContentLoaded', function() {
+    loadNotificationCount();
+});
+
+// Load notification count only
+async function loadNotificationCount() {
+    try {
+        const response = await fetch('/api/notifications/unread-count');
+        const data = await response.json();
+        unreadCount = data.unread_count || 0;
+        updateNotificationBadge();
+    } catch (error) {
+        console.error('Error loading notification count:', error);
+    }
+}
+</script>

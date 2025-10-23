@@ -2,9 +2,29 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Patch;
 use App\Repository\NotificationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(security: "is_granted('ROLE_USER')"),
+        new Put(security: "is_granted('ROLE_USER')"),
+        new Delete(security: "is_granted('ROLE_USER')"),
+        new Patch(security: "is_granted('ROLE_USER')")
+    ],
+    normalizationContext: ['groups' => ['notification:read']],
+    denormalizationContext: ['groups' => ['notification:write']]
+)]
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 #[ORM\Table(name: 'notifications')]
 class Notification
@@ -12,46 +32,89 @@ class Notification
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['notification:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    #[Groups(['notification:read', 'notification:write'])]
     private ?User $user = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private ?string $title = null;
-
-    #[ORM\Column(type: 'text', nullable: true)]
-    private ?string $message = null;
-
     #[ORM\Column(type: 'string', length: 50)]
+    #[Groups(['notification:read', 'notification:write'])]
     private ?string $type = null;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['notification:read', 'notification:write'])]
+    private ?string $title = null;
+
+    #[ORM\Column(type: 'text')]
+    #[Groups(['notification:read', 'notification:write'])]
+    private ?string $message = null;
+
     #[ORM\Column(type: 'boolean')]
+    #[Groups(['notification:read'])]
     private bool $isRead = false;
 
+    #[ORM\Column(type: 'boolean')]
+    #[Groups(['notification:read'])]
+    private bool $isImportant = false;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['notification:read', 'notification:write'])]
+    private ?string $actionUrl = null;
+
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[Groups(['notification:read', 'notification:write'])]
+    private ?string $actionText = null;
+
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    #[Groups(['notification:read', 'notification:write'])]
+    private ?string $icon = null;
+
+    #[ORM\Column(type: 'string', length: 20, nullable: true)]
+    #[Groups(['notification:read', 'notification:write'])]
+    private ?string $color = null;
+
+    #[ORM\Column(type: 'json', nullable: true)]
+    #[Groups(['notification:read', 'notification:write'])]
+    private ?array $metadata = null;
+
     #[ORM\Column(type: 'datetime')]
+    #[Groups(['notification:read'])]
     private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(['notification:read'])]
     private ?\DateTimeInterface $readAt = null;
 
-    #[ORM\Column(type: 'json', nullable: true)]
-    private ?array $data = null;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(['notification:read'])]
+    private ?\DateTimeInterface $expiresAt = null;
 
-    // For product notifications
-    #[ORM\ManyToOne(targetEntity: Product::class)]
-    #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
-    private ?Product $product = null;
+    // Notification types constants
+    public const TYPE_MESSAGE = 'message';
+    public const TYPE_FOLLOW = 'follow';
+    public const TYPE_PRODUCT = 'product';
+    public const TYPE_ORDER = 'order';
+    public const TYPE_REVIEW = 'review';
+    public const TYPE_SYSTEM = 'system';
+    public const TYPE_PROMOTION = 'promotion';
+    public const TYPE_SECURITY = 'security';
 
-    // For seller notifications
-    #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(name: 'seller_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
-    private ?User $seller = null;
+    // Notification colors
+    public const COLOR_PRIMARY = 'primary';
+    public const COLOR_SUCCESS = 'success';
+    public const COLOR_WARNING = 'warning';
+    public const COLOR_DANGER = 'danger';
+    public const COLOR_INFO = 'info';
+    public const COLOR_SECONDARY = 'secondary';
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('Asia/Baghdad'));
+        $this->isRead = false;
+        $this->isImportant = false;
     }
 
     public function getId(): ?int
@@ -67,6 +130,17 @@ class Notification
     public function setUser(?User $user): static
     {
         $this->user = $user;
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
         return $this;
     }
 
@@ -86,20 +160,9 @@ class Notification
         return $this->message;
     }
 
-    public function setMessage(?string $message): static
+    public function setMessage(string $message): static
     {
         $this->message = $message;
-        return $this;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): static
-    {
-        $this->type = $type;
         return $this;
     }
 
@@ -112,8 +175,74 @@ class Notification
     {
         $this->isRead = $isRead;
         if ($isRead && !$this->readAt) {
-            $this->readAt = new \DateTime();
+            $this->readAt = new \DateTime('now', new \DateTimeZone('Asia/Baghdad'));
         }
+        return $this;
+    }
+
+    public function isImportant(): bool
+    {
+        return $this->isImportant;
+    }
+
+    public function setIsImportant(bool $isImportant): static
+    {
+        $this->isImportant = $isImportant;
+        return $this;
+    }
+
+    public function getActionUrl(): ?string
+    {
+        return $this->actionUrl;
+    }
+
+    public function setActionUrl(?string $actionUrl): static
+    {
+        $this->actionUrl = $actionUrl;
+        return $this;
+    }
+
+    public function getActionText(): ?string
+    {
+        return $this->actionText;
+    }
+
+    public function setActionText(?string $actionText): static
+    {
+        $this->actionText = $actionText;
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?string $icon): static
+    {
+        $this->icon = $icon;
+        return $this;
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+
+    public function setColor(?string $color): static
+    {
+        $this->color = $color;
+        return $this;
+    }
+
+    public function getMetadata(): ?array
+    {
+        return $this->metadata;
+    }
+
+    public function setMetadata(?array $metadata): static
+    {
+        $this->metadata = $metadata;
         return $this;
     }
 
@@ -139,36 +268,35 @@ class Notification
         return $this;
     }
 
-    public function getData(): ?array
+    public function getExpiresAt(): ?\DateTimeInterface
     {
-        return $this->data;
+        return $this->expiresAt;
     }
 
-    public function setData(?array $data): static
+    public function setExpiresAt(?\DateTimeInterface $expiresAt): static
     {
-        $this->data = $data;
+        $this->expiresAt = $expiresAt;
         return $this;
     }
 
-    public function getProduct(): ?Product
+    public function isExpired(): bool
     {
-        return $this->product;
+        if (!$this->expiresAt) {
+            return false;
+        }
+        return $this->expiresAt < new \DateTime('now', new \DateTimeZone('Asia/Baghdad'));
     }
 
-    public function setProduct(?Product $product): static
+    public function markAsRead(): static
     {
-        $this->product = $product;
+        $this->setIsRead(true);
         return $this;
     }
 
-    public function getSeller(): ?User
+    public function markAsUnread(): static
     {
-        return $this->seller;
-    }
-
-    public function setSeller(?User $seller): static
-    {
-        $this->seller = $seller;
+        $this->setIsRead(false);
+        $this->readAt = null;
         return $this;
     }
 }

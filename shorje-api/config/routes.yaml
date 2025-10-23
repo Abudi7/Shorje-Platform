@@ -57,6 +57,10 @@ app_messages:
     path: /messages
     controller: App\Controller\SocialController::messages
 
+app_notifications:
+    path: /notifications
+    controller: App\Controller\NotificationController::index
+
 # Web-specific API endpoints (session-based auth)
 web_conversation:
     path: /web/conversation/{userId}
