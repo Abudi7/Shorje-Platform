@@ -2,7 +2,7 @@
     {% if field.value is iterable %}
         {# Display blob data as image #}
         <div class="blob-image-display">
-            <img src="data:{{ entity.imageMimeType }};base64,{{ field.value|base64_encode }}" 
+            <img src="data:{{ entity.imageMimeType }};base64,{{ field.value }}" 
                  alt="Slider Image" 
                  class="max-w-xs max-h-32 object-cover rounded-lg shadow-md">
             <p class="text-sm text-gray-500 mt-2">

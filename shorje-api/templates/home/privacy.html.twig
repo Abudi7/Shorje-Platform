@@ -1,0 +1,205 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}سياسة الخصوصية - شورجي{% endblock %}
+
+{% block body %}
+<!-- Navigation Bar -->
+<nav class="bg-white dark:bg-slate-800 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center space-x-8 rtl:space-x-reverse">
+                <a href="/home" class="flex items-center space-x-2 rtl:space-x-reverse text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                    <i class="fas fa-home"></i>
+                    <span>الرئيسية</span>
+                </a>
+                <a href="/products" class="flex items-center space-x-2 rtl:space-x-reverse text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                    <i class="fas fa-box"></i>
+                    <span>المنتجات</span>
+                </a>
+                <a href="/users" class="flex items-center space-x-2 rtl:space-x-reverse text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                    <i class="fas fa-users"></i>
+                    <span>البائعين</span>
+                </a>
+                <a href="/contact" class="flex items-center space-x-2 rtl:space-x-reverse text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                    <i class="fas fa-envelope"></i>
+                    <span>اتصل بنا</span>
+                </a>
+            </div>
+            <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                <a href="/terms" class="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400">
+                    الشروط والأحكام
+                </a>
+                {% if app.user %}
+                    <a href="/profile" class="flex items-center space-x-2 rtl:space-x-reverse text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-user"></i>
+                        <span>الملف الشخصي</span>
+                    </a>
+                {% else %}
+                    <a href="/login" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        تسجيل الدخول
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+                سياسة الخصوصية
+            </h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                نحن في شورجي نلتزم بحماية خصوصيتك وبياناتك الشخصية
+            </p>
+        </div>
+
+        <!-- Content -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg">
+            <div class="prose prose-lg max-w-none dark:prose-invert">
+                
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">1. جمع المعلومات</h2>
+                <div class="mb-8">
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                        نجمع المعلومات التي تقدمها لنا مباشرة عند:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 mb-4">
+                        <li>إنشاء حساب جديد</li>
+                        <li>إضافة منتجات للبيع</li>
+                        <li>التواصل مع البائعين أو المشترين</li>
+                        <li>استخدام خدماتنا</li>
+                    </ul>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">2. أنواع المعلومات التي نجمعها</h2>
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">المعلومات الشخصية:</h3>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 mb-4">
+                        <li>الاسم الكامل</li>
+                        <li>عنوان البريد الإلكتروني</li>
+                        <li>رقم الهاتف</li>
+                        <li>الموقع الجغرافي</li>
+                        <li>صورة الملف الشخصي</li>
+                    </ul>
+                    
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">معلومات المنتجات:</h3>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 mb-4">
+                        <li>وصف المنتج</li>
+                        <li>صور المنتج</li>
+                        <li>السعر والتفاصيل</li>
+                        <li>الموقع</li>
+                    </ul>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">3. استخدام المعلومات</h2>
+                <div class="mb-8">
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                        نستخدم المعلومات التي نجمعها لـ:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 mb-4">
+                        <li>توفير خدمات المنصة</li>
+                        <li>تسهيل التواصل بين البائعين والمشترين</li>
+                        <li>تحسين تجربة المستخدم</li>
+                        <li>إرسال الإشعارات المهمة</li>
+                        <li>ضمان أمان المنصة</li>
+                    </ul>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">4. مشاركة المعلومات</h2>
+                <div class="mb-8">
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                        نحن لا نبيع أو نؤجر معلوماتك الشخصية. قد نشارك معلوماتك في الحالات التالية فقط:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 mb-4">
+                        <li>مع موافقتك الصريحة</li>
+                        <li>للمشترين أو البائعين عند التواصل</li>
+                        <li>عندما يتطلب القانون ذلك</li>
+                        <li>لحماية حقوقنا أو حقوق المستخدمين الآخرين</li>
+                    </ul>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">5. أمان البيانات</h2>
+                <div class="mb-8">
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                        نتخذ إجراءات أمنية مناسبة لحماية معلوماتك:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 mb-4">
+                        <li>تشفير البيانات الحساسة</li>
+                        <li>استخدام بروتوكولات أمنية متقدمة</li>
+                        <li>مراقبة الوصول إلى البيانات</li>
+                        <li>تدريب فريق العمل على أفضل الممارسات الأمنية</li>
+                    </ul>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">6. ملفات تعريف الارتباط (Cookies)</h2>
+                <div class="mb-8">
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                        نستخدم ملفات تعريف الارتباط لتحسين تجربتك على المنصة. يمكنك التحكم في إعدادات ملفات تعريف الارتباط من خلال متصفحك.
+                    </p>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">7. حقوقك</h2>
+                <div class="mb-8">
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                        لديك الحق في:
+                    </p>
+                    <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2 mb-4">
+                        <li>الوصول إلى معلوماتك الشخصية</li>
+                        <li>تصحيح المعلومات غير الصحيحة</li>
+                        <li>حذف حسابك ومعلوماتك</li>
+                        <li>سحب موافقتك في أي وقت</li>
+                        <li>تصدير بياناتك</li>
+                    </ul>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">8. تحديث سياسة الخصوصية</h2>
+                <div class="mb-8">
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                        قد نقوم بتحديث هذه السياسة من وقت لآخر. سنقوم بإشعارك بأي تغييرات مهمة عبر البريد الإلكتروني أو من خلال المنصة.
+                    </p>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">9. التواصل معنا</h2>
+                <div class="mb-8">
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                        إذا كان لديك أي أسئلة حول سياسة الخصوصية، يرجى التواصل معنا:
+                    </p>
+                    <div class="bg-gray-50 dark:bg-slate-700 rounded-lg p-6">
+                        <p class="text-gray-700 dark:text-gray-300 mb-2">
+                            <strong>البريد الإلكتروني:</strong> privacy@shorje.com
+                        </p>
+                        <p class="text-gray-700 dark:text-gray-300 mb-2">
+                            <strong>الهاتف:</strong> +964-XXX-XXX-XXXX
+                        </p>
+                        <p class="text-gray-700 dark:text-gray-300">
+                            <strong>العنوان:</strong> بغداد، العراق
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mt-8">
+                    <h3 class="text-lg font-bold text-blue-900 dark:text-blue-100 mb-3">
+                        <i class="fas fa-info-circle ml-2"></i>
+                        ملاحظة مهمة
+                    </h3>
+                    <p class="text-blue-800 dark:text-blue-200">
+                        آخر تحديث: {{ "now"|date("Y-m-d") }}<br>
+                        هذه السياسة سارية المفعول اعتباراً من تاريخ آخر تحديث.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Back to Home -->
+        <div class="text-center mt-8">
+            <a href="/home" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-home ml-2"></i>
+                العودة للرئيسية
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

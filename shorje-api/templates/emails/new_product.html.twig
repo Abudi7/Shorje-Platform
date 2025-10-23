@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مرحباً بك في شورجي</title>
+    <title>منتج جديد - شورجي</title>
     <style>
         body {
             font-family: 'Inter', Arial, sans-serif;
@@ -27,7 +27,7 @@
         .logo {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background: linear-gradient(135deg, #10b981, #3b82f6);
             border-radius: 12px;
             margin: 0 auto 20px;
             display: flex;
@@ -52,7 +52,7 @@
         }
         .button {
             display: inline-block;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background: linear-gradient(135deg, #10b981, #3b82f6);
             color: white;
             padding: 14px 28px;
             text-decoration: none;
@@ -64,6 +64,13 @@
         .button:hover {
             transform: translateY(-2px);
         }
+        .product-info {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #10b981;
+        }
         .footer {
             margin-top: 40px;
             padding-top: 20px;
@@ -72,52 +79,43 @@
             color: #6b7280;
             font-size: 14px;
         }
-        .highlight {
-            background: #f3f4f6;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #3b82f6;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="logo">ش</div>
-            <h1>مرحباً بك في شورجي!</h1>
-            <p class="subtitle">منصة البيع والشراء المحلية</p>
+            <h1>منتج جديد!</h1>
+            <p class="subtitle">أضاف {{ sellerName }} منتج جديد</p>
         </div>
 
         <div class="content">
-            <p>مرحباً {{ firstName }} {{ lastName }},</p>
+            <p>مرحباً {{ user.firstName }},</p>
             
-            <p>شكراً لك على الانضمام إلى شورجي! نحن متحمسون لوجودك معنا. تم إنشاء حسابك بنجاح.</p>
+            <p>أضاف <strong>{{ sellerName }}</strong> منتج جديد قد يهمك في منصة شورجي.</p>
 
-            <div class="highlight">
-                <strong>🔐 الخطوة التالية:</strong> يرجى تأكيد عنوان بريدك الإلكتروني لإكمال التسجيل والوصول إلى جميع الميزات.
+            <div class="product-info">
+                <strong>📦 المنتج الجديد:</strong><br>
+                <strong>{{ productName }}</strong>
             </div>
 
-            <p>انقر على الزر أدناه لتأكيد عنوان بريدك الإلكتروني:</p>
+            <p>انقر على الزر أدناه لتصفح المنتج الجديد:</p>
 
             <div style="text-align: center;">
-                <a href="{{ verificationUrl }}" class="button">تأكيد البريد الإلكتروني</a>
+                <a href="{{ productsUrl }}" class="button">تصفح المنتج</a>
             </div>
 
-            <p>إذا لم يعمل الزر، يمكنك نسخ ولصق هذا الرابط في متصفحك:</p>
-            <p style="word-break: break-all; color: #3b82f6;">{{ verificationUrl }}</p>
-
-            <p><strong>ما التالي؟</strong></p>
+            <p><strong>نصائح للشراء الآمن:</strong></p>
             <ul>
-                <li>✅ تأكيد عنوان بريدك الإلكتروني</li>
-                <li>🛍️ تصفح المنتجات المتاحة</li>
-                <li>💬 تواصل مع البائعين</li>
-                <li>📱 أضف منتجاتك للبيع</li>
+                <li>✅ تحقق من صحة المنتج</li>
+                <li>💰 تأكد من السعر المناسب</li>
+                <li>📍 تحقق من موقع البائع</li>
+                <li>💬 تواصل مع البائع قبل الشراء</li>
             </ul>
         </div>
 
         <div class="footer">
-            <p>تم إرسال هذا البريد الإلكتروني إلى {{ user.email }}. إذا لم تقم بإنشاء حساب في شورجي، يمكنك تجاهل هذا البريد بأمان.</p>
+            <p>تم إرسال هذا البريد الإلكتروني إلى {{ user.email }}.</p>
             <p>&copy; 2024 شورجي. جميع الحقوق محفوظة.</p>
         </div>
     </div>

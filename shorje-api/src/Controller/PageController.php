@@ -42,4 +42,10 @@ class PageController extends AbstractController
     {
         return $this->render('dashboard/index.html.twig');
     }
+
+    #[Route('/privacy', name: 'privacy_policy', methods: ['GET'])]
+    public function privacy(): Response
+    {
+        return $this->render('home/privacy.html.twig');
+    }
 }
