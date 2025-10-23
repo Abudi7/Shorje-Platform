@@ -9,25 +9,30 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class BlobImageType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-            $data = $event->getData();
+            $form = $event->getForm();
+            $data = $form->getData();
             
-            if ($data instanceof \App\Entity\SliderImage && $data->getImage() instanceof \Symfony\Component\HttpFoundation\File\UploadedFile) {
-                $uploadedFile = $data->getImage();
+            if ($data instanceof \App\Entity\SliderImage) {
+                $imageField = $form->get('image');
+                $imageData = $imageField->getData();
                 
-                // Read the file content
-                $fileContent = file_get_contents($uploadedFile->getPathname());
-                
-                // Set the blob data
-                $data->setImage($fileContent);
-                
-                // Set the MIME type
-                $data->setImageMimeType($uploadedFile->getMimeType());
+                if ($imageData instanceof UploadedFile) {
+                    // Read the file content
+                    $fileContent = file_get_contents($imageData->getPathname());
+                    
+                    // Set the blob data
+                    $data->setImage($fileContent);
+                    
+                    // Set the MIME type
+                    $data->setImageMimeType($imageData->getMimeType());
+                }
             }
         });
     }

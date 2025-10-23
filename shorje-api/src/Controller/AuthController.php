@@ -11,6 +11,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use App\Service\EmailService;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Uid\Uuid;
 
@@ -71,7 +72,7 @@ class AuthController extends AbstractController
     public function forgotPassword(
         Request $request,
         EntityManagerInterface $em,
-        MailerInterface $mailer
+        EmailService $emailService
     ): JsonResponse {
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
@@ -96,7 +97,7 @@ class AuthController extends AbstractController
 
         // Send reset email
         try {
-            $this->sendPasswordResetEmail($mailer, $user, $resetToken);
+            $emailService->sendPasswordResetEmail($user, $resetToken);
         } catch (\Exception $e) {
             error_log('Failed to send password reset email: ' . $e->getMessage());
             return new JsonResponse(['error' => 'Failed to send reset email'], 500);

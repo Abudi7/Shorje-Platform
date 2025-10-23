@@ -54,6 +54,10 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('الرئيسية', 'fa fa-home');
         
+        // العودة للموقع
+        yield MenuItem::linkToUrl('العودة للموقع', 'fa fa-globe', '/home')
+            ->setCssClass('text-green-600 hover:text-green-700 font-bold');
+        
         // إدارة المحتوى
         yield MenuItem::section('إدارة المحتوى', 'fa fa-cogs');
         yield MenuItem::linkToCrud('صور السلايدر', 'fa fa-images', SliderImage::class)
