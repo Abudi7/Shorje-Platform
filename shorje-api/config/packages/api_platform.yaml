@@ -25,3 +25,5 @@ api_platform:
             apiKey:
                 type: 'header'
                 name: 'X-API-Key'
+        versions:
+            - 3
