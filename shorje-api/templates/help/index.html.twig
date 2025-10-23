@@ -1,0 +1,231 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}المساعدة - شورجي{% endblock %}
+
+{% block body %}
+<!-- Include Navigation Component -->
+{% include 'components/navigation.html.twig' %}
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <!-- Header Section -->
+    <div class="relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-emerald-600/10"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        
+        <div class="relative z-10 container mx-auto px-4 py-12">
+            <!-- Page Header -->
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-orange-500 to-red-600 rounded-full mb-6 shadow-lg">
+                    <i class="fas fa-question-circle text-3xl text-white"></i>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                    <span class="gradient-text">مركز المساعدة</span>
+                </h1>
+                <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    دليل شامل لاستخدام منصة شورجي والاستفادة من جميع الميزات
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Search Help Section -->
+        <div class="glass dark:glass-dark rounded-2xl p-6 mb-8">
+            <div class="text-center">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">ابحث عن المساعدة</h2>
+                <div class="max-w-2xl mx-auto">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" id="helpSearch" placeholder="ابحث عن موضوع المساعدة..." 
+                               class="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Help Categories -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="help-category bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer" onclick="showCategory('getting-started')">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-play text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">البدء السريع</h3>
+                    <p class="text-gray-600 dark:text-gray-300">تعلم أساسيات استخدام المنصة</p>
+                </div>
+            </div>
+
+            <div class="help-category bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer" onclick="showCategory('buying')">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shopping-cart text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">كيفية الشراء</h3>
+                    <p class="text-gray-600 dark:text-gray-300">دليل شامل لعملية الشراء</p>
+                </div>
+            </div>
+
+            <div class="help-category bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer" onclick="showCategory('selling')">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-store text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">كيفية البيع</h3>
+                    <p class="text-gray-600 dark:text-gray-300">تعلم كيفية بيع منتجاتك</p>
+                </div>
+            </div>
+
+            <div class="help-category bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer" onclick="showCategory('account')">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-user-cog text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">إدارة الحساب</h3>
+                    <p class="text-gray-600 dark:text-gray-300">إعدادات الحساب والملف الشخصي</p>
+                </div>
+            </div>
+
+            <div class="help-category bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer" onclick="showCategory('safety')">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-red-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">الأمان والحماية</h3>
+                    <p class="text-gray-600 dark:text-gray-300">نصائح للأمان أثناء التعامل</p>
+                </div>
+            </div>
+
+            <div class="help-category bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer" onclick="showCategory('contact')">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-teal-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-headset text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">التواصل معنا</h3>
+                    <p class="text-gray-600 dark:text-gray-300">طرق التواصل والدعم الفني</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Content -->
+        <div id="helpContent" class="hidden">
+            <!-- Content will be loaded here -->
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-8">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">الأسئلة الشائعة</h2>
+            
+            <div class="space-y-4">
+                <div class="faq-item border border-gray-200 dark:border-slate-600 rounded-xl">
+                    <button class="faq-question w-full text-right p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors" onclick="toggleFAQ(this)">
+                        <span class="text-lg font-medium text-gray-900 dark:text-white">كيف يمكنني إنشاء حساب جديد؟</span>
+                        <i class="fas fa-chevron-down text-gray-500 transition-transform"></i>
+                    </button>
+                    <div class="faq-answer hidden p-6 pt-0">
+                        <p class="text-gray-600 dark:text-gray-300">يمكنك إنشاء حساب جديد من خلال الضغط على زر "إنشاء حساب" في الصفحة الرئيسية، ثم ملء البيانات المطلوبة والتحقق من البريد الإلكتروني.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 dark:border-slate-600 rounded-xl">
+                    <button class="faq-question w-full text-right p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors" onclick="toggleFAQ(this)">
+                        <span class="text-lg font-medium text-gray-900 dark:text-white">كيف يمكنني إضافة منتج للبيع؟</span>
+                        <i class="fas fa-chevron-down text-gray-500 transition-transform"></i>
+                    </button>
+                    <div class="faq-answer hidden p-6 pt-0">
+                        <p class="text-gray-600 dark:text-gray-300">بعد تسجيل الدخول، اذهب إلى صفحة "منتجاتي" واضغط على "إضافة منتج جديد"، ثم املأ تفاصيل المنتج وأضف الصور.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 dark:border-slate-600 rounded-xl">
+                    <button class="faq-question w-full text-right p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors" onclick="toggleFAQ(this)">
+                        <span class="text-lg font-medium text-gray-900 dark:text-white">كيف يمكنني التواصل مع البائع؟</span>
+                        <i class="fas fa-chevron-down text-gray-500 transition-transform"></i>
+                    </button>
+                    <div class="faq-answer hidden p-6 pt-0">
+                        <p class="text-gray-600 dark:text-gray-300">يمكنك التواصل مع البائع من خلال صفحة المنتج بالضغط على زر "تواصل مع البائع" أو من خلال صفحة الرسائل.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item border border-gray-200 dark:border-slate-600 rounded-xl">
+                    <button class="faq-question w-full text-right p-6 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors" onclick="toggleFAQ(this)">
+                        <span class="text-lg font-medium text-gray-900 dark:text-white">هل المنصة آمنة للتعاملات المالية؟</span>
+                        <i class="fas fa-chevron-down text-gray-500 transition-transform"></i>
+                    </button>
+                    <div class="faq-answer hidden p-6 pt-0">
+                        <p class="text-gray-600 dark:text-gray-300">نعم، نستخدم أحدث تقنيات الأمان لحماية بياناتك ومعاملاتك المالية. جميع المعاملات مشفرة ومحمية.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.glass {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.glass-dark {
+    background: rgba(15, 23, 42, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.help-category:hover {
+    transform: translateY(-4px);
+}
+
+.faq-question i {
+    transition: transform 0.3s ease;
+}
+
+.faq-question.active i {
+    transform: rotate(180deg);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    document.getElementById('helpSearch').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        // Implement search logic here
+        console.log('Searching for:', searchTerm);
+    });
+});
+
+// Show help category
+function showCategory(category) {
+    console.log('Showing category:', category);
+    // Implement category content loading here
+}
+
+// Toggle FAQ item
+function toggleFAQ(button) {
+    const answer = button.nextElementSibling;
+    const icon = button.querySelector('i');
+    
+    if (answer.classList.contains('hidden')) {
+        answer.classList.remove('hidden');
+        button.classList.add('active');
+        icon.style.transform = 'rotate(180deg)';
+    } else {
+        answer.classList.add('hidden');
+        button.classList.remove('active');
+        icon.style.transform = 'rotate(0deg)';
+    }
+}
+</script>
+{% endblock %}
