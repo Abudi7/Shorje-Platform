@@ -8,6 +8,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use App\Form\Type\BlobImageType;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -63,13 +65,19 @@ class SliderImageCrudController extends AbstractCrudController
                 ->setHelp('وصف مختصر للصورة')
                 ->hideOnIndex(),
             
-            ImageField::new('image', 'الصورة')
-                ->setBasePath('/uploads/slider/')
-                ->setUploadDir('public/uploads/slider/')
-                ->setUploadedFileNamePattern('[randomhash].[extension]')
+            Field::new('image', 'الصورة')
                 ->setRequired(true)
                 ->setHelp('اختر صورة للسلايدر (JPG, PNG, GIF)')
-                ->setFormTypeOption('mapped', false),
+                ->hideOnIndex()
+                ->hideOnDetail()
+                ->setFormType(BlobImageType::class)
+                ->setFormTypeOption('mapped', true)
+                ->setTemplatePath('admin/fields/blob_image.html.twig'),
+            
+            Field::new('imagePreview', 'معاينة الصورة')
+                ->hideOnForm()
+                ->hideOnIndex()
+                ->setTemplatePath('admin/fields/image_preview.html.twig'),
             
             TextField::new('buttonText', 'نص الزر الأول')
                 ->setHelp('النص الذي سيظهر على الزر الأول')

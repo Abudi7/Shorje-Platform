@@ -1,0 +1,16 @@
+{% if entity.image and entity.imageMimeType %}
+    <div class="image-preview-container">
+        <img src="data:{{ entity.imageMimeType }};base64,{{ entity.image|base64_encode }}" 
+             alt="Slider Image Preview" 
+             class="max-w-md max-h-64 object-cover rounded-lg shadow-lg border border-gray-200">
+        <div class="mt-2 text-sm text-gray-600">
+            <p><strong>نوع الملف:</strong> {{ entity.imageMimeType }}</p>
+            <p><strong>حجم البيانات:</strong> {{ entity.image|length }} بايت</p>
+        </div>
+    </div>
+{% else %}
+    <div class="text-gray-500 text-sm">
+        <i class="fas fa-image mr-2"></i>
+        لا توجد صورة محفوظة
+    </div>
+{% endif %}

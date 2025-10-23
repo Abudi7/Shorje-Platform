@@ -285,7 +285,9 @@
                                             <i class="fas fa-user text-white text-lg" style="display: none;"></i>
                                         </div>
                                         <!-- Online Status -->
-                                        <div class="absolute -bottom-1 -right-1 h-4 w-4 bg-emerald-500 border-2 border-white dark:border-slate-800 rounded-full shadow-lg"></div>
+                                        <div class="absolute -bottom-1 -right-1 h-4 w-4 border-2 border-white dark:border-slate-800 rounded-full shadow-lg user-status-indicator" 
+                                             data-user-id="${conversation.user.id}" 
+                                             style="background-color: ${conversation.user.isOnline ? '#10b981' : '#6b7280'};"></div>
                                     </div>
                                     
                                     <!-- Conversation Info -->
@@ -340,8 +342,8 @@
                             <div>
                                 <h2 id="chatUserName" class="text-xl font-bold text-gray-900 dark:text-white"></h2>
                                 <div class="flex items-center space-x-2">
-                                    <div class="h-2 w-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                                    <p class="text-sm text-emerald-600 dark:text-emerald-400 font-medium">متصل الآن</p>
+                                    <div id="chatUserStatusDot" class="h-2 w-2 bg-gray-400 rounded-full"></div>
+                                    <p id="chatUserStatus" class="text-sm text-gray-500 font-medium">جاري التحميل...</p>
                                 </div>
                             </div>
                         </div>
@@ -504,6 +506,15 @@ function playMessageSound() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize user status tracking
+    updateUserStatus(true);
+    
+    // Check user status every 10 seconds
+    setInterval(checkUserStatus, 10000);
+    
+    // Load conversations on page load
+    loadConversations();
+    
     // Check for user ID in URL for chat persistence
     const urlParams = new URLSearchParams(window.location.search);
     const userId = urlParams.get('user');
@@ -512,13 +523,36 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // If user ID is in URL, auto-select that conversation
     if (userId) {
-        setTimeout(() => {
-            const conversationElement = document.querySelector(`[data-user-id="${userId}"]`);
-            if (conversationElement) {
-                const userName = conversationElement.querySelector('h3').textContent;
-                selectConversation(parseInt(userId), userName);
+        // Wait for conversations to load, then auto-select
+        setTimeout(async () => {
+            try {
+                const response = await apiCall('/web/conversations');
+                if (response && response.conversations) {
+                    const targetUser = response.conversations.find(conv => conv.user.id == userId);
+                    if (targetUser) {
+                        selectConversation(parseInt(userId), targetUser.user.firstName + ' ' + targetUser.user.lastName);
+                    } else {
+                        // If user not in conversations, fetch user info and create new conversation
+                        try {
+                            const userResponse = await apiCall(`/web/users/${userId}`);
+                            if (userResponse && userResponse.user) {
+                                const fullName = userResponse.user.firstName + ' ' + userResponse.user.lastName;
+                                selectConversation(parseInt(userId), fullName);
+                            } else {
+                                selectConversation(parseInt(userId), 'مستخدم جديد');
+                            }
+                        } catch (error) {
+                            console.error('Failed to fetch user info:', error);
+                            selectConversation(parseInt(userId), 'مستخدم جديد');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load conversations for auto-selection:', error);
+                // Fallback: try to select anyway
+                selectConversation(parseInt(userId), 'مستخدم');
             }
-        }, 500);
+        }, 2000);
     }
     
     if (sellerId && productData) {
@@ -1005,11 +1039,64 @@ function startChatWithUser(userId, userName) {
 async function loadConversations() {
     try {
         const response = await apiCall('/web/conversations');
-        // Update conversations list if needed
-        // This could be enhanced to update the UI dynamically
+        if (response && response.conversations) {
+            renderConversations(response.conversations);
+        }
     } catch (error) {
         console.error('Failed to load conversations:', error);
     }
+}
+
+function renderConversations(conversations) {
+    const conversationsList = document.getElementById('conversationsList');
+    if (!conversationsList) return;
+    
+    if (conversations.length === 0) {
+        conversationsList.innerHTML = `
+            <div class="text-center py-8">
+                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <i class="fas fa-comments text-white text-2xl"></i>
+                </div>
+                <p class="text-gray-500 dark:text-gray-400 mb-2">لا توجد محادثات</p>
+                <p class="text-sm text-gray-400 dark:text-gray-500">ابدأ محادثة جديدة مع البائعين</p>
+            </div>
+        `;
+        return;
+    }
+    
+    conversationsList.innerHTML = conversations.map(conversation => `
+        <div class="conversation-item p-4 border-b border-gray-200 dark:border-slate-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
+             data-user-id="${conversation.user.id}" onclick="selectConversation(${conversation.user.id}, '${conversation.user.firstName} ${conversation.user.lastName}')">
+            <div class="flex items-center space-x-3 rtl:space-x-reverse">
+                <div class="relative">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                        ${conversation.user.firstName.charAt(0)}${conversation.user.lastName.charAt(0)}
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 h-4 w-4 border-2 border-white dark:border-slate-800 rounded-full shadow-lg user-status-indicator" 
+                         data-user-id="${conversation.user.id}" 
+                         style="background-color: ${conversation.user.isOnline ? '#10b981' : '#6b7280'};"></div>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                        ${conversation.user.firstName} ${conversation.user.lastName}
+                    </h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        ${conversation.lastMessage ? conversation.lastMessage.content : 'لا توجد رسائل'}
+                    </p>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs text-gray-400 dark:text-gray-500">
+                        ${conversation.lastMessage ? formatMessageTime(conversation.lastMessage.createdAt) : ''}
+                    </span>
+                    ${conversation.unreadCount > 0 ? `
+                        <div class="mt-1 w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
+                            ${conversation.unreadCount}
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+    `).join('');
 }
 
 function formatMessageTime(timestamp) {
@@ -1431,6 +1518,28 @@ async function updateUserStatus(isOnline) {
     }
 }
 
+// Update user status indicators in the UI
+function updateUserStatusIndicators(userId, isOnline) {
+    const indicators = document.querySelectorAll(`[data-user-id="${userId}"]`);
+    indicators.forEach(indicator => {
+        indicator.style.backgroundColor = isOnline ? '#10b981' : '#6b7280';
+    });
+}
+
+// Check and update user status periodically
+async function checkUserStatus() {
+    try {
+        const response = await apiCall('/web/conversations');
+        if (response && response.conversations) {
+            response.conversations.forEach(conversation => {
+                updateUserStatusIndicators(conversation.user.id, conversation.user.isOnline);
+            });
+        }
+    } catch (error) {
+        console.error('Failed to check user status:', error);
+    }
+}
+
 // Clear unread indicators for a conversation
 function clearUnreadIndicators(userId) {
     const conversationItem = document.querySelector(`[data-user-id="${userId}"]`);
@@ -1559,7 +1668,7 @@ function handleKeyPress(event) {
 }
 
 // Update selectConversation to add URL parameter
-function selectConversation(userId, userName) {
+async function selectConversation(userId, userName) {
     currentChatUserId = userId;
     currentChatUserName = userName;
     
@@ -1573,6 +1682,70 @@ function selectConversation(userId, userName) {
     document.getElementById('chatUserImage').src = `/api/user/avatar/${userId}`;
     document.getElementById('chatUserImage').style.display = 'block';
     document.getElementById('chatUserIcon').style.display = 'none';
+    
+    // Fetch and display user online status
+    try {
+        const userResponse = await apiCall(`/web/users/${userId}`);
+        if (userResponse && userResponse.user) {
+            const statusElement = document.getElementById('chatUserStatus');
+            if (statusElement) {
+                if (userResponse.user.isOnline) {
+                    statusElement.innerHTML = 'متصل الآن';
+                    statusElement.className = 'text-sm text-green-500';
+                    const statusDot = document.getElementById('chatUserStatusDot');
+                    if (statusDot) {
+                        statusDot.className = 'h-2 w-2 bg-green-500 rounded-full animate-pulse';
+                    }
+                } else {
+                    const lastSeen = userResponse.user.lastSeenAt;
+                    if (lastSeen) {
+                        const lastSeenDate = new Date(lastSeen);
+                        const now = new Date();
+                        const diffInMinutes = Math.floor((now - lastSeenDate) / (1000 * 60));
+                        
+                        let statusText = '';
+                        if (diffInMinutes < 1) {
+                            statusText = 'كان متصلاً للتو';
+                        } else if (diffInMinutes < 60) {
+                            statusText = `آخر ظهور منذ ${diffInMinutes} دقيقة`;
+                        } else if (diffInMinutes < 1440) {
+                            const hours = Math.floor(diffInMinutes / 60);
+                            statusText = `آخر ظهور منذ ${hours} ساعة`;
+                        } else {
+                            const days = Math.floor(diffInMinutes / 1440);
+                            statusText = `آخر ظهور منذ ${days} يوم`;
+                        }
+                        
+                        statusElement.innerHTML = statusText;
+                        statusElement.className = 'text-sm text-gray-500';
+                        const statusDot = document.getElementById('chatUserStatusDot');
+                        if (statusDot) {
+                            statusDot.className = 'h-2 w-2 bg-gray-400 rounded-full';
+                        }
+                    } else {
+                        statusElement.innerHTML = 'غير متصل';
+                        statusElement.className = 'text-sm text-gray-500';
+                        const statusDot = document.getElementById('chatUserStatusDot');
+                        if (statusDot) {
+                            statusDot.className = 'h-2 w-2 bg-gray-400 rounded-full';
+                        }
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Failed to fetch user status:', error);
+        // Set default offline status
+        const statusElement = document.getElementById('chatUserStatus');
+        const statusDot = document.getElementById('chatUserStatusDot');
+        if (statusElement) {
+            statusElement.innerHTML = 'غير متصل';
+            statusElement.className = 'text-sm text-gray-500';
+        }
+        if (statusDot) {
+            statusDot.className = 'h-2 w-2 bg-gray-400 rounded-full';
+        }
+    }
     
     // Show chat interface
     document.getElementById('noChatSelected').classList.add('hidden');
