@@ -1,0 +1,29 @@
+api_platform:
+    title: Shorje Platform API
+    description: 'API documentation for Shorje Platform - Local marketplace for buying and selling'
+    version: 1.0.0
+    defaults:
+        stateless: true
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Origin']
+    mapping:
+        paths: ['%kernel.project_dir%/src/Entity']
+    formats:
+        jsonld:
+            mime_types: ['application/ld+json']
+        json:
+            mime_types: ['application/json']
+        html:
+            mime_types: ['text/html']
+    patch_formats:
+        json:
+            mime_types: ['application/merge-patch+json']
+    graphql:
+        enabled: true
+    swagger:
+        api_keys:
+            apiKey:
+                type: 'header'
+                name: 'X-API-Key'
+        versions:
+            - 3

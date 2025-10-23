@@ -315,10 +315,6 @@
                                         <i class="fas fa-box text-gray-500"></i>
                                         <span>منتجاتي</span>
                                     </a>
-                                    <a href="/messages" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
-                                        <i class="fas fa-comments text-gray-500"></i>
-                                        <span>الرسائل</span>
-                                    </a>
                                     <a href="/saved" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
                                         <i class="fas fa-heart text-gray-500"></i>
                                         <span>المحفوظات</span>
@@ -345,19 +341,14 @@
                         
                         <!-- Messages -->
                         <div class="relative">
-                            <button onclick="openMessages()" class="p-3 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 relative bg-gray-100 dark:bg-slate-700 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-600 transition-all duration-300 shadow-lg">
+                            <button onclick="openMessages()" class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg">
                                 <i class="fas fa-comments text-xl"></i>
-                                <span id="messagesCount" class="absolute -top-1 -right-1 bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg hidden">0</span>
+                                <span id="messagesCount" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                             </button>
                         </div>
                         
-                        <!-- Notifications -->
-                        <div class="relative">
-                            <button onclick="openNotifications()" class="p-3 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 relative bg-gray-100 dark:bg-slate-700 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-600 transition-all duration-300 shadow-lg">
-                                <i class="fas fa-bell text-xl"></i>
-                                <span id="notificationsCount" class="absolute -top-1 -right-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg hidden">0</span>
-                            </button>
-                        </div>
+                        <!-- Notification Dropdown -->
+                        {% include 'components/notification_dropdown.html.twig' %}
                     </div>
                 </div>
             </div>
@@ -379,10 +370,6 @@
                         <a href="/users" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
                             <i class="fas fa-users"></i>
                             <span>البائعين</span>
-                        </a>
-                        <a href="/messages" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
-                            <i class="fas fa-comments text-blue-500"></i>
-                            <span>الرسائل</span>
                         </a>
                         <a href="/products/my" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
                             <i class="fas fa-box text-purple-500"></i>
@@ -1395,17 +1382,39 @@ async function loadProducts() {
         document.getElementById('emptyState').classList.add('hidden');
         document.getElementById('pagination').classList.add('hidden');
         
-        const response = await apiCall(`/api/products?${params.toString()}`);
+        const response = await apiCall(`/web/products?${params.toString()}`);
+        
+        // Handle web endpoint response format
+        let products = [];
+        let total = 0;
+        
+        if (response.products && Array.isArray(response.products)) {
+            // Web endpoint format
+            products = response.products;
+            total = response.pagination?.total || response.products.length;
+        } else if (Array.isArray(response)) {
+            // Direct array response
+            products = response;
+            total = response.length;
+        } else if (response.member && Array.isArray(response.member)) {
+            // JSON-LD format with member array
+            products = response.member;
+            total = response.totalItems || response.member.length;
+        } else {
+            // Fallback
+            products = [];
+            total = 0;
+        }
         
         // Update pagination info
-        totalProducts = response.total || response.products.length;
+        totalProducts = total;
         totalPages = Math.ceil(totalProducts / 12);
         
         // Show loading state
         document.getElementById('loadingState').classList.add('hidden');
         
-        window.currentProducts = response.products;
-        renderProducts(response.products);
+        window.currentProducts = products;
+        renderProducts(products);
         
         // Show results count for filtered results
         const hasFilters = search || category || city || minPrice || maxPrice || selectedCategory !== 'all';

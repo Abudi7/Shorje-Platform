@@ -54,12 +54,19 @@ security:
         - { path: ^/api/notifications/unread-count, roles: PUBLIC_ACCESS }
         - { path: ^/api/user/avatar, roles: PUBLIC_ACCESS }
         - { path: ^/api/contact, roles: PUBLIC_ACCESS }
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+        - { path: ^/api/contexts, roles: PUBLIC_ACCESS }
+        - { path: ^/api/\.well-known, roles: PUBLIC_ACCESS }
+        - { path: ^/api/$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/index, roles: PUBLIC_ACCESS }
+        - { path: ^/api$, roles: PUBLIC_ACCESS }
+        - { path: ^/web/products, roles: PUBLIC_ACCESS }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
         - { path: ^/forgot-password, roles: PUBLIC_ACCESS }
         - { path: ^/reset-password, roles: PUBLIC_ACCESS }
         - { path: ^/web, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/(?!login|register|forgot-password|reset-password|verify-email|products|users/search|messages/unread-count|notifications/unread-count|user/avatar|contact|docs|contexts|\.well-known|$|index).*, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/dashboard, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/home, roles: PUBLIC_ACCESS }
         - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }

@@ -7,6 +7,7 @@ use App\Entity\Message;
 use App\Entity\User;
 use App\Repository\FollowRepository;
 use App\Repository\MessageRepository;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,6 +18,10 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class SocialController extends AbstractController
 {
+    public function __construct(
+        private NotificationService $notificationService
+    ) {}
+
     #[Route('/api/follow/{userId}', name: 'api_follow_user', methods: ['POST'])]
     #[Route('/web/follow/{userId}', name: 'web_follow_user', methods: ['POST'])]
     public function followUser(int $userId, EntityManagerInterface $em, FollowRepository $followRepo): JsonResponse
@@ -46,6 +51,9 @@ class SocialController extends AbstractController
 
             $em->persist($follow);
             $em->flush();
+
+            // Create follow notification
+            $this->notificationService->createFollowNotification($userToFollow, $currentUser);
 
             return new JsonResponse([
                 'message' => 'تم متابعة المستخدم بنجاح',
