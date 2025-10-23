@@ -66,6 +66,7 @@ security:
         - { path: ^/users, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/chat, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/messages, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/admin, roles: ROLE_SUPER_ADMIN }
 
 when@test:
     security:

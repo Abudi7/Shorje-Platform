@@ -18,10 +18,33 @@ services:
 ###< symfony/mailer ###
 
 ###> database admin ###
-  adminer:
-    image: adminer
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
     ports:
-      - "8080:8080"
-    depends_on:
-      - database
+      - "8080:80"
+    environment:
+      PMA_HOST: host.docker.internal
+      PMA_PORT: 3306
+      PMA_USER: shorje
+      PMA_PASSWORD: "shorje"
+      PMA_ABSOLUTE_URI: http://localhost:8080
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 ###< database admin ###
+
+###> MySQL Database ###
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: shorje
+      MYSQL_DATABASE: shorje
+      MYSQL_USER: shorje
+      MYSQL_PASSWORD: shorje
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+###< MySQL Database ###
+
+volumes:
+  mysql_data:
