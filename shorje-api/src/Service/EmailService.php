@@ -98,7 +98,7 @@ class EmailService
     {
         $email = (new Email())
             ->from(new Address($this->fromEmail, $this->fromName))
-            ->to($this->fromEmail) // Send to admin
+            ->to('shorje@abdulrhman-alshalal.com') // Send to admin email
             ->subject('رسالة جديدة من نموذج الاتصال: ' . $subject)
             ->html($this->twig->render('emails/contact_form.html.twig', [
                 'name' => $name,

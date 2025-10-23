@@ -3,7 +3,10 @@
 namespace App\Controller;
 
 use App\Repository\SliderImageRepository;
+use App\Form\ContactFormType;
+use App\Service\EmailService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -53,9 +56,36 @@ class HomeController extends AbstractController
     }
 
     #[Route('/contact', name: 'app_contact')]
-    public function contact(): Response
+    public function contact(Request $request, EmailService $emailService): Response
     {
-        return $this->render('home/contact.html.twig');
+        $form = $this->createForm(ContactFormType::class);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            
+            try {
+                // Send email to admin
+                $emailService->sendContactFormEmail(
+                    $data['name'],
+                    $data['email'],
+                    $data['subject'],
+                    $data['message']
+                );
+                
+                $this->addFlash('success', 'تم إرسال رسالتك بنجاح! سنتواصل معك خلال 24 ساعة.');
+                
+                // Redirect to prevent form resubmission
+                return $this->redirectToRoute('app_contact');
+                
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'حدث خطأ في إرسال الرسالة. يرجى المحاولة مرة أخرى.');
+            }
+        }
+
+        return $this->render('home/contact.html.twig', [
+            'form' => $form->createView()
+        ]);
     }
 
     #[Route('/terms', name: 'app_terms')]
