@@ -4,7 +4,7 @@
 
 {% block body %}
 <!-- Include Navigation Component -->
-{% include 'components/navigation.html.twig' %}
+{% include 'components/home_navigation.html.twig' %}
 
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
     <!-- Header Section -->
@@ -31,58 +31,91 @@
 
     <div class="container mx-auto px-4 py-8">
         <!-- Stats Dashboard -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div class="glass dark:glass-dark rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
-                <div class="text-3xl font-bold text-pink-600 dark:text-pink-400 mb-2" id="totalSaved">0</div>
+                <div class="text-3xl font-bold text-pink-600 dark:text-pink-400 mb-2" id="totalSaved">{{ favorites|length }}</div>
                 <div class="text-gray-600 dark:text-gray-300">إجمالي المحفوظات</div>
             </div>
             <div class="glass dark:glass-dark rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
-                <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2" id="productsSaved">0</div>
+                <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2" id="productsSaved">{{ favorites|length }}</div>
                 <div class="text-gray-600 dark:text-gray-300">منتجات محفوظة</div>
             </div>
-            <div class="glass dark:glass-dark rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
-                <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2" id="sellersSaved">0</div>
-                <div class="text-gray-600 dark:text-gray-300">بائعين محفوظين</div>
-            </div>
         </div>
 
-        <!-- Filter Tabs -->
-        <div class="flex flex-wrap gap-4 mb-8">
-            <button onclick="filterSaved('all')" class="filter-tab active px-6 py-3 rounded-full font-medium transition-all duration-300 bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg">
-                <i class="fas fa-th-large ml-2"></i>
-                الكل
-            </button>
-            <button onclick="filterSaved('products')" class="filter-tab px-6 py-3 rounded-full font-medium transition-all duration-300 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 shadow-lg">
-                <i class="fas fa-box ml-2"></i>
-                المنتجات
-            </button>
-            <button onclick="filterSaved('sellers')" class="filter-tab px-6 py-3 rounded-full font-medium transition-all duration-300 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 shadow-lg">
-                <i class="fas fa-users ml-2"></i>
-                البائعين
-            </button>
-        </div>
-
-        <!-- Loading State -->
-        <div id="loadingState" class="text-center py-12">
-            <i class="fas fa-spinner fa-spin text-4xl text-primary-500 mb-4"></i>
-            <p class="text-lg text-gray-600 dark:text-gray-300">جاري تحميل المحفوظات...</p>
-        </div>
-
+        {% if favorites is empty %}
         <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-12">
+        <div class="text-center py-12">
             <i class="fas fa-heart-broken text-6xl text-gray-400 mb-6"></i>
             <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">لا توجد محفوظات بعد</h2>
-            <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">ابدأ بحفظ المنتجات والبائعين المفضلين لديك!</p>
+            <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">ابدأ بحفظ المنتجات المفضلة لديك!</p>
             <a href="/products" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-full shadow-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105">
                 <i class="fas fa-search ml-2"></i>
                 تصفح المنتجات
             </a>
         </div>
-
-        <!-- Saved Items Grid -->
-        <div id="savedItemsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Saved items will be loaded here by JavaScript -->
+        {% else %}
+        <!-- Saved Products Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for favorite in favorites %}
+            {% set product = favorite.product %}
+            <div class="saved-item bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden">
+                <!-- Product Image -->
+                <div class="relative h-48 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-slate-700 dark:to-slate-600">
+                    {% if product.image1 %}
+                    <img src="data:{{ product.image1MimeType }};base64,{{ product.image1 }}" 
+                         alt="{{ product.title }}" 
+                         class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="flex items-center justify-center h-full">
+                        <i class="fas fa-image text-4xl text-gray-400"></i>
+                    </div>
+                    {% endif %}
+                    <!-- Remove Favorite Button -->
+                    <button onclick="toggleFavorite({{ product.id }})" 
+                            class="absolute top-3 right-3 w-10 h-10 bg-white dark:bg-slate-800 rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+                        <i class="fas fa-heart text-red-500"></i>
+                    </button>
+                </div>
+                
+                <!-- Product Info -->
+                <div class="p-4">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                        {{ product.title }}
+                    </h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm mb-3 line-clamp-2">
+                        {{ product.description }}
+                    </p>
+                    
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                            {{ product.price }} {{ product.currency }}
+                        </div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-map-marker-alt ml-1"></i>
+                            {{ product.city }}
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-3">
+                        <i class="fas fa-user ml-2"></i>
+                        {{ product.seller.firstName }} {{ product.seller.lastName }}
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <a href="/products/{{ product.id }}" 
+                           class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-lg text-center font-medium hover:from-blue-600 hover:to-purple-700 transition-all">
+                            عرض المنتج
+                        </a>
+                        <a href="/messages?product={{ product.id }}&seller={{ product.seller.id }}" 
+                           class="w-10 h-10 bg-emerald-500 text-white rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors">
+                            <i class="fas fa-comment"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
+        {% endif %}
     </div>
 </div>
 
@@ -122,16 +155,31 @@
 </style>
 
 <script>
-let currentSavedItems = [];
-let currentFilter = 'all';
+// Toggle favorite function
+async function toggleFavorite(productId) {
+    try {
+        const response = await fetch('/web/favorites/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ productId: productId })
+        });
 
-document.addEventListener('DOMContentLoaded', function() {
-    loadSavedItems();
-});
+        const data = await response.json();
+        
+        if (data.success) {
+            // Reload the page to show updated list
+            window.location.reload();
+        } else {
+            alert(data.error || 'حدث خطأ');
+        }
+    } catch (error) {
+        console.error('Error toggling favorite:', error);
+        alert('حدث خطأ في الاتصال');
+    }
+}
 
-// Load saved items
-async function loadSavedItems() {
-    console.log('Loading saved items...');
     
     try {
         // For now, we'll simulate saved items since we don't have a backend endpoint yet
