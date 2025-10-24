@@ -29,6 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[ORM\Entity(repositoryClass: SliderImageRepository::class)]
 #[ORM\Table(name: 'slider_images')]
+#[ORM\HasLifecycleCallbacks]
 class SliderImage
 {
     #[ORM\Id]
@@ -227,5 +228,11 @@ class SliderImage
     {
         $this->updatedAt = $updatedAt;
         return $this;
+    }
+
+    #[ORM\PreUpdate]
+    public function preUpdate(): void
+    {
+        $this->updatedAt = new \DateTime();
     }
 }

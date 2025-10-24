@@ -15,24 +15,21 @@ class BlobImageType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+            $uploadedFile = $event->getData();
             $form = $event->getForm();
-            $data = $form->getData();
+            $entity = $form->getParent()->getData();
             
-            if ($data instanceof \App\Entity\SliderImage) {
-                $imageField = $form->get('image');
-                $imageData = $imageField->getData();
+            if ($uploadedFile instanceof UploadedFile && $entity instanceof \App\Entity\SliderImage) {
+                // Read the file content
+                $fileContent = file_get_contents($uploadedFile->getPathname());
                 
-                if ($imageData instanceof UploadedFile) {
-                    // Read the file content
-                    $fileContent = file_get_contents($imageData->getPathname());
-                    
-                    // Set the blob data
-                    $data->setImage($fileContent);
-                    
-                    // Set the MIME type
-                    $data->setImageMimeType($imageData->getMimeType());
-                }
+                // Set the blob data and MIME type
+                $entity->setImage($fileContent);
+                $entity->setImageMimeType($uploadedFile->getMimeType());
+                
+                // Clear the form data to prevent Doctrine from trying to persist the UploadedFile
+                $event->setData(null);
             }
         });
     }
