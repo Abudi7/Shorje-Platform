@@ -61,15 +61,13 @@
             <div class="saved-item bg-white dark:bg-slate-800 rounded-2xl shadow-lg overflow-hidden">
                 <!-- Product Image -->
                 <div class="relative h-48 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-slate-700 dark:to-slate-600">
-                    {% if product.image1 %}
-                    <img src="data:{{ product.image1MimeType }};base64,{{ product.image1 }}" 
+                    <img src="/api/products/image/{{ product.id }}/1" 
                          alt="{{ product.title }}" 
-                         class="w-full h-full object-cover">
-                    {% else %}
-                    <div class="flex items-center justify-center h-full">
+                         class="w-full h-full object-cover"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="hidden items-center justify-center h-full absolute inset-0">
                         <i class="fas fa-image text-4xl text-gray-400"></i>
                     </div>
-                    {% endif %}
                     <!-- Remove Favorite Button -->
                     <button onclick="toggleFavorite({{ product.id }})" 
                             class="absolute top-3 right-3 w-10 h-10 bg-white dark:bg-slate-800 rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
@@ -102,14 +100,14 @@
                     </div>
                     
                     <div class="flex items-center gap-2">
-                        <a href="/products/{{ product.id }}" 
+                        <a href="/product/{{ product.id }}" 
                            class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 rounded-lg text-center font-medium hover:from-blue-600 hover:to-purple-700 transition-all">
                             عرض المنتج
                         </a>
-                        <a href="/messages?product={{ product.id }}&seller={{ product.seller.id }}" 
+                        <button onclick="contactSeller({{ product.id }}, {{ product.seller.id }}, '{{ product.title|e('js') }}', '{{ product.price }} {{ product.currency }}', '{{ product.city }}')" 
                            class="w-10 h-10 bg-emerald-500 text-white rounded-lg flex items-center justify-center hover:bg-emerald-600 transition-colors">
                             <i class="fas fa-comment"></i>
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -178,6 +176,30 @@ async function toggleFavorite(productId) {
         console.error('Error toggling favorite:', error);
         alert('حدث خطأ في الاتصال');
     }
+}
+
+// Contact seller with product details
+function contactSeller(productId, sellerId, productName, productPrice, productCity) {
+    if (!sellerId || sellerId === 0) {
+        alert('معلومات البائع غير متوفرة');
+        return;
+    }
+    
+    // Create product attachment data
+    const productAttachment = {
+        productId: productId,
+        productName: productName,
+        productPrice: productPrice,
+        productImage: `/api/products/image/${productId}/1`,
+        productCategory: '',
+        productCity: productCity
+    };
+    
+    // Encode the product data as URL parameter
+    const productData = encodeURIComponent(JSON.stringify(productAttachment));
+    
+    // Redirect to messages with product attachment
+    window.location.href = `/messages?seller=${sellerId}&product=${productData}`;
 }
 
     
