@@ -1,0 +1,236 @@
+{# Home Navigation Component - Reusable across all pages #}
+<!-- Modern Arabic Marketplace Header -->
+<nav class="glass sticky top-0 z-50 border-b border-white/20 dark:border-slate-700/30">
+    <!-- Top Promotional Bar -->
+    <div class="bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 text-white text-center py-3 text-sm relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
+        <div class="max-w-7xl mx-auto px-4 relative">
+            <div class="flex items-center justify-center space-x-4">
+                <span class="font-bold text-lg animate-bounce">🎉</span>
+                <span class="font-bold">بيع واشتري من جيرانك المحليين</span>
+                <span class="mx-4 text-white/80">•</span>
+                <span>💬 تواصل مباشر مع البائعين</span>
+                <span class="font-bold text-lg animate-bounce">🎉</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Header -->
+    <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo Section -->
+                <div class="flex items-center">
+                    <div class="flex items-center space-x-4">
+                        <div class="h-12 w-12 bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
+                            <i class="fas fa-store text-white text-xl relative z-10"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold gradient-text">شورجي</h1>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">سوق متعدد البائعين</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Actions -->
+                <div class="flex items-center space-x-4">
+                    {% if app.user %}
+                    <!-- User Profile Dropdown -->
+                    <div class="relative" id="userDropdown">
+                        <button onclick="toggleUserDropdown()" class="flex items-center space-x-3 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-600 px-4 py-2 rounded-2xl hover:from-gray-200 hover:to-gray-300 dark:hover:from-slate-600 dark:hover:to-slate-500 transition-all duration-300 shadow-lg">
+                            <div class="h-10 w-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center overflow-hidden shadow-lg">
+                                <img src="/api/user/avatar/{{ app.user.id }}" 
+                                     alt="{{ app.user.firstName }} {{ app.user.lastName }}" 
+                                     class="w-full h-full object-cover"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <i class="fas fa-user text-white text-sm" style="display: none;"></i>
+                            </div>
+                            <div class="text-right hidden md:block">
+                                <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ app.user.firstName }} {{ app.user.lastName }}</p>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">مرحباً بك</p>
+                            </div>
+                            <i class="fas fa-chevron-down text-gray-600 dark:text-gray-400 transition-transform duration-300" id="dropdownArrow"></i>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div id="userDropdownMenu" class="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-600 opacity-0 invisible scale-95 transition-all duration-300 z-50">
+                            <div class="p-4 border-b border-gray-200 dark:border-slate-600">
+                                <div class="flex items-center space-x-3">
+                                    <div class="h-12 w-12 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+                                        <img src="/api/user/avatar/{{ app.user.id }}" 
+                                             alt="{{ app.user.firstName }} {{ app.user.lastName }}" 
+                                             class="w-full h-full object-cover"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <i class="fas fa-user text-white text-lg" style="display: none;"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-900 dark:text-white">{{ app.user.firstName }} {{ app.user.lastName }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ app.user.email }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-2">
+                                <a href="/profile" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
+                                    <i class="fas fa-user text-gray-500"></i>
+                                    <span>الملف الشخصي</span>
+                                </a>
+                                <a href="/products/my" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
+                                    <i class="fas fa-box text-gray-500"></i>
+                                    <span>منتجاتي</span>
+                                </a>
+                                <a href="/saved" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
+                                    <i class="fas fa-heart text-gray-500"></i>
+                                    <span>المحفوظات</span>
+                                </a>
+                                {% if app.user and ('ROLE_ADMIN' in app.user.roles or 'ROLE_SUPER_ADMIN' in app.user.roles) %}
+                                <hr class="my-2 border-gray-200 dark:border-slate-600">
+                                <a href="/admin" class="flex items-center space-x-3 px-4 py-3 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl transition-colors">
+                                    <i class="fas fa-cog text-purple-400"></i>
+                                    <span>لوحة الإدارة</span>
+                                </a>
+                                {% endif %}
+                                <hr class="my-2 border-gray-200 dark:border-slate-600">
+                                <a href="/logout" class="w-full flex items-center space-x-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>تسجيل الخروج</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Guest Actions -->
+                    <div class="flex items-center space-x-3">
+                        <a href="/login" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium px-4 py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-300">
+                            <i class="fas fa-sign-in-alt ml-2"></i>تسجيل الدخول
+                        </a>
+                        <a href="/register" class="bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-6 py-2 rounded-xl font-medium hover:from-emerald-600 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-user-plus ml-2"></i>إنشاء حساب
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Messages -->
+                    <div class="relative">
+                        <a href="/messages" class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg">
+                            <i class="fas fa-comments text-xl"></i>
+                            <span id="messagesCount" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                        </a>
+                    </div>
+                    
+                    <!-- Language Switcher -->
+                    <div class="relative">
+                        <button onclick="toggleLanguageSwitcher()" class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg" title="تغيير اللغة">
+                            <i class="fas fa-globe text-xl"></i>
+                        </button>
+                        
+                        <!-- Language Dropdown -->
+                        <div id="languageDropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-600 z-50 hidden">
+                            <div class="py-2">
+                                <a href="/language/ar" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                                    <span class="text-2xl">🇸🇦</span>
+                                    <span>العربية</span>
+                                </a>
+                                <a href="/language/en" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                                    <span class="text-2xl">🇺🇸</span>
+                                    <span>English</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Notification Dropdown -->
+                    {% include 'components/notification_dropdown.html.twig' %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-t border-gray-200/50 dark:border-slate-600/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center space-x-8">
+                    <a href="/home" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
+                        <i class="fas fa-home"></i>
+                        <span>الرئيسية</span>
+                    </a>
+                    <a href="/products" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
+                        <i class="fas fa-th-large"></i>
+                        <span>المنتجات</span>
+                    </a>
+                    <a href="/users" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
+                        <i class="fas fa-users"></i>
+                        <span>البائعين</span>
+                    </a>
+                    {% if app.user %}
+                    <a href="/products/my" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
+                        <i class="fas fa-box text-purple-500"></i>
+                        <span>منتجاتي</span>
+                    </a>
+                    {% endif %}
+                    <a href="/help" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
+                        <i class="fas fa-question-circle text-orange-500"></i>
+                        <span>كيف يعمل</span>
+                    </a>
+                    <a href="/contact" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
+                        <i class="fas fa-envelope text-green-500"></i>
+                        <span>اتصل بنا</span>
+                    </a>
+                    {% if app.user and 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                    <a href="/admin" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 font-medium transition-colors bg-red-50 dark:bg-red-900/20 px-3 py-2 rounded-lg">
+                        <i class="fas fa-crown text-red-500"></i>
+                        <span>لوحة التحكم</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+// Navigation functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // User dropdown
+    const userDropdown = document.getElementById('userDropdown');
+    const userDropdownMenu = document.getElementById('userDropdownMenu');
+    const dropdownArrow = document.getElementById('dropdownArrow');
+    
+    if (userDropdown && userDropdownMenu) {
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!userDropdown.contains(event.target)) {
+                userDropdownMenu.classList.add('opacity-0', 'invisible', 'scale-95');
+                userDropdownMenu.classList.remove('opacity-100', 'visible', 'scale-100');
+                if (dropdownArrow) dropdownArrow.classList.remove('rotate-180');
+            }
+        });
+    }
+});
+
+function toggleUserDropdown() {
+    const dropdown = document.getElementById('userDropdownMenu');
+    const arrow = document.getElementById('dropdownArrow');
+    
+    if (dropdown.classList.contains('opacity-0')) {
+        dropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
+        dropdown.classList.add('opacity-100', 'visible', 'scale-100');
+        if (arrow) arrow.classList.add('rotate-180');
+    } else {
+        dropdown.classList.add('opacity-0', 'invisible', 'scale-95');
+        dropdown.classList.remove('opacity-100', 'visible', 'scale-100');
+        if (arrow) arrow.classList.remove('rotate-180');
+    }
+}
+
+function toggleLanguageSwitcher() {
+    const dropdown = document.getElementById('languageDropdown');
+    dropdown.classList.toggle('hidden');
+}
+
+function openMessages() {
+    window.location.href = '/messages';
+}
+</script>
+

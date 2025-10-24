@@ -3,8 +3,8 @@
 {% block title %}منتجاتي - شورجي{% endblock %}
 
 {% block body %}
-<!-- Include Navigation Component -->
-{% include 'components/navigation.html.twig' %}
+<!-- Include Home Navigation Component -->
+{% include 'components/home_navigation.html.twig' %}
 
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
     <!-- Header Section -->
@@ -27,7 +27,7 @@
                 </p>
             </div>
         </div>
-    </div>
+                </div>
 
     <!-- Main Content -->
     <div class="container mx-auto px-4 pb-12">
@@ -51,8 +51,8 @@
             <button onclick="window.location.href='/products/add'" class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-8 py-3 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
                 <i class="fas fa-plus ml-2"></i>إضافة منتج جديد
             </button>
-        </div>
-
+                </div>
+                
         <!-- Products Grid -->
         <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
             <!-- Products will be loaded here -->
