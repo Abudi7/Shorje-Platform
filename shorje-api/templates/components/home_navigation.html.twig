@@ -38,8 +38,8 @@
                     {% if app.user %}
                     <!-- User Profile Dropdown -->
                     <div class="relative" id="userDropdown">
-                        <button onclick="toggleUserDropdown()" class="flex items-center space-x-3 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-600 px-4 py-2 rounded-2xl hover:from-gray-200 hover:to-gray-300 dark:hover:from-slate-600 dark:hover:to-slate-500 transition-all duration-300 shadow-lg">
-                            <div class="h-10 w-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center overflow-hidden shadow-lg">
+                        <button onclick="toggleUserDropdown()" class="flex items-center space-x-3 bg-white dark:bg-slate-800 px-3 py-2 rounded-xl hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-slate-600">
+                            <div class="h-10 w-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center overflow-hidden shadow-md ring-2 ring-white dark:ring-slate-800">
                                 <img src="/api/user/avatar/{{ app.user.id }}" 
                                      alt="{{ app.user.firstName }} {{ app.user.lastName }}" 
                                      class="w-full h-full object-cover"
@@ -48,52 +48,67 @@
                             </div>
                             <div class="text-right hidden md:block">
                                 <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ app.user.firstName }} {{ app.user.lastName }}</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">مرحباً بك</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">مرحباً بك</p>
                             </div>
-                            <i class="fas fa-chevron-down text-gray-600 dark:text-gray-400 transition-transform duration-300" id="dropdownArrow"></i>
+                            <i class="fas fa-chevron-down text-gray-400 dark:text-gray-500 text-sm transition-transform duration-300" id="dropdownArrow"></i>
                         </button>
                         
                         <!-- Dropdown Menu -->
-                        <div id="userDropdownMenu" class="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-600 opacity-0 invisible scale-95 transition-all duration-300 z-50">
-                            <div class="p-4 border-b border-gray-200 dark:border-slate-600">
+                        <div id="userDropdownMenu" class="absolute top-full right-0 mt-3 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 opacity-0 invisible scale-95 transition-all duration-300 z-50 overflow-hidden">
+                            <!-- User Info Header with Gradient -->
+                            <div class="bg-gradient-to-r from-emerald-500 via-blue-500 to-purple-500 p-4">
                                 <div class="flex items-center space-x-3">
-                                    <div class="h-12 w-12 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+                                    <div class="h-14 w-14 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center overflow-hidden shadow-lg ring-4 ring-white/30">
                                         <img src="/api/user/avatar/{{ app.user.id }}" 
                                              alt="{{ app.user.firstName }} {{ app.user.lastName }}" 
                                              class="w-full h-full object-cover"
                                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                        <i class="fas fa-user text-white text-lg" style="display: none;"></i>
+                                        <i class="fas fa-user text-emerald-500 text-lg" style="display: none;"></i>
                                     </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-900 dark:text-white">{{ app.user.firstName }} {{ app.user.lastName }}</p>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ app.user.email }}</p>
+                                    <div class="flex-1">
+                                        <p class="font-bold text-white text-base">{{ app.user.firstName }} {{ app.user.lastName }}</p>
+                                        <p class="text-sm text-white/80 truncate">{{ app.user.email }}</p>
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- Menu Items -->
                             <div class="p-2">
-                                <a href="/profile" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
-                                    <i class="fas fa-user text-gray-500"></i>
-                                    <span>الملف الشخصي</span>
+                                <a href="/profile" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-blue-50 dark:hover:from-emerald-900/20 dark:hover:to-blue-900/20 rounded-xl transition-all group">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                        <i class="fas fa-user text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-medium">الملف الشخصي</span>
                                 </a>
-                                <a href="/products/my" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
-                                    <i class="fas fa-box text-gray-500"></i>
-                                    <span>منتجاتي</span>
+                                <a href="/products/my" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 dark:hover:from-purple-900/20 dark:hover:to-pink-900/20 rounded-xl transition-all group">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                        <i class="fas fa-box text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-medium">منتجاتي</span>
                                 </a>
-                                <a href="/saved" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
-                                    <i class="fas fa-heart text-gray-500"></i>
-                                    <span>المحفوظات</span>
+                                <a href="/saved" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 dark:hover:from-red-900/20 dark:hover:to-pink-900/20 rounded-xl transition-all group">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-red-400 to-pink-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                        <i class="fas fa-heart text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-medium">المحفوظات</span>
                                 </a>
+                                
                                 {% if app.user and ('ROLE_ADMIN' in app.user.roles or 'ROLE_SUPER_ADMIN' in app.user.roles) %}
-                                <hr class="my-2 border-gray-200 dark:border-slate-600">
-                                <a href="/admin" class="flex items-center space-x-3 px-4 py-3 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-xl transition-colors">
-                                    <i class="fas fa-cog text-purple-400"></i>
-                                    <span>لوحة الإدارة</span>
+                                <div class="my-2 border-t border-gray-200 dark:border-slate-600"></div>
+                                <a href="/admin" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 dark:hover:from-purple-900/20 dark:hover:to-indigo-900/20 rounded-xl transition-all group">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                        <i class="fas fa-cog text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-medium">لوحة الإدارة</span>
                                 </a>
                                 {% endif %}
-                                <hr class="my-2 border-gray-200 dark:border-slate-600">
-                                <a href="/logout" class="w-full flex items-center space-x-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                    <span>تسجيل الخروج</span>
+                                
+                                <div class="my-2 border-t border-gray-200 dark:border-slate-600"></div>
+                                <a href="/logout" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 dark:hover:from-red-900/20 dark:hover:to-orange-900/20 rounded-xl transition-all group">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                        <i class="fas fa-sign-out-alt text-white text-sm"></i>
+                                    </div>
+                                    <span class="font-medium">تسجيل الخروج</span>
                                 </a>
                             </div>
                         </div>
@@ -110,30 +125,48 @@
                     </div>
                     {% endif %}
                     
+                    <!-- Theme Toggle -->
+                    <div class="relative">
+                        <button onclick="toggleTheme()" id="themeToggle" class="relative p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-200 rounded-lg group" title="تبديل الوضع">
+                            <i class="fas fa-sun text-xl hidden dark:block text-yellow-400 group-hover:rotate-180 transition-transform duration-300" id="lightIcon"></i>
+                            <i class="fas fa-moon text-xl block dark:hidden text-indigo-600 group-hover:-rotate-12 transition-transform duration-300" id="darkIcon"></i>
+                        </button>
+                    </div>
+                    
                     <!-- Messages -->
                     <div class="relative">
-                        <a href="/messages" class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg">
+                        <a href="/messages" class="relative p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-200 rounded-lg">
                             <i class="fas fa-comments text-xl"></i>
-                            <span id="messagesCount" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                            <span id="messagesCount" class="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden shadow-lg animate-pulse">0</span>
                         </a>
                     </div>
                     
                     <!-- Language Switcher -->
-                    <div class="relative">
-                        <button onclick="toggleLanguageSwitcher()" class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg" title="تغيير اللغة">
-                            <i class="fas fa-globe text-xl"></i>
+                    <div class="relative" id="languageSwitcherContainer">
+                        <button onclick="toggleLanguageSwitcher()" class="relative p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-200 rounded-lg group" title="تغيير اللغة">
+                            <i class="fas fa-globe text-xl group-hover:rotate-12 transition-transform duration-300"></i>
                         </button>
                         
                         <!-- Language Dropdown -->
-                        <div id="languageDropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-slate-600 z-50 hidden">
-                            <div class="py-2">
-                                <a href="/language/ar" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
-                                    <span class="text-2xl">🇸🇦</span>
-                                    <span>العربية</span>
+                        <div id="languageDropdown" class="absolute right-0 mt-3 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 z-50 hidden overflow-hidden">
+                            <div class="p-2">
+                                <a href="/language/ar" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-blue-50 dark:hover:from-emerald-900/20 dark:hover:to-blue-900/20 rounded-xl transition-all group">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-green-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform text-2xl">
+                                        🇸🇦
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-sm">العربية</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">Arabic</p>
+                                    </div>
                                 </a>
-                                <a href="/language/en" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
-                                    <span class="text-2xl">🇺🇸</span>
-                                    <span>English</span>
+                                <a href="/language/en" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 rounded-xl transition-all group">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform text-2xl">
+                                        🇺🇸
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-sm">English</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">الإنجليزية</p>
+                                    </div>
                                 </a>
                             </div>
                         </div>
@@ -207,6 +240,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Initialize theme
+    initTheme();
+    
+    // Close language dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const languageContainer = document.getElementById('languageSwitcherContainer');
+        const languageDropdown = document.getElementById('languageDropdown');
+        if (languageContainer && languageDropdown && !languageContainer.contains(event.target)) {
+            languageDropdown.classList.add('hidden');
+        }
+    });
 });
 
 function toggleUserDropdown() {
@@ -227,6 +272,39 @@ function toggleUserDropdown() {
 function toggleLanguageSwitcher() {
     const dropdown = document.getElementById('languageDropdown');
     dropdown.classList.toggle('hidden');
+}
+
+function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    // Toggle dark class
+    if (newTheme === 'dark') {
+        html.classList.add('dark');
+    } else {
+        html.classList.remove('dark');
+    }
+    
+    // Save preference
+    localStorage.setItem('theme', newTheme);
+}
+
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+    
+    if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+    
+    // Save initial theme if not set
+    if (!savedTheme) {
+        localStorage.setItem('theme', theme);
+    }
 }
 
 function openMessages() {
