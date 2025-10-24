@@ -147,45 +147,65 @@
 
 <!-- Notification Item Template -->
 <template id="notificationItemTemplate">
-    <div class="notification-item p-6 hover:bg-gray-50 transition-colors duration-200 cursor-pointer" data-notification-id="">
+    <div class="notification-item p-6 hover:bg-gradient-to-r hover:from-gray-50 hover:to-white transition-all duration-300 cursor-pointer group rounded-lg mb-3 border border-transparent hover:border-gray-200 hover:shadow-md" data-notification-id="">
         <div class="flex items-start space-x-4 space-x-reverse">
-            <!-- Icon -->
-            <div class="flex-shrink-0">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white">
-                    <i class="notification-icon text-lg"></i>
+            <!-- Avatar/Icon -->
+            <div class="flex-shrink-0 relative">
+                <div class="notification-avatar w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center text-white shadow-lg group-hover:shadow-xl transition-all duration-300">
+                    <img class="notification-user-image w-full h-full object-cover hidden" src="" alt="">
+                    <i class="notification-icon text-2xl"></i>
+                </div>
+                <div class="notification-status absolute -bottom-1 -right-1">
+                    <span class="unread-dot w-4 h-4 bg-red-500 rounded-full border-2 border-white shadow-md"></span>
                 </div>
             </div>
             
             <!-- Content -->
             <div class="flex-1 min-w-0">
-                <div class="flex items-center justify-between mb-2">
-                    <h3 class="notification-title text-lg font-medium text-gray-900"></h3>
-                    <div class="flex items-center space-x-3 space-x-reverse">
-                        <span class="notification-time text-sm text-gray-500"></span>
-                        <div class="flex items-center space-x-2 space-x-reverse">
-                            <div class="notification-status">
-                                <span class="unread-dot w-3 h-3 bg-primary-500 rounded-full"></span>
+                <div class="flex items-start justify-between mb-2">
+                    <div class="flex-1">
+                        <h3 class="notification-title text-lg font-bold text-gray-900 mb-1"></h3>
+                        <p class="notification-message text-gray-600 leading-relaxed"></p>
+                    </div>
+                    <div class="flex items-center space-x-3 space-x-reverse mr-4">
+                        <span class="notification-time text-sm text-gray-400 whitespace-nowrap"></span>
+                        <button class="notification-delete-btn text-gray-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition-all duration-200">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- User Info for Follow Notifications -->
+                <div class="notification-user-info hidden mt-4 p-4 bg-gradient-to-r from-blue-50 to-transparent rounded-xl border border-blue-100">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3 space-x-reverse">
+                            <img class="user-info-avatar w-12 h-12 rounded-full object-cover border-2 border-white shadow-md" src="" alt="">
+                            <div>
+                                <p class="user-info-name text-base font-bold text-gray-900"></p>
+                                <p class="user-info-email text-sm text-gray-500"></p>
                             </div>
-                            <button class="notification-delete-btn text-gray-400 hover:text-red-500 p-1">
-                                <i class="fas fa-trash text-sm"></i>
+                        </div>
+                        <div class="flex items-center space-x-2 space-x-reverse">
+                            <button class="follow-back-btn px-5 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-semibold rounded-full transition-all duration-200 hover:shadow-lg transform hover:scale-105">
+                                <i class="fas fa-user-plus ml-1"></i>
+                                متابعة
                             </button>
+                            <a href="#" class="view-profile-btn px-4 py-2 border-2 border-gray-200 hover:border-primary-600 text-gray-700 hover:text-primary-600 text-sm font-medium rounded-full transition-all duration-200">
+                                <i class="fas fa-user ml-1"></i>
+                                الملف الشخصي
+                            </a>
                         </div>
                     </div>
                 </div>
                 
-                <p class="notification-message text-gray-600 mb-3"></p>
-                
-                <!-- Metadata -->
-                <div class="notification-metadata text-sm text-gray-500 mb-3 hidden">
-                    <!-- Metadata will be displayed here -->
-                </div>
-                
                 <!-- Actions -->
-                <div class="notification-actions flex items-center space-x-3 space-x-reverse">
-                    <button class="notification-action-btn px-4 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 transition-colors hidden">
+                <div class="notification-actions mt-4 flex items-center space-x-3 space-x-reverse">
+                    <button class="notification-action-btn px-5 py-2 bg-primary-600 text-white text-sm font-semibold rounded-lg hover:bg-primary-700 transition-all duration-200 hover:shadow-md hidden">
+                        <i class="action-icon fas fa-arrow-left ml-1"></i>
                         <span class="action-text"></span>
                     </button>
-                    <button class="notification-mark-read-btn text-sm text-gray-500 hover:text-gray-700">
+                    <button class="notification-mark-read-btn px-4 py-2 text-sm text-gray-600 hover:text-primary-600 font-medium hover:bg-gray-100 rounded-lg transition-all duration-200">
+                        <i class="fas fa-check ml-1"></i>
                         تعيين كمقروء
                     </button>
                 </div>
@@ -197,32 +217,56 @@
 <style>
 /* Notification Styles */
 .notification-item.unread {
-    background-color: #f8fafc;
-    border-left: 4px solid #3b82f6;
+    background: linear-gradient(to left, #f0f9ff 0%, #ffffff 100%);
+    border-right: 4px solid #3b82f6;
 }
 
 .notification-item.important {
-    background-color: #fef2f2;
-    border-left: 4px solid #ef4444;
+    background: linear-gradient(to left, #fef2f2 0%, #ffffff 100%);
+    border-right: 4px solid #ef4444;
 }
 
 .notification-item.read {
-    opacity: 0.7;
+    opacity: 0.75;
 }
 
 .notification-item.read .unread-dot {
     display: none;
 }
 
-/* Notification type colors */
-.notification-icon.message { background-color: #3b82f6; }
-.notification-icon.follow { background-color: #10b981; }
-.notification-icon.product { background-color: #06b6d4; }
-.notification-icon.order { background-color: #f59e0b; }
-.notification-icon.review { background-color: #10b981; }
-.notification-icon.system { background-color: #6b7280; }
-.notification-icon.security { background-color: #ef4444; }
-.notification-icon.promotion { background-color: #10b981; }
+/* Notification type colors with gradients */
+.notification-avatar.message { 
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+.notification-avatar.follow { 
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+.notification-avatar.product { 
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+}
+.notification-avatar.order { 
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+.notification-avatar.review { 
+    background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+}
+.notification-avatar.system { 
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+}
+.notification-avatar.security { 
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+.notification-avatar.promotion { 
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+.notification-avatar.new_product { 
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+}
+
+/* Hover effects */
+.notification-item:hover .notification-avatar {
+    transform: scale(1.05) rotate(3deg);
+}
 
 /* Animation for new notifications */
 @keyframes slideInRight {
@@ -236,8 +280,35 @@
     }
 }
 
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+}
+
 .notification-item.new {
-    animation: slideInRight 0.3s ease-out;
+    animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.unread-dot {
+    animation: pulse 2s infinite;
+}
+
+/* Stats cards */
+.bg-primary-100 {
+    background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+}
+.bg-red-100 {
+    background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+}
+.bg-yellow-100 {
+    background: linear-gradient(135deg, #fef3c7 0%, #fef9e3 100%);
+}
+.bg-green-100 {
+    background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
 }
 </style>
 
@@ -263,7 +334,7 @@ async function loadNotifications(reset = false) {
     const typeFilter = document.getElementById('typeFilter').value;
     const statusFilter = document.getElementById('statusFilter').value;
     
-    let url = `/api/notifications?limit=20&offset=${(currentPage - 1) * 20}`;
+    let url = `/app/notifications?limit=20&offset=${(currentPage - 1) * 20}`;
     
     if (typeFilter) {
         url += `&type=${typeFilter}`;
@@ -272,7 +343,18 @@ async function loadNotifications(reset = false) {
     try {
         showLoading();
         
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         
         if (reset) {
@@ -346,29 +428,95 @@ function createNotificationItem(notification) {
     const item = template.content.cloneNode(true);
     
     const itemElement = item.querySelector('.notification-item');
+    const avatar = item.querySelector('.notification-avatar');
+    const userImage = item.querySelector('.notification-user-image');
     const icon = item.querySelector('.notification-icon');
     const title = item.querySelector('.notification-title');
     const message = item.querySelector('.notification-message');
     const time = item.querySelector('.notification-time');
     const actionBtn = item.querySelector('.notification-action-btn');
     const actionText = item.querySelector('.action-text');
+    const actionIcon = item.querySelector('.action-icon');
     const markReadBtn = item.querySelector('.notification-mark-read-btn');
     const deleteBtn = item.querySelector('.notification-delete-btn');
+    const userInfo = item.querySelector('.notification-user-info');
+    const userInfoAvatar = item.querySelector('.user-info-avatar');
+    const userInfoName = item.querySelector('.user-info-name');
+    const userInfoEmail = item.querySelector('.user-info-email');
+    const followBackBtn = item.querySelector('.follow-back-btn');
+    const viewProfileBtn = item.querySelector('.view-profile-btn');
     
     // Set notification data
     itemElement.setAttribute('data-notification-id', notification.id);
     itemElement.onclick = () => handleNotificationClick(notification);
     
+    // Set avatar/icon
+    avatar.classList.add(notification.type);
+    
+    // Check if we have user image in metadata
+    if (notification.metadata && notification.metadata.sender_image) {
+        userImage.src = notification.metadata.sender_image;
+        userImage.classList.remove('hidden');
+        icon.classList.add('hidden');
+    } else if (notification.metadata && notification.metadata.follower_image) {
+        userImage.src = notification.metadata.follower_image;
+        userImage.classList.remove('hidden');
+        icon.classList.add('hidden');
+    } else if (notification.metadata && notification.metadata.seller_image) {
+        userImage.src = notification.metadata.seller_image;
+        userImage.classList.remove('hidden');
+        icon.classList.add('hidden');
+    } else {
+        icon.className = `notification-icon ${notification.icon || 'fas fa-bell'}`;
+    }
+    
     // Set content
-    icon.className = `notification-icon ${notification.icon || 'fas fa-bell'} ${notification.type}`;
     title.textContent = notification.title;
     message.textContent = notification.message;
     time.textContent = formatNotificationTime(notification.createdAt);
+    
+    // Handle follow notifications - show user info and follow back button
+    if (notification.type === 'follow' && notification.metadata) {
+        userInfo.classList.remove('hidden');
+        
+        // Set user info
+        const followerName = notification.metadata.follower_name || 'مستخدم';
+        const followerId = notification.metadata.follower_id;
+        const followerImage = notification.metadata.follower_image || '/images/default-avatar.png';
+        
+        userInfoAvatar.src = followerImage;
+        userInfoName.textContent = followerName;
+        userInfoEmail.textContent = `@user${followerId}`;
+        
+        // Follow back button
+        followBackBtn.onclick = (e) => {
+            e.stopPropagation();
+            followUser(followerId, followBackBtn);
+        };
+        
+        // View profile button
+        viewProfileBtn.href = `/profile?user=${followerId}`;
+        viewProfileBtn.onclick = (e) => {
+            e.stopPropagation();
+        };
+    }
     
     // Set action button
     if (notification.actionUrl && notification.actionText) {
         actionBtn.classList.remove('hidden');
         actionText.textContent = notification.actionText;
+        
+        // Set appropriate icon based on type
+        if (notification.type === 'message') {
+            actionIcon.className = 'action-icon fas fa-envelope ml-1';
+        } else if (notification.type === 'product') {
+            actionIcon.className = 'action-icon fas fa-box ml-1';
+        } else if (notification.type === 'order') {
+            actionIcon.className = 'action-icon fas fa-shopping-cart ml-1';
+        } else {
+            actionIcon.className = 'action-icon fas fa-arrow-left ml-1';
+        }
+        
         actionBtn.onclick = (e) => {
             e.stopPropagation();
             window.location.href = notification.actionUrl;
@@ -405,6 +553,31 @@ function createNotificationItem(notification) {
     return item;
 }
 
+// Follow user function
+async function followUser(userId, button) {
+    try {
+        const response = await fetch(`/follow/${userId}`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        if (response.ok) {
+            button.innerHTML = '<i class="fas fa-check ml-1"></i> تمت المتابعة';
+            button.classList.remove('bg-primary-600', 'hover:bg-primary-700');
+            button.classList.add('bg-green-500', 'cursor-default');
+            button.disabled = true;
+        }
+    } catch (error) {
+        console.error('Error following user:', error);
+        button.innerHTML = '<i class="fas fa-times ml-1"></i> خطأ';
+        button.classList.add('bg-red-500');
+    }
+}
+
 // Handle notification click
 function handleNotificationClick(notification) {
     // Mark as read
@@ -419,10 +592,12 @@ function handleNotificationClick(notification) {
 // Mark notification as read
 async function markNotificationAsRead(notificationId) {
     try {
-        await fetch(`/api/notifications/${notificationId}/read`, {
+        await fetch(`/app/notifications/${notificationId}/read`, {
             method: 'POST',
+            credentials: 'same-origin',
             headers: {
                 'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
             }
         });
         
@@ -448,10 +623,12 @@ async function deleteNotification(notificationId) {
     }
     
     try {
-        await fetch(`/api/notifications/${notificationId}`, {
+        await fetch(`/app/notifications/${notificationId}`, {
             method: 'DELETE',
+            credentials: 'same-origin',
             headers: {
                 'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
             }
         });
         
@@ -469,10 +646,12 @@ async function deleteNotification(notificationId) {
 // Mark all notifications as read
 async function markAllNotificationsAsRead() {
     try {
-        await fetch('/api/notifications/mark-all-read', {
+        await fetch('/app/notifications/mark-all-read', {
             method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
             }
         });
         

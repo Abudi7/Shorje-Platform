@@ -70,8 +70,19 @@ class NotificationService
     /**
      * Create notification for new message
      */
-    public function createMessageNotification(User $receiver, User $sender, string $messagePreview): Notification
+    public function createMessageNotification(User $receiver, User $sender, $message): Notification
     {
+        // Get message preview
+        $messagePreview = is_string($message) ? $message : (method_exists($message, 'getContent') ? $message->getContent() : 'رسالة جديدة');
+        
+        // Truncate if too long
+        if (strlen($messagePreview) > 100) {
+            $messagePreview = substr($messagePreview, 0, 100) . '...';
+        }
+        
+        // Get sender's avatar URL
+        $senderImage = $sender->getAvatarUrl();
+        
         return $this->createNotification(
             $receiver,
             Notification::TYPE_MESSAGE,
@@ -84,7 +95,9 @@ class NotificationService
                 'color' => Notification::COLOR_PRIMARY,
                 'metadata' => [
                     'sender_id' => $sender->getId(),
-                    'sender_name' => $sender->getFirstName() . ' ' . $sender->getLastName()
+                    'sender_name' => $sender->getFirstName() . ' ' . $sender->getLastName(),
+                    'sender_image' => $senderImage,
+                    'sender_email' => $sender->getEmail()
                 ]
             ]
         );
@@ -95,6 +108,9 @@ class NotificationService
      */
     public function createFollowNotification(User $user, User $follower): Notification
     {
+        // Get follower's avatar URL
+        $followerImage = $follower->getAvatarUrl();
+            
         return $this->createNotification(
             $user,
             Notification::TYPE_FOLLOW,
@@ -107,7 +123,9 @@ class NotificationService
                 'color' => Notification::COLOR_SUCCESS,
                 'metadata' => [
                     'follower_id' => $follower->getId(),
-                    'follower_name' => $follower->getFirstName() . ' ' . $follower->getLastName()
+                    'follower_name' => $follower->getFirstName() . ' ' . $follower->getLastName(),
+                    'follower_image' => $followerImage,
+                    'follower_email' => $follower->getEmail()
                 ]
             ]
         );
@@ -118,6 +136,9 @@ class NotificationService
      */
     public function createProductNotification(User $user, User $seller, string $productTitle): Notification
     {
+        // Get seller's avatar URL
+        $sellerImage = $seller->getAvatarUrl();
+            
         return $this->createNotification(
             $user,
             Notification::TYPE_PRODUCT,
@@ -131,6 +152,7 @@ class NotificationService
                 'metadata' => [
                     'seller_id' => $seller->getId(),
                     'seller_name' => $seller->getFirstName() . ' ' . $seller->getLastName(),
+                    'seller_image' => $sellerImage,
                     'product_title' => $productTitle
                 ]
             ]
@@ -234,7 +256,7 @@ class NotificationService
         User $user,
         string $title,
         string $message,
-        string $actionUrl = null
+        ?string $actionUrl = null
     ): Notification {
         return $this->createNotification(
             $user,
@@ -257,6 +279,15 @@ class NotificationService
     public function markAsRead(Notification $notification): void
     {
         $notification->markAsRead();
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Delete a notification
+     */
+    public function deleteNotification(Notification $notification): void
+    {
+        $this->entityManager->remove($notification);
         $this->entityManager->flush();
     }
 
@@ -301,6 +332,14 @@ class NotificationService
     }
 
     /**
+     * Get notifications by type
+     */
+    public function getNotificationsByType(User $user, string $type, int $limit = 20): array
+    {
+        return $this->notificationRepository->findByUserAndType($user, $type, $limit);
+    }
+
+    /**
      * Get notification statistics
      */
     public function getNotificationStats(User $user): array
@@ -331,6 +370,86 @@ class NotificationService
             $notifications[] = $this->createNotification($user, $type, $title, $message, $options);
         }
         return $notifications;
+    }
+
+    /**
+     * Create platform update notification for all users
+     */
+    public function createPlatformUpdateNotification(
+        string $title,
+        string $message,
+        ?string $actionUrl = null
+    ): array {
+        // Get all active users
+        $users = $this->entityManager->getRepository(User::class)->findAll();
+        
+        return $this->createBulkNotifications(
+            $users,
+            Notification::TYPE_SYSTEM,
+            $title,
+            $message,
+            [
+                'actionUrl' => $actionUrl,
+                'actionText' => 'Learn More',
+                'icon' => 'fas fa-bullhorn',
+                'color' => Notification::COLOR_INFO,
+                'isImportant' => true
+            ]
+        );
+    }
+
+    /**
+     * Create slider image update notification for all users
+     */
+    public function createSliderUpdateNotification(): array {
+        return $this->createPlatformUpdateNotification(
+            'New Images in Gallery',
+            'Check out our new images in the home page slider!',
+            $this->urlGenerator->generate('app_home')
+        );
+    }
+
+    /**
+     * Notify followers when seller posts a new product
+     */
+    public function notifyFollowersAboutNewProduct(User $seller, $product): array {
+        // Get all followers of this seller
+        $followRepo = $this->entityManager->getRepository(\App\Entity\Follow::class);
+        $followers = $followRepo->createQueryBuilder('f')
+            ->select('IDENTITY(f.follower)')
+            ->where('f.following = :seller')
+            ->setParameter('seller', $seller)
+            ->getQuery()
+            ->getScalarResult();
+        
+        $followerIds = array_column($followers, 1);
+        $followerUsers = $this->entityManager->getRepository(User::class)->findBy(['id' => $followerIds]);
+        
+        $productTitle = is_string($product) ? $product : (method_exists($product, 'getTitle') ? $product->getTitle() : 'New Product');
+        $productId = is_object($product) && method_exists($product, 'getId') ? $product->getId() : null;
+        
+        $actionUrl = $productId 
+            ? $this->urlGenerator->generate('app_product_show', ['id' => $productId])
+            : $this->urlGenerator->generate('app_products');
+        
+        return $this->createBulkNotifications(
+            $followerUsers,
+            Notification::TYPE_PRODUCT,
+            'New Product from ' . $seller->getFirstName(),
+            $seller->getFirstName() . ' ' . $seller->getLastName() . ' posted: ' . $productTitle,
+            [
+                'actionUrl' => $actionUrl,
+                'actionText' => 'View Product',
+                'icon' => 'fas fa-box',
+                'color' => Notification::COLOR_SUCCESS,
+                'metadata' => [
+                    'seller_id' => $seller->getId(),
+                    'seller_name' => $seller->getFirstName() . ' ' . $seller->getLastName(),
+                    'product_title' => $productTitle,
+                    'product_id' => $productId
+                ]
+            ]
+        );
     }
 
     /**

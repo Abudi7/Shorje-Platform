@@ -1089,6 +1089,11 @@ function renderConversations(conversations) {
                     <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
                         ${conversation.user.firstName.charAt(0)}${conversation.user.lastName.charAt(0)}
                     </div>
+                    ${conversation.unreadCount > 0 ? `
+                        <div class="absolute -top-2 -left-2 min-w-6 h-6 px-1.5 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg border-2 border-white dark:border-slate-800 animate-bounce">
+                            ${conversation.unreadCount}
+                        </div>
+                    ` : ''}
                     <div class="absolute -bottom-1 -right-1 h-4 w-4 border-2 border-white dark:border-slate-800 rounded-full shadow-lg user-status-indicator" 
                          data-user-id="${conversation.user.id}" 
                          style="background-color: ${conversation.user.isOnline ? '#10b981' : '#6b7280'};"></div>
@@ -1098,7 +1103,7 @@ function renderConversations(conversations) {
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center space-x-2">
                                 <span class="unread-message-alert text-xs text-white px-3 py-1 rounded-full font-bold shadow-lg">
-                                    ${conversation.unreadCount} رسالة جديدة
+                                    ${conversation.unreadCount} New ${conversation.unreadCount === 1 ? 'Message' : 'Messages'}
                                 </span>
                             </div>
                         </div>
@@ -1506,6 +1511,19 @@ function openImageModal(imageUrl) {
     });
 }
 
+// Play voice message
+function playVoiceMessage(messageId) {
+    const audioUrl = `/web/message/${messageId}/attachment`;
+    const audio = new Audio(audioUrl);
+    
+    audio.play().then(() => {
+        showToast('جاري تشغيل الرسالة الصوتية...', 'info');
+    }).catch(error => {
+        console.error('Error playing voice message:', error);
+        showToast('فشل في تشغيل الرسالة الصوتية', 'error');
+    });
+}
+
 // Mark message as seen
 async function markMessageAsSeen(messageId) {
     try {
@@ -1853,23 +1871,102 @@ function renderMessage(message, isCurrentUser) {
     // Add unread pulse class to unread messages
     const unreadClass = !isCurrentUser && !message.isRead ? 'unread-pulse' : '';
     
+    // Handle different message types
+    let messageContent = '';
+    
+    // Video Call Message
+    if (message.isVideoCall && message.callId) {
+        messageContent = `
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <i class="fas fa-video text-white text-xl"></i>
+                </div>
+                <div>
+                    <div class="${messageColor} font-semibold">مكالمة فيديو</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">معرف المكالمة: ${message.callId}</div>
+                </div>
+            </div>
+        `;
+    }
+    // Voice Message
+    else if (message.isVoice && message.hasAttachment) {
+        const duration = message.voiceDuration ? `${Math.floor(message.voiceDuration / 60)}:${(message.voiceDuration % 60).toString().padStart(2, '0')}` : '--:--';
+        messageContent = `
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <button onclick="playVoiceMessage(${message.id})" class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center hover:scale-110 transition-transform">
+                    <i class="fas fa-play text-white"></i>
+                </button>
+                <div class="flex-1">
+                    <div class="h-8 bg-gray-200 dark:bg-slate-600 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-600" style="width: 0%"></div>
+                    </div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">${duration}</div>
+                </div>
+                <i class="fas fa-microphone text-emerald-500 text-xl"></i>
+            </div>
+        `;
+    }
+    // Image/Attachment Message
+    else if (message.hasAttachment && message.attachmentMimeType) {
+        if (message.attachmentMimeType.startsWith('image/')) {
+            messageContent = `
+                <div class="space-y-2">
+                    ${message.content && !message.content.startsWith('📷') ? `<div class="${messageColor} whitespace-pre-wrap mb-2">${message.content}</div>` : ''}
+                    <div class="rounded-xl overflow-hidden cursor-pointer hover:opacity-90 transition-opacity" onclick="openImageModal('/web/message/${message.id}/attachment')">
+                        <img src="/web/message/${message.id}/attachment" alt="${message.attachmentName || 'صورة'}" class="w-full h-auto" onerror="this.src='/images/default-avatar.png'">
+                    </div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-paperclip mr-1"></i>${message.attachmentName || 'صورة'}
+                    </div>
+                </div>
+            `;
+        } else {
+            messageContent = `
+                <div class="space-y-2">
+                    ${message.content ? `<div class="${messageColor} whitespace-pre-wrap mb-2">${message.content}</div>` : ''}
+                    <a href="/web/message/${message.id}/attachment" target="_blank" class="flex items-center space-x-3 space-x-reverse p-3 bg-gray-100 dark:bg-slate-600 rounded-xl hover:bg-gray-200 dark:hover:bg-slate-500 transition-colors">
+                        <i class="fas fa-file text-2xl text-blue-500"></i>
+                        <div class="flex-1">
+                            <div class="${messageColor} font-semibold">${message.attachmentName || 'ملف مرفق'}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">${message.attachmentMimeType}</div>
+                        </div>
+                        <i class="fas fa-download text-gray-500"></i>
+                    </a>
+                </div>
+            `;
+        }
+    }
+    // HTML Content (Product Cards)
+    else if (message.isHtml) {
+        messageContent = `<div class="${messageColor}">${message.content}</div>`;
+    }
+    // Regular Text Message
+    else {
+        messageContent = `<div class="${messageColor} whitespace-pre-wrap">${message.content}</div>`;
+    }
+    
     messageDiv.innerHTML = `
         <div class="max-w-xs lg:max-w-md relative">
             <div class="message-bubble ${messageClass} rounded-2xl shadow-lg p-4 ${isCurrentUser ? 'rounded-br-md' : 'rounded-bl-md'} relative ${unreadClass}">
                 ${unreadIndicator}
-                <div class="${messageColor} whitespace-pre-wrap">${message.content}</div>
+                ${messageContent}
                 <div class="flex items-center justify-between mt-2">
                     <span class="text-xs text-gray-500 dark:text-gray-400">${formatMessageTime(message.createdAt)}</span>
                     ${isCurrentUser ? `<i class="${statusIcon} text-xs ml-2 message-status"></i>` : ''}
                 </div>
-                ${isCurrentUser && message.seenAt ? `
+                ${isCurrentUser && message.isDelivered && !message.seenAt && !message.readAt ? `
                     <div class="text-xs text-gray-400 mt-1 text-right">
-                        <i class="fas fa-eye mr-1"></i>تم المشاهدة ${formatMessageTime(message.seenAt)}
+                        <i class="fas fa-check mr-1"></i>Delivered
+                    </div>
+                ` : ''}
+                ${isCurrentUser && message.seenAt && !message.readAt ? `
+                    <div class="text-xs text-gray-400 mt-1 text-right">
+                        <i class="fas fa-eye mr-1"></i>Seen ${formatMessageTime(message.seenAt)}
                     </div>
                 ` : ''}
                 ${isCurrentUser && message.readAt ? `
                     <div class="text-xs text-blue-500 mt-1 text-right">
-                        <i class="fas fa-check-double mr-1"></i>تم القراءة ${formatMessageTime(message.readAt)}
+                        <i class="fas fa-check-double mr-1"></i>Read ${formatMessageTime(message.readAt)}
                     </div>
                 ` : ''}
             </div>
@@ -1879,28 +1976,45 @@ function renderMessage(message, isCurrentUser) {
     return messageDiv;
 }
 
-// Format message time in Iraq timezone
+// Format message time in Iraq timezone (English format)
 function formatMessageTime(timestamp) {
     const date = new Date(timestamp);
     const now = new Date();
-    const diffInHours = (now - date) / (1000 * 60 * 60);
+    const diffInMinutes = (now - date) / (1000 * 60);
+    const diffInHours = diffInMinutes / 60;
+    const diffInDays = diffInHours / 24;
     
-    // Format directly in Iraq timezone
-    if (diffInHours < 24) {
-        return date.toLocaleTimeString('ar-SA', { 
+    // Show relative time for recent messages
+    if (diffInMinutes < 1) {
+        return 'Just now';
+    } else if (diffInMinutes < 60) {
+        return `${Math.floor(diffInMinutes)}m ago`;
+    } else if (diffInHours < 24) {
+        return date.toLocaleTimeString('en-US', { 
             hour: '2-digit', 
             minute: '2-digit',
             timeZone: 'Asia/Baghdad',
-            hour12: false
+            hour12: true
         });
-    } else {
-        return date.toLocaleDateString('ar-SA', { 
-            day: 'numeric',
-            month: 'short',
+    } else if (diffInDays < 7) {
+        // Show day name + time for messages within a week
+        return date.toLocaleString('en-US', {
+            weekday: 'short',
             hour: '2-digit',
             minute: '2-digit',
             timeZone: 'Asia/Baghdad',
-            hour12: false
+            hour12: true
+        });
+    } else {
+        // Show full date for older messages
+        return date.toLocaleString('en-US', { 
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'Asia/Baghdad',
+            hour12: true
         });
     }
 }

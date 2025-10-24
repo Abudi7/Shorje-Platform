@@ -309,6 +309,10 @@ class SocialController extends AbstractController
         $attachment = $data['attachment'] ?? null;
         $attachmentMimeType = $data['attachmentMimeType'] ?? null;
         $attachmentName = $data['attachmentName'] ?? null;
+        $isVoice = $data['isVoice'] ?? false;
+        $voiceDuration = $data['voiceDuration'] ?? null;
+        $isVideoCall = $data['isVideoCall'] ?? false;
+        $callId = $data['callId'] ?? null;
 
         if (!$receiverId || !$content) {
             return new JsonResponse(['error' => 'المعرف والمحتوى مطلوبان'], 400);
@@ -340,14 +344,36 @@ class SocialController extends AbstractController
             $message->setAttachmentName($attachmentName);
         }
 
+        // Store voice message info
+        if ($isVoice) {
+            $message->setIsVoice(true);
+            if ($voiceDuration) {
+                $message->setVoiceDuration($voiceDuration);
+            }
+        }
+
+        // Store video call info
+        if ($isVideoCall && $callId) {
+            $message->setIsVideoCall(true);
+            $message->setCallId($callId);
+        }
+
+        // Mark as delivered immediately upon creation
+        $message->setIsDelivered(true);
+
         $em->persist($message);
         $em->flush();
+
+        // Create notification for new message
+        $this->notificationService->createMessageNotification($receiver, $currentUser, $message);
 
         return new JsonResponse([
             'message' => 'تم إرسال الرسالة بنجاح',
             'messageId' => $message->getId(),
             'createdAt' => $message->getCreatedAt()->format('Y-m-d H:i:s'),
-            'isHTML' => $isHTML
+            'isHTML' => $isHTML,
+            'isDelivered' => $message->isDelivered(),
+            'isRead' => $message->isRead()
         ]);
     }
 
@@ -365,7 +391,21 @@ class SocialController extends AbstractController
         }
 
         $messages = $messageRepo->findConversation($currentUser, $otherUser);
-        $messageRepo->markMessagesAsRead($currentUser, $otherUser);
+        
+        // Mark messages as read and seen
+        $now = new \DateTime('now', new \DateTimeZone('Asia/Baghdad'));
+        foreach ($messages as $message) {
+            if ($message->getReceiver()->getId() === $currentUser->getId()) {
+                if (!$message->getSeenAt()) {
+                    $message->setSeenAt($now);
+                }
+                if (!$message->isRead()) {
+                    $message->setIsRead(true);
+                    $message->setReadAt($now);
+                }
+            }
+        }
+        $em->flush();
 
         $messagesData = [];
         foreach ($messages as $message) {
@@ -374,11 +414,18 @@ class SocialController extends AbstractController
                 'content' => $message->getContent(),
                 'senderId' => $message->getSender()->getId(),
                 'senderName' => $message->getSender()->getFullName(),
+                'receiverId' => $message->getReceiver()->getId(),
+                'receiverName' => $message->getReceiver()->getFullName(),
                 'isRead' => $message->isRead(),
                 'isHtml' => $message->isHtml(),
+                'isDelivered' => $message->isDelivered(),
                 'hasAttachment' => $message->getAttachment() !== null,
                 'attachmentMimeType' => $message->getAttachmentMimeType(),
                 'attachmentName' => $message->getAttachmentName(),
+                'isVoice' => $message->getIsVoice(),
+                'voiceDuration' => $message->getVoiceDuration(),
+                'isVideoCall' => $message->getIsVideoCall(),
+                'callId' => $message->getCallId(),
                 'seenAt' => $message->getSeenAt() ? $message->getSeenAt()->format('Y-m-d H:i:s') : null,
                 'readAt' => $message->getReadAt() ? $message->getReadAt()->format('Y-m-d H:i:s') : null,
                 'createdAt' => $message->getCreatedAt()->format('Y-m-d H:i:s')
@@ -447,7 +494,7 @@ class SocialController extends AbstractController
     }
 
     #[Route('/web/conversations', name: 'web_get_conversations', methods: ['GET'])]
-    public function webGetConversations(MessageRepository $messageRepo): JsonResponse
+    public function webGetConversations(MessageRepository $messageRepo, EntityManagerInterface $em): JsonResponse
     {
         $currentUser = $this->getUser();
         if (!$currentUser) {
@@ -457,14 +504,40 @@ class SocialController extends AbstractController
         $conversations = $messageRepo->findRecentConversations($currentUser);
         $unreadCount = $messageRepo->getUnreadMessagesCount($currentUser);
 
+        // Format conversations for frontend
+        $formattedConversations = [];
+        foreach ($conversations as $conversation) {
+            $otherUser = $em->getRepository(User::class)->find($conversation['otherUserId']);
+            if (!$otherUser) {
+                continue;
+            }
+
+            $formattedConversations[] = [
+                'user' => [
+                    'id' => $otherUser->getId(),
+                    'firstName' => $otherUser->getFirstName(),
+                    'lastName' => $otherUser->getLastName(),
+                    'fullName' => $otherUser->getFullName(),
+                    'email' => $otherUser->getEmail(),
+                    'isOnline' => $otherUser->isOnline(),
+                    'lastSeenAt' => $otherUser->getLastSeenAt() ? $otherUser->getLastSeenAt()->format('Y-m-d H:i:s') : null
+                ],
+                'lastMessage' => [
+                    'content' => $conversation['lastMessageContent'],
+                    'createdAt' => $conversation['lastMessageSentAt']->format('Y-m-d H:i:s')
+                ],
+                'unreadCount' => $conversation['unreadCount']
+            ];
+        }
+
         return new JsonResponse([
-            'conversations' => $conversations,
+            'conversations' => $formattedConversations,
             'unreadCount' => $unreadCount
         ]);
     }
 
     #[Route('/web/notifications/unread-count', name: 'web_notifications_unread_count', methods: ['GET'])]
-    public function getUnreadNotificationsCount(MessageRepository $messageRepo): JsonResponse
+    public function getUnreadNotificationsCount(EntityManagerInterface $em): JsonResponse
     {
         $currentUser = $this->getUser();
         if (!$currentUser) {
@@ -472,9 +545,9 @@ class SocialController extends AbstractController
             return new JsonResponse(['count' => 0]);
         }
 
-        // For now, we'll use messages as notifications
-        // You can extend this later to include other types of notifications
-        $unreadCount = $messageRepo->getUnreadMessagesCount($currentUser);
+        // Get actual notifications count from Notification entity
+        $notificationRepo = $em->getRepository(\App\Entity\Notification::class);
+        $unreadCount = $notificationRepo->getUnreadCount($currentUser);
 
         return new JsonResponse(['count' => $unreadCount]);
     }
@@ -523,7 +596,7 @@ class SocialController extends AbstractController
         return $response;
     }
 
-    #[Route('/web/users/{userId}', name: 'web_get_user', methods: ['GET'])]
+    #[Route('/web/users/{userId}', name: 'web_get_user', methods: ['GET'], requirements: ['userId' => '\d+'])]
     public function getUserById(int $userId, EntityManagerInterface $em): JsonResponse
     {
         $currentUser = $this->getUser();
@@ -609,15 +682,22 @@ class SocialController extends AbstractController
 
         $usersData = [];
         foreach ($users as $user) {
+            // Get user avatar URL
+            $avatarUrl = $user->getAvatarUrl();
+                
             $usersData[] = [
                 'id' => $user->getId(),
                 'name' => $user->getFullName(),
+                'firstName' => $user->getFirstName(),
+                'lastName' => $user->getLastName(),
                 'email' => $user->getEmail(),
                 'age' => $user->getAge(),
                 'location' => $user->getLocation(),
                 'gender' => $user->getGender(),
                 'isVerified' => $user->isVerified(),
-                'hasProfileImage' => $user->getProfilePicture() !== null
+                'hasProfileImage' => $user->getProfilePicture() !== null,
+                'avatar' => $avatarUrl,
+                'profileImage' => $avatarUrl
             ];
         }
 
@@ -785,15 +865,21 @@ class SocialController extends AbstractController
             throw new AccessDeniedException('يجب تسجيل الدخول أولاً');
         }
 
-        $users = $em->getRepository(User::class)->createQueryBuilder('u')
+        // Get top sellers in Iraq based on followers count
+        $topSellers = $em->getRepository(User::class)->createQueryBuilder('u')
+            ->select('u', 'COUNT(f.id) as HIDDEN followersCount')
+            ->leftJoin('App\Entity\Follow', 'f', 'WITH', 'f.following = u.id')
             ->where('u.id != :currentUserId')
             ->setParameter('currentUserId', $currentUser->getId())
-            ->orderBy('u.firstName', 'ASC')
+            ->groupBy('u.id')
+            ->orderBy('followersCount', 'DESC')
+            ->setMaxResults(6)
             ->getQuery()
             ->getResult();
 
         return $this->render('social/users.html.twig', [
-            'users' => $users,
+            'users' => [],  // Empty array - don't show all users
+            'topSellers' => $topSellers,
             'currentUser' => $currentUser,
             'user' => $currentUser
         ]);
@@ -915,19 +1001,6 @@ class SocialController extends AbstractController
         ]);
     }
 
-    #[Route('/web/notifications/unread-count', name: 'web_notifications_unread_count', methods: ['GET'])]
-    public function getNotificationsUnreadCount(EntityManagerInterface $em): JsonResponse
-    {
-        $currentUser = $this->getUser();
-        if (!$currentUser) {
-            return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
-        }
-
-        $notificationRepo = $em->getRepository(\App\Entity\Notification::class);
-        $count = $notificationRepo->getUnreadCount($currentUser);
-
-        return new JsonResponse(['count' => $count]);
-    }
 
     #[Route('/web/notifications/list', name: 'web_notifications_list', methods: ['GET'])]
     public function getNotifications(EntityManagerInterface $em, Request $request): JsonResponse
