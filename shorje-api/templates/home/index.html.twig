@@ -248,7 +248,7 @@
                         {% for sliderImage in sliderImages %}
                             <div class="hero-slide {% if loop.first %}active{% endif %} absolute inset-0 flex items-center">
                                 {% if sliderImage.image %}
-                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('data:{{ sliderImage.imageMimeType }};base64,{{ sliderImage.image }}');">
+                                    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('/api/slider/image/{{ sliderImage.id }}');">
                                         <div class="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-black/50"></div>
                                     </div>
                                 {% else %}
