@@ -395,6 +395,14 @@ function renderProducts(products) {
                         ${product.statusDisplay || 'متاح'}
                     </span>
                 </div>
+                
+                <!-- Favorite Button -->
+                <button onclick="event.stopPropagation(); toggleProductFavorite(${product.id}, event)" 
+                        class="absolute top-3 left-3 w-10 h-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-110 transition-all duration-200 shadow-lg group"
+                        title="حفظ في المفضلة"
+                        data-product-id="${product.id}">
+                    <i class="far fa-heart text-gray-600 dark:text-gray-300 group-hover:text-red-500 transition-colors" data-favorite-icon="${product.id}"></i>
+                </button>
             </div>
             
             <!-- Product Info -->
@@ -846,6 +854,44 @@ async function checkForNewMessages() {
         if (error.message === 'Authentication required') {
             console.log('User not authenticated, stopping real-time updates');
         }
+    }
+}
+
+// Toggle product favorite
+async function toggleProductFavorite(productId, event) {
+    const button = event.currentTarget;
+    const icon = button.querySelector('i');
+    
+    try {
+        const response = await fetch('/web/favorites/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ productId: productId })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update icon
+            if (data.action === 'added') {
+                icon.classList.remove('far');
+                icon.classList.add('fas', 'text-red-500');
+                button.classList.add('bg-red-50', 'dark:bg-red-900/30');
+                showToast('تم إضافة المنتج إلى المفضلة ❤️', 'success');
+            } else {
+                icon.classList.remove('fas', 'text-red-500');
+                icon.classList.add('far');
+                button.classList.remove('bg-red-50', 'dark:bg-red-900/30');
+                showToast('تم إزالة المنتج من المفضلة', 'info');
+            }
+        } else {
+            showToast(data.error || 'حدث خطأ', 'error');
+        }
+    } catch (error) {
+        console.error('Error toggling favorite:', error);
+        showToast('حدث خطأ في الاتصال', 'error');
     }
 }
 </script>
