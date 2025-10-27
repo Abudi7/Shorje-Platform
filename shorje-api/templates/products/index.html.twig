@@ -3,6 +3,8 @@
 {% block title %}جميع المنتجات - شورجي{% endblock %}
 
 {% block body %}
+{% include 'components/home_navigation.html.twig' %}
+
 <style>
     /* Custom animations and styles */
     .glass {
@@ -66,59 +68,6 @@
 </style>
 
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-    <!-- Modern Header -->
-    <nav class="glass sticky top-0 z-50 border-b border-white/20 dark:border-slate-700/30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <!-- Logo Section -->
-                <div class="flex items-center">
-                    <div class="flex items-center space-x-4">
-                        <div class="h-12 w-12 bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden">
-                            <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
-                            <i class="fas fa-th-large text-white text-xl relative z-10"></i>
-                        </div>
-                        <div>
-                            <h1 class="text-3xl font-bold gradient-text">جميع المنتجات</h1>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">اكتشف وابحث عن المنتجات</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Navigation Actions -->
-                <div class="flex items-center space-x-4">
-                    <a href="/home" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
-                        <i class="fas fa-home"></i>
-                        <span>الرئيسية</span>
-                    </a>
-                    <a href="/products" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
-                        <i class="fas fa-th-large"></i>
-                        <span>المنتجات</span>
-                    </a>
-                    <a href="/users" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
-                        <i class="fas fa-users"></i>
-                        <span>البائعين</span>
-                    </a>
-                    {% if user %}
-                    <a href="/products/my" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
-                        <i class="fas fa-box"></i>
-                        <span>منتجاتي</span>
-                    </a>
-                    {% endif %}
-                    <a href="/messages" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50 relative">
-                        <i class="fas fa-comments"></i>
-                        <span>الرسائل</span>
-                        <span id="messagesCount" class="absolute -top-1 -right-1 bg-gradient-to-r from-emerald-500 to-blue-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-lg hidden z-10">0</span>
-                    </a>
-                    {% if user %}
-                    <a href="/profile" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
-                        <i class="fas fa-user"></i>
-                        <span>الملف الشخصي</span>
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </nav>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Page Header -->
@@ -446,6 +395,14 @@ function renderProducts(products) {
                         ${product.statusDisplay || 'متاح'}
                     </span>
                 </div>
+                
+                <!-- Favorite Button -->
+                <button onclick="event.stopPropagation(); toggleProductFavorite(${product.id}, event)" 
+                        class="absolute top-3 left-3 w-10 h-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-110 transition-all duration-200 shadow-lg group"
+                        title="حفظ في المفضلة"
+                        data-product-id="${product.id}">
+                    <i class="far fa-heart text-gray-600 dark:text-gray-300 group-hover:text-red-500 transition-colors" data-favorite-icon="${product.id}"></i>
+                </button>
             </div>
             
             <!-- Product Info -->
@@ -897,6 +854,44 @@ async function checkForNewMessages() {
         if (error.message === 'Authentication required') {
             console.log('User not authenticated, stopping real-time updates');
         }
+    }
+}
+
+// Toggle product favorite
+async function toggleProductFavorite(productId, event) {
+    const button = event.currentTarget;
+    const icon = button.querySelector('i');
+    
+    try {
+        const response = await fetch('/web/favorites/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ productId: productId })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update icon
+            if (data.action === 'added') {
+                icon.classList.remove('far');
+                icon.classList.add('fas', 'text-red-500');
+                button.classList.add('bg-red-50', 'dark:bg-red-900/30');
+                showToast('تم إضافة المنتج إلى المفضلة ❤️', 'success');
+            } else {
+                icon.classList.remove('fas', 'text-red-500');
+                icon.classList.add('far');
+                button.classList.remove('bg-red-50', 'dark:bg-red-900/30');
+                showToast('تم إزالة المنتج من المفضلة', 'info');
+            }
+        } else {
+            showToast(data.error || 'حدث خطأ', 'error');
+        }
+    } catch (error) {
+        console.error('Error toggling favorite:', error);
+        showToast('حدث خطأ في الاتصال', 'error');
     }
 }
 </script>

@@ -1,0 +1,98 @@
+name: 🧪 CI Pipeline
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  test:
+    name: 🧪 Run Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: shorje_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🐘 Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, zip, gd, curl, json, bcmath, soap, xmlrpc, xsl, gmp, exif, fileinfo, sodium, redis
+        coverage: xdebug
+
+    - name: 📥 Install Composer dependencies
+      run: |
+        cd shorje-api
+        composer install --prefer-dist --no-progress --no-suggest
+
+    - name: 🔧 Create .env.test
+      run: |
+        cd shorje-api
+        cp .env.dev .env.test
+        echo "DATABASE_URL=mysql://root:root@127.0.0.1:3306/shorje_test" >> .env.test
+        echo "APP_ENV=test" >> .env.test
+
+    - name: 🗄️ Run database migrations
+      run: |
+        cd shorje-api
+        php bin/console doctrine:database:create --env=test
+        php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+    - name: 🧪 Run PHPUnit tests
+      run: |
+        cd shorje-api
+        php bin/phpunit --coverage-clover=coverage.xml
+
+  build:
+    name: 🏗️ Build Application
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🐘 Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, zip, gd, curl, json, bcmath, soap, xmlrpc, xsl, gmp, exif, fileinfo, sodium, redis
+
+    - name: 📥 Install Composer dependencies
+      run: |
+        cd shorje-api
+        composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
+
+    - name: 🏗️ Build for production
+      run: |
+        cd shorje-api
+        php bin/console cache:clear --env=prod
+        php bin/console cache:warmup --env=prod
+
+    - name: 📊 Create build summary
+      run: |
+        echo "## 🚀 Build Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ **Tests Passed** - All PHPUnit tests completed successfully" >> $GITHUB_STEP_SUMMARY
+        echo "✅ **Build Successful** - Application built for production" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📋 Branch Information:" >> $GITHUB_STEP_SUMMARY
+        echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version**: 1.0.0" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔗 Links:" >> $GITHUB_STEP_SUMMARY
+        echo "- 📚 **Source Code**: https://github.com/Abudi7/Shorje-Platform" >> $GITHUB_STEP_SUMMARY
+        echo "- 🌐 **GitHub Pages**: https://abudi7.github.io/Shorje-Platform/" >> $GITHUB_STEP_SUMMARY

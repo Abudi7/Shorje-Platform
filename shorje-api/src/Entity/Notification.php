@@ -16,7 +16,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new Get(),
-        new GetCollection(),
+        // GetCollection disabled - use custom controller at /api/notifications instead
+        // new GetCollection(),
         new Post(security: "is_granted('ROLE_USER')"),
         new Put(security: "is_granted('ROLE_USER')"),
         new Delete(security: "is_granted('ROLE_USER')"),

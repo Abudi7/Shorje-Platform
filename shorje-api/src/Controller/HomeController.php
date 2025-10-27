@@ -93,4 +93,25 @@ class HomeController extends AbstractController
     {
         return $this->render('home/terms.html.twig');
     }
+
+    #[Route('/api/slider/image/{id}', name: 'api_slider_image', methods: ['GET'])]
+    public function getSliderImage(int $id, SliderImageRepository $sliderImageRepo): Response
+    {
+        $sliderImage = $sliderImageRepo->find($id);
+        
+        if (!$sliderImage || !$sliderImage->getImage()) {
+            throw $this->createNotFoundException('Slider image not found');
+        }
+
+        $imageData = $sliderImage->getImage();
+        if (is_resource($imageData)) {
+            $imageData = stream_get_contents($imageData);
+        }
+
+        $response = new Response($imageData);
+        $response->headers->set('Content-Type', $sliderImage->getImageMimeType() ?: 'image/jpeg');
+        $response->headers->set('Cache-Control', 'public, max-age=3600');
+        
+        return $response;
+    }
 }

@@ -1,0 +1,223 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}لوحة الإدارة - شورجي{% endblock %}
+
+{% block body %}
+<!-- Include Navigation Component -->
+{% include 'components/navigation.html.twig' %}
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <!-- Header Section -->
+    <div class="relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-blue-600/10 to-indigo-600/10"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        
+        <div class="relative z-10 container mx-auto px-4 py-12">
+            <!-- Page Header -->
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full mb-6 shadow-lg">
+                    <i class="fas fa-cog text-3xl text-white"></i>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                    <span class="gradient-text">لوحة الإدارة</span>
+                </h1>
+                <p class="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    إدارة شاملة لمنصة شورجي
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8">
+        <!-- Stats Dashboard -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="glass dark:glass-dark rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2" id="totalUsers">0</div>
+                <div class="text-gray-600 dark:text-gray-300">إجمالي المستخدمين</div>
+            </div>
+            <div class="glass dark:glass-dark rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2" id="totalProducts">0</div>
+                <div class="text-gray-600 dark:text-gray-300">إجمالي المنتجات</div>
+            </div>
+            <div class="glass dark:glass-dark rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2" id="totalOrders">0</div>
+                <div class="text-gray-600 dark:text-gray-300">إجمالي الطلبات</div>
+            </div>
+            <div class="glass dark:glass-dark rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
+                <div class="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2" id="totalRevenue">0</div>
+                <div class="text-gray-600 dark:text-gray-300">إجمالي الإيرادات</div>
+            </div>
+        </div>
+
+        <!-- Admin Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-users text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">إدارة المستخدمين</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">إدارة المستخدمين والصلاحيات</p>
+                    <a href="/admin/users" class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left ml-2"></i>
+                        إدارة المستخدمين
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-box text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">إدارة المنتجات</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">إدارة المنتجات والفئات</p>
+                    <a href="/admin/products" class="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left ml-2"></i>
+                        إدارة المنتجات
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chart-bar text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">التقارير والإحصائيات</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">عرض التقارير والإحصائيات</p>
+                    <a href="/admin/reports" class="inline-flex items-center px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left ml-2"></i>
+                        عرض التقارير
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-cog text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">إعدادات النظام</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">إعدادات النظام والتكوين</p>
+                    <a href="/admin/settings" class="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left ml-2"></i>
+                        الإعدادات
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-teal-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bell text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">الإشعارات</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">إدارة الإشعارات والتنبيهات</p>
+                    <a href="/admin/notifications" class="inline-flex items-center px-4 py-2 bg-teal-500 hover:bg-teal-600 text-white rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left ml-2"></i>
+                        الإشعارات
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">الأمان</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">إدارة الأمان والصلاحيات</p>
+                    <a href="/admin/security" class="inline-flex items-center px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors">
+                        <i class="fas fa-arrow-left ml-2"></i>
+                        الأمان
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-8">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">النشاط الأخير</h2>
+            <div class="space-y-4">
+                <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
+                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-gray-900 dark:text-white font-medium">مستخدم جديد انضم للمنصة</p>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">منذ 5 دقائق</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
+                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-box text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-gray-900 dark:text-white font-medium">منتج جديد تم إضافته</p>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">منذ 15 دقيقة</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-slate-700 rounded-lg">
+                    <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-shopping-cart text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-gray-900 dark:text-white font-medium">طلب جديد تم إنشاؤه</p>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">منذ 30 دقيقة</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.glass {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.glass-dark {
+    background: rgba(15, 23, 42, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load admin stats
+    loadAdminStats();
+});
+
+async function loadAdminStats() {
+    try {
+        // Mock data for now - replace with actual API calls
+        const stats = {
+            totalUsers: 1250,
+            totalProducts: 3400,
+            totalOrders: 890,
+            totalRevenue: 125000
+        };
+        
+        document.getElementById('totalUsers').textContent = stats.totalUsers.toLocaleString();
+        document.getElementById('totalProducts').textContent = stats.totalProducts.toLocaleString();
+        document.getElementById('totalOrders').textContent = stats.totalOrders.toLocaleString();
+        document.getElementById('totalRevenue').textContent = stats.totalRevenue.toLocaleString() + ' د.ع';
+        
+    } catch (error) {
+        console.error('Error loading admin stats:', error);
+    }
+}
+</script>
+{% endblock %}

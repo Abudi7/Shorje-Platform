@@ -77,12 +77,15 @@ class MessageRepository extends ServiceEntityRepository
             
             // Only keep the latest message for each conversation
             if (!isset($groupedConversations[$otherUserId])) {
+                // Calculate unread count for this conversation
+                $unreadCount = $this->countUnreadMessages($user, $otherUser);
+                
                 $groupedConversations[$otherUserId] = [
                     'otherUserId' => $otherUserId,
                     'otherUserName' => $otherUser->getFullName(),
                     'lastMessageContent' => $message->getContent(),
                     'lastMessageSentAt' => $message->getCreatedAt(),
-                    'unreadCount' => 0 // We'll calculate this separately
+                    'unreadCount' => $unreadCount
                 ];
             }
         }
