@@ -10,12 +10,16 @@ use Twig\Environment;
 
 class EmailService
 {
+    private string $fromEmail;
+    private string $fromName;
+
     public function __construct(
         private MailerInterface $mailer,
-        private Environment $twig,
-        private string $fromEmail,
-        private string $fromName
-    ) {}
+        private Environment $twig
+    ) {
+        $this->fromEmail = 'shorje@abdulrhman-alshalal.com';
+        $this->fromName = 'شورجي';
+    }
 
     public function sendWelcomeEmail(User $user): void
     {

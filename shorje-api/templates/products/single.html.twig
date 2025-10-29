@@ -56,58 +56,93 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
         background: linear-gradient(135deg, #2563eb, #7c3aed);
     }
-</style>
 
+    /* Responsive Design */
+    @media (max-width: 640px) {
+        .product-image:hover {
+            transform: none;
+        }
+        
+        .glass {
+            backdrop-filter: blur(5px);
+        }
+        
+        .gradient-text {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .product-image:hover {
+            transform: none;
+        }
+        
+        .glass {
+            backdrop-filter: blur(3px);
+        }
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+        .product-image:hover {
+            transform: none;
+        }
+        
+        .glass {
+            backdrop-filter: blur(3px);
+        }
+    }
+
+    /* Smooth scrolling */
+    html {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Prevent mobile zoom on input focus */
+    @media screen and (max-width: 768px) {
+        input, textarea, select {
+            font-size: 16px !important;
+        }
+    }
+</style>
+{% include 'components/home_navigation.html.twig' %}
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-    <!-- Modern Header -->
+    <!-- Modern Header - Responsive -->
     <nav class="glass sticky top-0 z-50 border-b border-white/20 dark:border-slate-700/30">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
+        <div class="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 sm:h-18 md:h-20">
                 <!-- Logo Section -->
                 <div class="flex items-center">
-                    <div class="flex items-center space-x-4">
-                        <div class="h-12 w-12 bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden">
+                    <div class="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
+                        <div class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-500 rounded-lg sm:rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg relative overflow-hidden">
                             <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
-                            <i class="fas fa-box text-white text-xl relative z-10"></i>
+                            <i class="fas fa-box text-white text-sm sm:text-lg md:text-xl relative z-10"></i>
                         </div>
                         <div>
-                            <h1 class="text-2xl font-bold gradient-text">{{ product.title }}</h1>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">تفاصيل المنتج</p>
+                            <h1 class="text-lg sm:text-xl md:text-2xl font-bold gradient-text line-clamp-1">{{ product.title }}</h1>
+                            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">تفاصيل المنتج</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Navigation Actions -->
-                <div class="flex items-center space-x-4">
-                    <a href="/home" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
-                        <i class="fas fa-home"></i>
-                        <span>الرئيسية</span>
-                    </a>
-                    <a href="/products" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
-                        <i class="fas fa-th-large"></i>
-                        <span>المنتجات</span>
-                    </a>
-                    <a href="/messages" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
-                        <i class="fas fa-comments"></i>
-                        <span>الرسائل</span>
-                    </a>
-                    <a href="/profile" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors px-4 py-2 rounded-xl hover:bg-white/50 dark:hover:bg-slate-800/50">
-                        <i class="fas fa-user"></i>
-                        <span>الملف الشخصي</span>
-                    </a>
-                </div>
+                
+                <!-- Back Button -->
+                <button onclick="history.back()" class="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-lg sm:rounded-xl hover:bg-white dark:hover:bg-slate-800 transition-all duration-200 shadow-md">
+                    <i class="fas fa-arrow-right text-gray-600 dark:text-gray-400 text-sm sm:text-base"></i>
+                    <span class="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-300">رجوع</span>
+                </button>
             </div>
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Product Details -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+        <!-- Product Details - Responsive -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
             <!-- Product Images -->
-            <div class="space-y-4">
+            <div class="space-y-3 sm:space-y-4">
                 <!-- Main Image -->
-                <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 overflow-hidden">
-                    <div class="relative h-96 bg-gray-100 dark:bg-slate-700">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl border border-white/20 dark:border-slate-700/20 overflow-hidden">
+                    <div class="relative h-64 sm:h-80 md:h-96 bg-gray-100 dark:bg-slate-700">
                         {% if product.image1 %}
                         <img src="/api/products/image/{{ product.id }}/1" 
                              alt="{{ product.title }}" 
@@ -117,24 +152,24 @@
                         {% else %}
                         <div class="flex items-center justify-center h-full text-gray-400 dark:text-slate-400">
                             <div class="text-center">
-                                <i class="fas fa-image text-6xl mb-4"></i>
-                                <p class="text-lg">لا توجد صورة</p>
+                                <i class="fas fa-image text-4xl sm:text-6xl mb-2 sm:mb-4"></i>
+                                <p class="text-sm sm:text-lg">لا توجد صورة</p>
                             </div>
                         </div>
                         {% endif %}
                         
                         <!-- Status Badge -->
-                        <div class="absolute top-4 right-4">
+                        <div class="absolute top-3 sm:top-4 right-3 sm:right-4">
                             {% if product.status == 'available' %}
-                            <span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                            <span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg">
                                 متاح
                             </span>
                             {% elseif product.status == 'sold' %}
-                            <span class="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                            <span class="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg">
                                 مباع
                             </span>
                             {% elseif product.status == 'reserved' %}
-                            <span class="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                            <span class="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold shadow-lg">
                                 محجوز
                             </span>
                             {% endif %}
@@ -144,21 +179,21 @@
 
                 <!-- Additional Images -->
                 {% if product.image2 or product.image3 %}
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-2 sm:gap-4">
                     {% if product.image2 %}
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-white/20 dark:border-slate-700/20 overflow-hidden">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-lg border border-white/20 dark:border-slate-700/20 overflow-hidden">
                         <img src="/api/products/image/{{ product.id }}/2" 
                              alt="{{ product.title }}" 
-                             class="w-full h-32 object-cover product-image cursor-pointer"
+                             class="w-full h-24 sm:h-32 object-cover product-image cursor-pointer"
                              onclick="openImageModal('/api/products/image/{{ product.id }}/2')"
                              loading="lazy">
                     </div>
                     {% endif %}
                     {% if product.image3 %}
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-white/20 dark:border-slate-700/20 overflow-hidden">
+                    <div class="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl shadow-lg border border-white/20 dark:border-slate-700/20 overflow-hidden">
                         <img src="/api/products/image/{{ product.id }}/3" 
                              alt="{{ product.title }}" 
-                             class="w-full h-32 object-cover product-image cursor-pointer"
+                             class="w-full h-24 sm:h-32 object-cover product-image cursor-pointer"
                              onclick="openImageModal('/api/products/image/{{ product.id }}/3')"
                              loading="lazy">
                     </div>
@@ -167,77 +202,79 @@
                 {% endif %}
             </div>
 
-            <!-- Product Information -->
-            <div class="space-y-6">
+            <!-- Product Information - Responsive -->
+            <div class="space-y-4 sm:space-y-6">
                 <!-- Product Header -->
-                <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
-                    <div class="flex items-start justify-between mb-6">
-                        <div class="flex-1">
-                            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">{{ product.title }}</h1>
-                            <div class="flex items-center space-x-4 mb-4">
-                                <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl border border-white/20 dark:border-slate-700/20 p-4 sm:p-6 md:p-8">
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4 sm:mb-6">
+                        <div class="flex-1 mb-4 sm:mb-0">
+                            <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3">{{ product.title }}</h1>
+                            <div class="flex flex-wrap items-center gap-2 sm:gap-4 mb-3 sm:mb-4">
+                                <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
                                     <i class="fas fa-tag ml-1"></i>{{ product.categoryDisplayName }}
                                 </span>
                                 {% if product.condition %}
-                                <span class="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-3 py-1 rounded-full text-sm font-medium">
+                                <span class="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium">
                                     <i class="fas fa-info-circle ml-1"></i>{{ product.condition }}
                                 </span>
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="text-right">
-                            <div class="text-4xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+                        <div class="text-left sm:text-right">
+                            <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-emerald-600 dark:text-emerald-400 mb-1 sm:mb-2">
                                 {{ product.price }} {{ product.currencyDisplayName }}
                             </div>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">السعر</p>
+                            <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">السعر</p>
                         </div>
                     </div>
 
                     <!-- Product Description -->
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">الوصف</h3>
-                        <p class="text-gray-600 dark:text-gray-300 leading-relaxed">{{ product.description }}</p>
+                    <div class="mb-4 sm:mb-6">
+                        <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-2 sm:mb-3">الوصف</h3>
+                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">{{ product.description }}</p>
                     </div>
 
                     <!-- Product Details -->
-                    <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
                         <div class="flex items-center">
-                            <i class="fas fa-map-marker-alt text-emerald-500 ml-2"></i>
-                            <span class="text-gray-700 dark:text-gray-300 font-medium">{{ product.city }}</span>
+                            <i class="fas fa-map-marker-alt text-emerald-500 ml-2 text-sm sm:text-base"></i>
+                            <span class="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium">{{ product.city }}</span>
                         </div>
                         <div class="flex items-center">
-                            <i class="fas fa-calendar text-blue-500 ml-2"></i>
-                            <span class="text-gray-700 dark:text-gray-300 font-medium">{{ product.createdAt|date('M d, Y') }}</span>
+                            <i class="fas fa-calendar text-blue-500 ml-2 text-sm sm:text-base"></i>
+                            <span class="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium">{{ product.createdAt|date('M d, Y') }}</span>
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="flex space-x-4">
-                        <button onclick="contactSellerWithProduct({{ product.id }}, {{ product.seller.id }})" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-2xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
+                    <!-- Action Buttons - Responsive -->
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <button onclick="contactSellerWithProduct({{ product.id }}, {{ product.seller.id }})" class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 sm:px-6 py-3 rounded-xl sm:rounded-2xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base">
                             <i class="fas fa-comments ml-2"></i>رسالة البائع
                         </button>
-                        <button id="favoriteBtn" onclick="toggleFavorite({{ product.id }})" class="px-6 py-3 bg-white dark:bg-slate-700 border-2 border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-2xl hover:bg-red-50 dark:hover:bg-slate-600 transition-all duration-200 shadow-lg hover:shadow-xl group" title="حفظ في المفضلة">
-                            <i class="far fa-heart ml-2 group-hover:text-red-500 transition-colors" id="favoriteIcon"></i>
-                            <span class="hidden md:inline">حفظ</span>
-                        </button>
-                        <button onclick="viewSellerProfile({{ product.seller.id }})" class="px-6 py-3 border-2 border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-2xl hover:bg-gray-50 dark:hover:bg-slate-600 transition-all duration-200 shadow-lg hover:shadow-xl">
-                            <i class="fas fa-user ml-2"></i>الملف الشخصي
-                        </button>
+                        <div class="flex gap-3 sm:gap-4">
+                            <button id="favoriteBtn" onclick="toggleFavorite({{ product.id }})" class="flex-1 sm:flex-none px-4 sm:px-6 py-3 bg-white dark:bg-slate-700 border-2 border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-xl sm:rounded-2xl hover:bg-red-50 dark:hover:bg-slate-600 transition-all duration-200 shadow-lg hover:shadow-xl group" title="حفظ في المفضلة">
+                                <i class="far fa-heart ml-2 group-hover:text-red-500 transition-colors text-sm sm:text-base" id="favoriteIcon"></i>
+                                <span class="hidden sm:inline text-sm sm:text-base">حفظ</span>
+                            </button>
+                            <button onclick="viewSellerProfile({{ product.seller.id }})" class="flex-1 sm:flex-none px-4 sm:px-6 py-3 border-2 border-gray-300 dark:border-slate-600 text-gray-700 dark:text-gray-300 rounded-xl sm:rounded-2xl hover:bg-gray-50 dark:hover:bg-slate-600 transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base">
+                                <i class="fas fa-user ml-2"></i><span class="hidden sm:inline">الملف الشخصي</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Seller Information -->
-                <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6">معلومات البائع</h3>
-                    <div class="flex items-center space-x-4">
-                        <div class="w-16 h-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-2xl flex items-center justify-center">
-                            <i class="fas fa-user text-white text-xl"></i>
+                <!-- Seller Information - Responsive -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl border border-white/20 dark:border-slate-700/20 p-4 sm:p-6 md:p-8">
+                    <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">معلومات البائع</h3>
+                    <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-xl sm:rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-user text-white text-lg sm:text-xl"></i>
                         </div>
                         <div class="flex-1">
-                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white">{{ product.seller.fullName }}</h4>
-                            <p class="text-gray-600 dark:text-gray-400">{{ product.seller.email }}</p>
+                            <h4 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">{{ product.seller.fullName }}</h4>
+                            <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">{{ product.seller.email }}</p>
                         </div>
-                        <button onclick="viewSellerProfile({{ product.seller.id }})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl transition-colors duration-200">
+                        <button onclick="viewSellerProfile({{ product.seller.id }})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 sm:px-4 py-2 rounded-lg sm:rounded-xl transition-colors duration-200 text-sm sm:text-base">
                             <i class="fas fa-eye ml-1"></i>عرض الملف
                         </button>
                     </div>
@@ -246,13 +283,13 @@
         </div>
     </div>
 
-    <!-- Image Modal -->
-    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center p-4">
-        <div class="relative max-w-4xl max-h-full">
-            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 z-10">
+    <!-- Image Modal - Responsive -->
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center p-2 sm:p-4">
+        <div class="relative max-w-4xl max-h-full w-full">
+            <button onclick="closeImageModal()" class="absolute top-2 sm:top-4 right-2 sm:right-4 text-white text-xl sm:text-2xl hover:text-gray-300 z-10 bg-black/50 rounded-full p-2">
                 <i class="fas fa-times"></i>
             </button>
-            <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain rounded-2xl">
+            <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain rounded-lg sm:rounded-2xl mx-auto">
         </div>
     </div>
 </div>

@@ -4,7 +4,7 @@
 
 {% block body %}
 <!-- Include Home Navigation Component -->
-{% include 'components/home-navigation.html.twig' %}
+{% include 'components/home_navigation.html.twig' %}
 
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
     <!-- Header Section -->
@@ -31,6 +31,14 @@
 
     <!-- Main Content -->
     <div class="container mx-auto px-4 pb-12">
+        <!-- Actions Bar -->
+        <div class="flex items-center justify-between py-4">
+            <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">لوحة منتجاتي</h2>
+            <a href="/products/add" class="inline-flex items-center bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-5 py-2.5 rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-xl">
+                <i class="fas fa-plus ml-2"></i>
+                إضافة منتج
+            </a>
+        </div>
         <!-- Loading State -->
         <div id="loadingState" class="text-center py-12">
             <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
@@ -60,6 +68,12 @@
     </div>
 </div>
 
+<!-- Floating Action Button (Mobile) -->
+<a href="/products/add" class="fixed bottom-6 left-6 z-40 md:hidden bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-transform active:scale-95">
+    <i class="fas fa-plus text-2xl"></i>
+    <span class="sr-only">إضافة منتج</span>
+    </a>
+
 <script>
 let currentProducts = [];
 
@@ -68,9 +82,23 @@ async function loadMyProducts() {
     console.log('Loading my products with simple API...');
     
     try {
-        const response = await apiCall('/web/products/my-simple');
+        const response = await fetch('/web/products/my-simple', {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
         const data = await response.json();
         
+        if (!response.ok) {
+            if (response.status === 401) {
+                window.location.href = '/login';
+                return;
+            }
+            showToast(data.error || 'تعذر تحميل المنتجات', 'error');
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('emptyState').classList.remove('hidden');
+            return;
+        }
+
         if (data.error) {
             showToast(data.error, 'error');
             document.getElementById('loadingState').classList.add('hidden');
@@ -136,7 +164,7 @@ function displayMyProducts(products) {
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">
                         <i class="fas fa-calendar ml-1"></i>
-                        ${new Date(product.createdAt).toLocaleDateString('ar-SA')}
+                        ${new Date(product.createdAt).toLocaleDateString('en-US')}
                     </div>
                 </div>
                 
@@ -152,10 +180,10 @@ function displayMyProducts(products) {
                 </div>
                 
                 <div class="flex space-x-2">
-                    <button onclick="editProduct(${product.id})" class="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <a href="/products/${product.id}/edit" class="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105 text-center">
                         <i class="fas fa-edit ml-1"></i>تعديل
-                    </button>
-                    <button onclick="deleteProduct(${product.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg font-medium transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105">
+                    </a>
+                    <button onclick="deleteProduct(${product.id}, this)" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg font-medium transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -180,25 +208,51 @@ function getStatusColor(status) {
 
 // Edit product
 function editProduct(productId) {
-    const product = currentProducts.find(p => p.id === productId);
-    if (!product) {
-        showToast('المنتج غير موجود', 'error');
-        return;
-    }
-    
-    showToast('ميزة التعديل قيد التطوير', 'info');
+    window.location.href = `/products/${productId}/edit`;
 }
 
 // Delete product
-function deleteProduct(productId) {
+async function deleteProduct(productId, btnEl) {
     const product = currentProducts.find(p => p.id === productId);
     if (!product) {
         showToast('المنتج غير موجود', 'error');
         return;
     }
-    
-    if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
-        showToast('ميزة الحذف قيد التطوير', 'info');
+
+    if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
+
+    try {
+        // حالة تحميل على الزر
+        let originalHtml;
+        if (btnEl) {
+            originalHtml = btnEl.innerHTML;
+            btnEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            btnEl.disabled = true;
+        }
+        const res = await fetch(`/web/products/${productId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) {
+            showToast(data.error || 'تعذر حذف المنتج', 'error');
+            if (btnEl) {
+                btnEl.innerHTML = originalHtml;
+                btnEl.disabled = false;
+            }
+            return;
+        }
+        currentProducts = currentProducts.filter(p => p.id !== productId);
+        displayMyProducts(currentProducts);
+        showToast('تم حذف المنتج بنجاح', 'success');
+        if (currentProducts.length === 0) {
+            document.getElementById('emptyState').classList.remove('hidden');
+            document.getElementById('productsGrid').classList.add('hidden');
+        }
+    } catch (e) {
+        showToast('حدث خطأ في الاتصال', 'error');
+    } finally {
+        if (btnEl) {
+            btnEl.disabled = false;
+            btnEl.innerHTML = '<i class="fas fa-trash"></i>';
+        }
     }
 }
 

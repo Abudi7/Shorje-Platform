@@ -1,0 +1,967 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}تعديل المنتج - {{ product.title }} - شورجي{% endblock %}
+
+{% block body %}
+{% include 'components/home_navigation.html.twig' %}
+
+<style>
+    /* Custom animations and styles */
+    .glass {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    
+    .glass-dark {
+        background: rgba(15, 23, 42, 0.25);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .gradient-text {
+        background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .form-group {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .form-group:focus-within {
+        transform: translateY(-2px);
+    }
+    
+    /* Image Gallery Styles */
+    .image-preview {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .image-preview:hover {
+        transform: scale(1.02);
+    }
+    
+    /* Image Modal Styles */
+    #imageModal {
+        backdrop-filter: blur(8px);
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    #imageModal.hidden {
+        animation: fadeOut 0.3s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+    
+    /* Responsive Image Gallery */
+    @media (max-width: 640px) {
+        .aspect-video {
+            aspect-ratio: 16/9;
+        }
+        
+        .grid.grid-cols-2 {
+            gap: 0.5rem;
+        }
+        
+        .aspect-square {
+            aspect-ratio: 1/1;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .aspect-video {
+            aspect-ratio: 4/3;
+        }
+        
+        .grid.grid-cols-2 {
+            gap: 0.375rem;
+        }
+    }
+    
+    /* Touch device optimizations for images */
+    @media (hover: none) and (pointer: coarse) {
+        .image-preview:hover {
+            transform: none;
+        }
+        
+        .group-hover\\:scale-110:hover {
+            transform: none;
+        }
+        
+        /* Make images clickable on touch devices */
+        .group:hover .group-hover\\:opacity-100 {
+            opacity: 0.7;
+        }
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 3px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #10b981, #3b82f6);
+        border-radius: 3px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #059669, #2563eb);
+    }
+    
+    /* Enhanced Responsive Design */
+    @media (max-width: 1200px) {
+        .container {
+            max-width: 100%;
+            padding: 1rem;
+        }
+        
+        .form-container {
+            padding: 2rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            padding: 0.5rem;
+        }
+        
+        .form-container {
+            margin: 0;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+        
+        .form-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .form-header p {
+            font-size: 0.875rem;
+        }
+        
+        .form-header .h-16 {
+            height: 3rem;
+            width: 3rem;
+        }
+        
+        .form-header .text-2xl {
+            font-size: 1.25rem;
+        }
+        
+        /* Grid adjustments */
+        .grid-cols-1.lg\\:grid-cols-2 {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        /* Form sections */
+        .bg-gradient-to-r {
+            padding: 1rem;
+        }
+        
+        /* Input fields */
+        .px-4.py-4 {
+            padding: 0.75rem 1rem;
+        }
+        
+        /* Currency conversion button */
+        .text-xs {
+            font-size: 0.75rem;
+            padding: 0.5rem 0.75rem;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .form-container {
+            padding: 1rem;
+            margin: 0.5rem;
+        }
+        
+        .form-header h1 {
+            font-size: 1.25rem;
+        }
+        
+        .form-header p {
+            font-size: 0.8rem;
+        }
+        
+        /* Input fields */
+        .px-4.py-4 {
+            padding: 0.625rem 0.875rem;
+            font-size: 0.875rem;
+        }
+        
+        /* Currency section */
+        .flex.space-x-3 {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .flex.space-x-3 > * {
+            width: 100%;
+        }
+        
+        /* Image grid */
+        .grid.grid-cols-3 {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        /* Submit buttons */
+        .flex-col.sm\\:flex-row {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .flex-col.sm\\:flex-row > * {
+            width: 100%;
+        }
+        
+        .px-8.py-4 {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .container {
+            padding: 0.25rem;
+        }
+        
+        .form-container {
+            padding: 0.75rem;
+            margin: 0.25rem;
+            border-radius: 0.75rem;
+        }
+        
+        .form-header {
+            margin-bottom: 1rem;
+        }
+        
+        .form-header h1 {
+            font-size: 1.125rem;
+        }
+        
+        .form-header p {
+            font-size: 0.75rem;
+        }
+        
+        .form-header .h-16 {
+            height: 2.5rem;
+            width: 2.5rem;
+        }
+        
+        .form-header .text-2xl {
+            font-size: 1rem;
+        }
+        
+        /* Form sections */
+        .bg-gradient-to-r {
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+        }
+        
+        /* Input fields */
+        .px-4.py-4 {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            border-radius: 0.5rem;
+        }
+        
+        /* Labels */
+        .text-sm {
+            font-size: 0.75rem;
+        }
+        
+        /* Currency conversion */
+        .text-xs {
+            font-size: 0.7rem;
+            padding: 0.375rem 0.5rem;
+        }
+        
+        /* Image grid */
+        .grid.grid-cols-3 {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+        
+        /* Submit buttons */
+        .px-8.py-4 {
+            padding: 0.625rem 1rem;
+            font-size: 0.8rem;
+        }
+        
+        /* Icons */
+        .text-lg {
+            font-size: 1rem;
+        }
+        
+        .text-2xl {
+            font-size: 1.25rem;
+        }
+    }
+    
+    @media (max-width: 360px) {
+        .form-container {
+            padding: 0.5rem;
+            margin: 0.125rem;
+        }
+        
+        .form-header h1 {
+            font-size: 1rem;
+        }
+        
+        .form-header p {
+            font-size: 0.7rem;
+        }
+        
+        .px-4.py-4 {
+            padding: 0.375rem 0.5rem;
+            font-size: 0.75rem;
+        }
+        
+        .text-sm {
+            font-size: 0.7rem;
+        }
+        
+        .text-xs {
+            font-size: 0.65rem;
+        }
+    }
+    
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+        .form-group:focus-within {
+            transform: none;
+        }
+        
+        .image-preview:hover {
+            transform: none;
+        }
+        
+        /* Larger touch targets */
+        button, input, select, textarea {
+            min-height: 44px;
+        }
+        
+        .text-xs {
+            min-height: 36px;
+            padding: 0.5rem 0.75rem;
+        }
+    }
+    
+    /* Landscape orientation adjustments */
+    @media (max-height: 500px) and (orientation: landscape) {
+        .form-container {
+            padding: 1rem;
+        }
+        
+        .form-header {
+            margin-bottom: 1rem;
+        }
+        
+        .space-y-8 > * + * {
+            margin-top: 1rem;
+        }
+    }
+</style>
+
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-4 sm:py-6 lg:py-8">
+    <div class="container mx-auto px-2 sm:px-4 lg:px-6 max-w-4xl">
+        <!-- Form Container -->
+        <div class="form-container bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-4 sm:p-6 lg:p-8 custom-scrollbar">
+            <!-- Form Header -->
+            <div class="form-header text-center mb-6 sm:mb-8">
+                <div class="flex items-center justify-center mb-3 sm:mb-4">
+                    <div class="h-12 w-12 sm:h-16 sm:w-16 bg-gradient-to-r from-emerald-500 to-blue-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-edit text-white text-lg sm:text-2xl"></i>
+                    </div>
+                </div>
+                <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold gradient-text mb-2">تعديل المنتج</h1>
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">قم بتحديث تفاصيل منتجك</p>
+            </div>
+            
+            <!-- Edit Product Form -->
+            <form id="editProductForm" class="space-y-6 sm:space-y-8">
+                <!-- Product Title & Price Section -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-blue-100 dark:border-slate-600">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-3 sm:mb-4 flex items-center">
+                        <i class="fas fa-info-circle ml-2 text-blue-500 text-sm sm:text-base"></i>
+                        المعلومات الأساسية
+                    </h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                        <div class="form-group">
+                            <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                <i class="fas fa-tag ml-2 text-blue-500"></i>عنوان المنتج *
+                            </label>
+                            <input type="text" id="productTitle" required placeholder="أدخل عنوان المنتج..." value="{{ product.title }}"
+                                   class="w-full px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                <i class="fas fa-dollar-sign ml-2 text-green-500"></i>السعر *
+                            </label>
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <input type="number" id="productPrice" required min="0" step="0.01" placeholder="0.00" value="{{ product.price }}"
+                                       class="flex-1 px-3 sm:px-4 py-3 sm:py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg sm:rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 shadow-sm text-sm sm:text-base">
+                                <select id="productCurrency" class="px-3 sm:px-4 py-3 sm:py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg sm:rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 shadow-sm text-sm sm:text-base">
+                                    <option value="IQD" {{ product.currency == 'IQD' ? 'selected' : '' }}>دينار عراقي</option>
+                                    <option value="USD" {{ product.currency == 'USD' ? 'selected' : '' }}>دولار أمريكي</option>
+                                </select>
+                            </div>
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-2 gap-2">
+                                <p class="text-xs text-gray-500 dark:text-slate-400">أدخل السعر بالعملة المختارة</p>
+                                <button type="button" onclick="convertCurrency()" class="text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-3 py-2 rounded-lg hover:bg-green-200 dark:hover:bg-green-800 transition-colors flex items-center">
+                                    <i class="fas fa-exchange-alt ml-1"></i>تحويل العملة
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description Section -->
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 border border-purple-100 dark:border-slate-600">
+                    <div class="form-group">
+                        <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+                            <i class="fas fa-align-right ml-2 text-purple-500"></i>وصف المنتج *
+                        </label>
+                        <textarea id="productDescription" required rows="4" placeholder="اكتب وصفاً مفصلاً عن منتجك..."
+                                  class="w-full px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 shadow-sm resize-none">{{ product.description }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Category & Location Section -->
+                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 border border-emerald-100 dark:border-slate-600">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+                        <i class="fas fa-th-large ml-2 text-emerald-500"></i>
+                        التصنيف والموقع
+                    </h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                <i class="fas fa-th-large ml-2 text-emerald-500"></i>الفئة *
+                            </label>
+                            <select id="productCategory" required
+                                    class="w-full px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                                <option value="">اختر الفئة</option>
+                                <option value="car" {{ product.category == 'car' ? 'selected' : '' }}>🚗 سيارات</option>
+                                <option value="home_rental" {{ product.category == 'home_rental' ? 'selected' : '' }}>🏠 إيجار منازل</option>
+                                <option value="apartment_rental" {{ product.category == 'apartment_rental' ? 'selected' : '' }}>🏢 إيجار شقق</option>
+                                <option value="job" {{ product.category == 'job' ? 'selected' : '' }}>💼 وظائف</option>
+                                <option value="laptop" {{ product.category == 'laptop' ? 'selected' : '' }}>💻 لابتوب</option>
+                                <option value="electronics" {{ product.category == 'electronics' ? 'selected' : '' }}>📱 إلكترونيات</option>
+                                <option value="fashion" {{ product.category == 'fashion' ? 'selected' : '' }}>👕 أزياء</option>
+                                <option value="furniture" {{ product.category == 'furniture' ? 'selected' : '' }}>🪑 أثاث</option>
+                                <option value="books" {{ product.category == 'books' ? 'selected' : '' }}>📚 كتب</option>
+                                <option value="sports" {{ product.category == 'sports' ? 'selected' : '' }}>⚽ رياضة</option>
+                                <option value="other" {{ product.category == 'other' ? 'selected' : '' }}>📦 أخرى</option>
+                            </select>
+                        </div>
+                    
+                        <div class="form-group">
+                            <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                <i class="fas fa-map-marker-alt ml-2 text-teal-500"></i>المدينة *
+                            </label>
+                            <select id="productCity" required
+                                    class="w-full px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                                <option value="">اختر المدينة</option>
+                                <option value="بغداد" {{ product.city == 'بغداد' ? 'selected' : '' }}>بغداد</option>
+                                <option value="البصرة" {{ product.city == 'البصرة' ? 'selected' : '' }}>البصرة</option>
+                                <option value="الموصل" {{ product.city == 'الموصل' ? 'selected' : '' }}>الموصل</option>
+                                <option value="أربيل" {{ product.city == 'أربيل' ? 'selected' : '' }}>أربيل</option>
+                                <option value="السليمانية" {{ product.city == 'السليمانية' ? 'selected' : '' }}>السليمانية</option>
+                                <option value="دهوك" {{ product.city == 'دهوك' ? 'selected' : '' }}>دهوك</option>
+                                <option value="كركوك" {{ product.city == 'كركوك' ? 'selected' : '' }}>كركوك</option>
+                                <option value="الرمادي" {{ product.city == 'الرمادي' ? 'selected' : '' }}>الرمادي</option>
+                                <option value="الفلوجة" {{ product.city == 'الفلوجة' ? 'selected' : '' }}>الفلوجة</option>
+                                <option value="تكريت" {{ product.city == 'تكريت' ? 'selected' : '' }}>تكريت</option>
+                                <option value="بعقوبة" {{ product.city == 'بعقوبة' ? 'selected' : '' }}>بعقوبة</option>
+                                <option value="كربلاء" {{ product.city == 'كربلاء' ? 'selected' : '' }}>كربلاء</option>
+                                <option value="النجف" {{ product.city == 'النجف' ? 'selected' : '' }}>النجف</option>
+                                <option value="الحلة" {{ product.city == 'الحلة' ? 'selected' : '' }}>الحلة</option>
+                                <option value="الكوت" {{ product.city == 'الكوت' ? 'selected' : '' }}>الكوت</option>
+                                <option value="الديوانية" {{ product.city == 'الديوانية' ? 'selected' : '' }}>الديوانية</option>
+                                <option value="السماوة" {{ product.city == 'السماوة' ? 'selected' : '' }}>السماوة</option>
+                                <option value="الناصرية" {{ product.city == 'الناصرية' ? 'selected' : '' }}>الناصرية</option>
+                                <option value="العمارة" {{ product.city == 'العمارة' ? 'selected' : '' }}>العمارة</option>
+                                <option value="الأنبار" {{ product.city == 'الأنبار' ? 'selected' : '' }}>الأنبار</option>
+                                <option value="ديالى" {{ product.city == 'ديالى' ? 'selected' : '' }}>ديالى</option>
+                                <option value="واسط" {{ product.city == 'واسط' ? 'selected' : '' }}>واسط</option>
+                                <option value="ميسان" {{ product.city == 'ميسان' ? 'selected' : '' }}>ميسان</option>
+                                <option value="ذي قار" {{ product.city == 'ذي قار' ? 'selected' : '' }}>ذي قار</option>
+                                <option value="المثنى" {{ product.city == 'المثنى' ? 'selected' : '' }}>المثنى</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location & Details Section -->
+                <div class="bg-gradient-to-r from-orange-50 to-red-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 border border-orange-100 dark:border-slate-600">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+                        <i class="fas fa-map-pin ml-2 text-orange-500"></i>
+                        التفاصيل الإضافية
+                    </h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                <i class="fas fa-map-pin ml-2 text-orange-500"></i>العنوان التفصيلي *
+                            </label>
+                            <div class="relative">
+                                <input type="text" id="productLocation" required placeholder="مثال: شارع الرشيد، حي الكرادة، بغداد" value="{{ product.location }}"
+                                       class="w-full px-4 py-4 pr-12 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                                <button type="button" onclick="getCurrentLocation()" 
+                                        class="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 transition-colors"
+                                        title="الحصول على الموقع الحالي">
+                                    <i class="fas fa-map-marker-alt text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    
+                        <div class="form-group">
+                            <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                <i class="fas fa-palette ml-2 text-red-500"></i>اللون
+                            </label>
+                            <select id="productColor" class="w-full px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                                <option value="">اختر اللون</option>
+                                <option value="أبيض" {{ product.color == 'أبيض' ? 'selected' : '' }}>⚪ أبيض</option>
+                                <option value="أسود" {{ product.color == 'أسود' ? 'selected' : '' }}>⚫ أسود</option>
+                                <option value="أحمر" {{ product.color == 'أحمر' ? 'selected' : '' }}>🔴 أحمر</option>
+                                <option value="أزرق" {{ product.color == 'أزرق' ? 'selected' : '' }}>🔵 أزرق</option>
+                                <option value="أخضر" {{ product.color == 'أخضر' ? 'selected' : '' }}>🟢 أخضر</option>
+                                <option value="أصفر" {{ product.color == 'أصفر' ? 'selected' : '' }}>🟡 أصفر</option>
+                                <option value="برتقالي" {{ product.color == 'برتقالي' ? 'selected' : '' }}>🟠 برتقالي</option>
+                                <option value="بنفسجي" {{ product.color == 'بنفسجي' ? 'selected' : '' }}>🟣 بنفسجي</option>
+                                <option value="وردي" {{ product.color == 'وردي' ? 'selected' : '' }}>🩷 وردي</option>
+                                <option value="بني" {{ product.color == 'بني' ? 'selected' : '' }}>🟤 بني</option>
+                                <option value="رمادي" {{ product.color == 'رمادي' ? 'selected' : '' }}>🔘 رمادي</option>
+                                <option value="فضي" {{ product.color == 'فضي' ? 'selected' : '' }}>⚪ فضي</option>
+                                <option value="ذهبي" {{ product.color == 'ذهبي' ? 'selected' : '' }}>🟡 ذهبي</option>
+                                <option value="نحاسي" {{ product.color == 'نحاسي' ? 'selected' : '' }}>🟤 نحاسي</option>
+                                <option value="متعدد الألوان" {{ product.color == 'متعدد الألوان' ? 'selected' : '' }}>🌈 متعدد الألوان</option>
+                                <option value="أخرى" {{ product.color == 'أخرى' ? 'selected' : '' }}>❓ أخرى</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Condition & Images Section -->
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-6 border border-indigo-100 dark:border-slate-600">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
+                        <i class="fas fa-star ml-2 text-indigo-500"></i>
+                        الحالة والصور
+                    </h3>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                <i class="fas fa-star ml-2 text-indigo-500"></i>حالة المنتج
+                            </label>
+                            <select id="productCondition" class="w-full px-4 py-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 shadow-sm">
+                                <option value="">اختر الحالة</option>
+                                <option value="جديد" {{ product.condition == 'جديد' ? 'selected' : '' }}>✨ جديد</option>
+                                <option value="مستعمل - ممتاز" {{ product.condition == 'مستعمل - ممتاز' ? 'selected' : '' }}>⭐ مستعمل - ممتاز</option>
+                                <option value="مستعمل - جيد جداً" {{ product.condition == 'مستعمل - جيد جداً' ? 'selected' : '' }}>👍 مستعمل - جيد جداً</option>
+                                <option value="مستعمل - جيد" {{ product.condition == 'مستعمل - جيد' ? 'selected' : '' }}>👍 مستعمل - جيد</option>
+                                <option value="مستعمل - مقبول" {{ product.condition == 'مستعمل - مقبول' ? 'selected' : '' }}>👌 مستعمل - مقبول</option>
+                                <option value="يحتاج إصلاح" {{ product.condition == 'يحتاج إصلاح' ? 'selected' : '' }}>🔧 يحتاج إصلاح</option>
+                                <option value="للقطع" {{ product.condition == 'للقطع' ? 'selected' : '' }}>🔨 للقطع</option>
+                                <option value="مشروع" {{ product.condition == 'مشروع' ? 'selected' : '' }}>🚧 مشروع</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                <i class="fas fa-images ml-2 text-purple-500"></i>صور المنتج (اختياري)
+                            </label>
+                            
+                            <!-- Main Image Display -->
+                            <div class="mb-4">
+                                <div class="relative">
+                                    <div class="aspect-video bg-white dark:bg-slate-800 rounded-xl border-2 border-dashed border-purple-300 dark:border-purple-600 flex items-center justify-center cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200 group" onclick="selectImage(1)">
+                                        <input type="file" id="image1" accept="image/*" style="display: none;" onchange="handleImagePreview(1)">
+                                        <div id="image1Preview" class="text-center w-full h-full flex items-center justify-center">
+                                            {% if product.image1 %}
+                                                <img src="/api/products/image/{{ product.id }}/1" alt="صورة المنتج الرئيسية" class="w-full h-full object-cover rounded-xl">
+                                            {% else %}
+                                                <div class="text-center">
+                                                    <i class="fas fa-camera text-3xl sm:text-4xl text-purple-400 group-hover:text-purple-600 dark:group-hover:text-purple-300 mb-2 transition-colors"></i>
+                                                    <p class="text-sm sm:text-base text-purple-600 dark:text-purple-400 font-medium">الصورة الرئيسية</p>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Thumbnail Gallery -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="aspect-square bg-white dark:bg-slate-800 rounded-lg border-2 border-dashed border-purple-300 dark:border-purple-600 flex items-center justify-center cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200 group relative overflow-hidden" onclick="selectImage(2)">
+                                    <input type="file" id="image2" accept="image/*" style="display: none;" onchange="handleImagePreview(2)">
+                                    <div id="image2Preview" class="text-center w-full h-full flex items-center justify-center">
+                                        {% if product.image2 %}
+                                            <img src="/api/products/image/{{ product.id }}/2" alt="صورة المنتج الثانية" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 cursor-pointer" onclick="event.stopPropagation(); openImageModal(this.src)">
+                                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                                                <i class="fas fa-expand text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+                                            </div>
+                                        {% else %}
+                                            <div class="text-center">
+                                                <i class="fas fa-camera text-lg sm:text-xl text-purple-400 group-hover:text-purple-600 dark:group-hover:text-purple-300 mb-1 transition-colors"></i>
+                                                <p class="text-xs sm:text-sm text-purple-600 dark:text-purple-400 font-medium">صورة 2</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="aspect-square bg-white dark:bg-slate-800 rounded-lg border-2 border-dashed border-purple-300 dark:border-purple-600 flex items-center justify-center cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-200 group relative overflow-hidden" onclick="selectImage(3)">
+                                    <input type="file" id="image3" accept="image/*" style="display: none;" onchange="handleImagePreview(3)">
+                                    <div id="image3Preview" class="text-center w-full h-full flex items-center justify-center">
+                                        {% if product.image3 %}
+                                            <img src="/api/products/image/{{ product.id }}/3" alt="صورة المنتج الثالثة" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 cursor-pointer" onclick="event.stopPropagation(); openImageModal(this.src)">
+                                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                                                <i class="fas fa-expand text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+                                            </div>
+                                        {% else %}
+                                            <div class="text-center">
+                                                <i class="fas fa-camera text-lg sm:text-xl text-purple-400 group-hover:text-purple-600 dark:group-hover:text-purple-300 mb-1 transition-colors"></i>
+                                                <p class="text-xs sm:text-sm text-purple-600 dark:text-purple-400 font-medium">صورة 3</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Image Gallery Modal -->
+                            <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+                                <div class="max-w-4xl max-h-[90vh] p-4 relative">
+                                    <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain rounded-lg">
+                                    <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 bg-black/50 rounded-full w-10 h-10 flex items-center justify-center">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Section -->
+                <div class="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-slate-800 dark:to-slate-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-emerald-100 dark:border-slate-600">
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <button type="submit" id="updateProductBtn" class="flex-1 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center text-sm sm:text-base">
+                            <i class="fas fa-save ml-2 text-sm sm:text-lg"></i>حفظ التعديلات
+                        </button>
+                        <button type="button" onclick="goBack()" class="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-300 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 border border-gray-200 dark:border-slate-600 flex items-center justify-center text-sm sm:text-base">
+                            <i class="fas fa-arrow-right ml-2 text-sm sm:text-lg"></i>العودة
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Form submission
+document.getElementById('editProductForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('updateProductBtn');
+    const originalText = submitBtn.innerHTML;
+    
+    // Show loading state
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i>جاري الحفظ...';
+    submitBtn.disabled = true;
+    
+    try {
+        const formData = {
+            title: document.getElementById('productTitle').value,
+            description: document.getElementById('productDescription').value,
+            price: parseFloat(document.getElementById('productPrice').value),
+            currency: document.getElementById('productCurrency').value,
+            category: document.getElementById('productCategory').value,
+            city: document.getElementById('productCity').value,
+            location: document.getElementById('productLocation').value,
+            color: document.getElementById('productColor').value,
+            condition: document.getElementById('productCondition').value
+        };
+        
+        // Convert images to base64 if they exist
+        const image1File = document.getElementById('image1').files[0];
+        const image2File = document.getElementById('image2').files[0];
+        const image3File = document.getElementById('image3').files[0];
+        
+        if (image1File) {
+            formData.image1 = await fileToBase64(image1File);
+        }
+        if (image2File) {
+            formData.image2 = await fileToBase64(image2File);
+        }
+        if (image3File) {
+            formData.image3 = await fileToBase64(image3File);
+        }
+        
+        const response = await fetch(`/web/products/{{ product.id }}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            showToast('تم تحديث المنتج بنجاح!', 'success');
+            setTimeout(() => {
+                window.location.href = '/products/my';
+            }, 1500);
+        } else {
+            showToast(result.error || 'حدث خطأ أثناء تحديث المنتج', 'error');
+        }
+    } catch (error) {
+        console.error('Error updating product:', error);
+        showToast('حدث خطأ أثناء تحديث المنتج', 'error');
+    } finally {
+        // Reset button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+});
+
+// Image handling functions
+function selectImage(imageNumber) {
+    document.getElementById(`image${imageNumber}`).click();
+}
+
+function handleImagePreview(imageNumber) {
+    const file = document.getElementById(`image${imageNumber}`).files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById(`image${imageNumber}Preview`);
+            if (imageNumber === 1) {
+                // Main image - full display
+                preview.innerHTML = `<img src="${e.target.result}" alt="صورة المنتج الرئيسية" class="w-full h-full object-cover rounded-xl">`;
+            } else {
+                // Thumbnail images - with hover effects and click to modal
+                preview.innerHTML = `
+                    <img src="${e.target.result}" alt="صورة المنتج" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300 cursor-pointer" onclick="event.stopPropagation(); openImageModal(this.src)">
+                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                        <i class="fas fa-expand text-white text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+                    </div>
+                `;
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Image modal functions
+function openImageModal(imageSrc) {
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    modalImage.src = imageSrc;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Add click handlers for existing images
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers to existing images for modal view
+    const image2Preview = document.getElementById('image2Preview');
+    const image3Preview = document.getElementById('image3Preview');
+    
+    if (image2Preview && image2Preview.querySelector('img')) {
+        image2Preview.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const img = image2Preview.querySelector('img');
+            if (img) {
+                openImageModal(img.src);
+            }
+        });
+    }
+    
+    if (image3Preview && image3Preview.querySelector('img')) {
+        image3Preview.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const img = image3Preview.querySelector('img');
+            if (img) {
+                openImageModal(img.src);
+            }
+        });
+    }
+    
+    // Close modal when clicking outside
+    document.getElementById('imageModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeImageModal();
+        }
+    });
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeImageModal();
+        }
+    });
+});
+
+// Helper function to convert file to base64
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+// Currency conversion function with real-time rates
+async function convertCurrency() {
+    const priceInput = document.getElementById('productPrice');
+    const currencySelect = document.getElementById('productCurrency');
+    const currentPrice = parseFloat(priceInput.value);
+    const currentCurrency = currencySelect.value;
+    
+    if (!currentPrice || currentPrice <= 0) {
+        showToast('يرجى إدخال سعر صحيح أولاً', 'warning');
+        return;
+    }
+    
+    // Show loading state
+    const convertBtn = event.target;
+    const originalText = convertBtn.innerHTML;
+    convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin ml-1"></i>جاري التحويل...';
+    convertBtn.disabled = true;
+    
+    try {
+        // Try to get real-time exchange rate
+        let exchangeRate = 0.00068; // Default fallback rate
+        
+        try {
+            // You can use a free API like exchangerate-api.com or fixer.io
+            const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+            if (response.ok) {
+                const data = await response.json();
+                exchangeRate = data.rates.IQD ? 1 / data.rates.IQD : 0.00068;
+            }
+        } catch (apiError) {
+            console.log('Using fallback exchange rate');
+        }
+        
+        let convertedPrice;
+        let newCurrency;
+        
+        if (currentCurrency === 'IQD') {
+            // Convert from IQD to USD
+            convertedPrice = currentPrice * exchangeRate;
+            newCurrency = 'USD';
+        } else {
+            // Convert from USD to IQD
+            convertedPrice = currentPrice / exchangeRate;
+            newCurrency = 'IQD';
+        }
+        
+        // Update the form
+        priceInput.value = convertedPrice.toFixed(2);
+        currencySelect.value = newCurrency;
+        
+        // Show conversion info
+        const fromCurrency = currentCurrency === 'IQD' ? 'دينار عراقي' : 'دولار أمريكي';
+        const toCurrency = newCurrency === 'IQD' ? 'دينار عراقي' : 'دولار أمريكي';
+        
+        showToast(`تم التحويل من ${fromCurrency} إلى ${toCurrency} (السعر: ${convertedPrice.toFixed(2)})`, 'success');
+        
+    } catch (error) {
+        console.error('Currency conversion error:', error);
+        showToast('حدث خطأ أثناء تحويل العملة', 'error');
+    } finally {
+        // Reset button state
+        convertBtn.innerHTML = originalText;
+        convertBtn.disabled = false;
+    }
+}
+
+// Get current location
+function getCurrentLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            // You can use a geocoding service here to get the address
+            document.getElementById('productLocation').value = `الموقع الحالي: ${lat}, ${lng}`;
+            showToast('تم الحصول على الموقع الحالي', 'success');
+        }, function(error) {
+            showToast('لا يمكن الحصول على الموقع الحالي', 'warning');
+        });
+    } else {
+        showToast('المتصفح لا يدعم تحديد الموقع', 'warning');
+    }
+}
+
+// Go back function
+function goBack() {
+    window.history.back();
+}
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg text-white font-medium transition-all duration-300 transform translate-x-full`;
+    
+    switch(type) {
+        case 'success':
+            toast.classList.add('bg-green-500');
+            break;
+        case 'error':
+            toast.classList.add('bg-red-500');
+            break;
+        case 'warning':
+            toast.classList.add('bg-yellow-500');
+            break;
+        default:
+            toast.classList.add('bg-blue-500');
+    }
+    
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        toast.classList.add('translate-x-full');
+        setTimeout(() => {
+            document.body.removeChild(toast);
+        }, 300);
+    }, 3000);
+}
+</script>
+{% endblock %}

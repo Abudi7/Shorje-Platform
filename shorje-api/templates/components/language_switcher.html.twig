@@ -1,47 +1,47 @@
-<!-- Language Switcher Component -->
+<!-- Language Switcher Component - Responsive -->
 <div class="relative" id="languageSwitcher">
-    <!-- Language Button -->
+    <!-- Language Button - Responsive -->
     <button 
         id="languageButton" 
-        class="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg"
+        class="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1.5 sm:py-2 text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded-lg sm:rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700"
         onclick="toggleLanguageDropdown()"
     >
-        <i class="fas fa-globe text-lg"></i>
-        <span id="currentLanguage">{{ app.request.locale == 'ar' ? 'العربية' : 'English' }}</span>
-        <i class="fas fa-chevron-down text-sm transition-transform duration-200" id="languageArrow"></i>
+        <i class="fas fa-globe text-sm sm:text-lg group-hover:rotate-12 transition-transform duration-300"></i>
+        <span id="currentLanguage" class="text-xs sm:text-sm font-medium">{{ app.request.locale == 'ar' ? 'العربية' : 'English' }}</span>
+        <i class="fas fa-chevron-down text-xs sm:text-sm transition-transform duration-200" id="languageArrow"></i>
     </button>
 
-    <!-- Language Dropdown -->
+    <!-- Language Dropdown - Responsive -->
     <div 
         id="languageDropdown" 
-        class="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-600 z-50 hidden"
+        class="absolute right-0 mt-2 w-44 sm:w-48 bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl shadow-2xl border border-gray-200 dark:border-slate-600 z-50 hidden overflow-hidden"
     >
         <!-- Arabic Option -->
         <button 
-            class="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+            class="w-full flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2.5 sm:py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-blue-50 dark:hover:from-emerald-900/20 dark:hover:to-blue-900/20 transition-all group"
             onclick="switchLanguage('ar')"
             data-locale="ar"
         >
-            <span class="text-lg">🇸🇦</span>
+            <span class="text-base sm:text-lg">🇸🇦</span>
             <div class="flex-1 text-right">
-                <div class="font-medium">العربية</div>
-                <div class="text-sm text-gray-500">Arabic</div>
+                <div class="font-medium text-xs sm:text-sm">العربية</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">Arabic</div>
             </div>
-            <i class="fas fa-check text-primary-600 hidden" id="check-ar"></i>
+            <i class="fas fa-check text-emerald-600 hidden group-hover:scale-110 transition-transform" id="check-ar"></i>
         </button>
 
         <!-- English Option -->
         <button 
-            class="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+            class="w-full flex items-center space-x-2 sm:space-x-3 px-3 sm:px-4 py-2.5 sm:py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 transition-all group"
             onclick="switchLanguage('en')"
             data-locale="en"
         >
-            <span class="text-lg">🇺🇸</span>
+            <span class="text-base sm:text-lg">🇺🇸</span>
             <div class="flex-1 text-right">
-                <div class="font-medium">English</div>
-                <div class="text-sm text-gray-500">English</div>
+                <div class="font-medium text-xs sm:text-sm">English</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">الإنجليزية</div>
             </div>
-            <i class="fas fa-check text-primary-600 hidden" id="check-en"></i>
+            <i class="fas fa-check text-emerald-600 hidden group-hover:scale-110 transition-transform" id="check-en"></i>
         </button>
     </div>
 </div>
@@ -66,7 +66,7 @@ function toggleLanguageDropdown() {
     languageDropdownOpen = !languageDropdownOpen;
 }
 
-// Switch language
+// Switch language with RTL/LTR support
 async function switchLanguage(locale) {
     try {
         const response = await fetch('/api/language/set', {
@@ -81,18 +81,49 @@ async function switchLanguage(locale) {
             // Update UI immediately
             updateLanguageUI(locale);
             
+            // Apply RTL/LTR direction
+            applyTextDirection(locale);
+            
             // Reload page to apply new language
             setTimeout(() => {
                 window.location.reload();
             }, 300);
         } else {
             console.error('Failed to switch language');
+            // Fallback to page reload with direction
+            applyTextDirection(locale);
+            window.location.href = `/language/${locale}`;
         }
     } catch (error) {
         console.error('Error switching language:', error);
-        // Fallback to page reload
+        // Fallback to page reload with direction
+        applyTextDirection(locale);
         window.location.href = `/language/${locale}`;
     }
+}
+
+// Apply text direction based on language
+function applyTextDirection(locale) {
+    const html = document.documentElement;
+    const body = document.body;
+    
+    if (locale === 'ar') {
+        // Arabic - RTL
+        html.setAttribute('dir', 'rtl');
+        html.setAttribute('lang', 'ar');
+        body.classList.add('rtl');
+        body.classList.remove('ltr');
+    } else {
+        // English - LTR
+        html.setAttribute('dir', 'ltr');
+        html.setAttribute('lang', 'en');
+        body.classList.add('ltr');
+        body.classList.remove('rtl');
+    }
+    
+    // Store language preference
+    localStorage.setItem('language', locale);
+    localStorage.setItem('textDirection', locale === 'ar' ? 'rtl' : 'ltr');
 }
 
 // Update language UI
@@ -124,15 +155,30 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Initialize current language
+// Initialize current language and direction
 document.addEventListener('DOMContentLoaded', function() {
     const currentLocale = '{{ app.request.locale }}';
+    const savedLanguage = localStorage.getItem('language');
+    const savedDirection = localStorage.getItem('textDirection');
+    
+    // Apply saved language if different from current
+    if (savedLanguage && savedLanguage !== currentLocale) {
+        applyTextDirection(savedLanguage);
+    } else {
+        // Apply current language direction
+        applyTextDirection(currentLocale);
+    }
+    
+    // Update UI
     updateLanguageUI(currentLocale);
+    
+    // Add smooth transition for direction changes
+    document.body.style.transition = 'all 0.3s ease-in-out';
 });
 </script>
 
 <style>
-/* Language Switcher Styles */
+/* Language Switcher Styles - Responsive */
 #languageDropdown {
     animation: slideDown 0.2s ease-out;
 }
@@ -152,7 +198,41 @@ document.addEventListener('DOMContentLoaded', function() {
     transform: rotate(180deg);
 }
 
-/* RTL Support for language switcher */
+/* Responsive Design */
+@media (max-width: 640px) {
+    #languageDropdown {
+        right: -10px;
+        width: calc(100vw - 40px);
+        max-width: 200px;
+        left: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    #languageDropdown {
+        right: -20px;
+        width: calc(100vw - 20px);
+        max-width: 180px;
+        left: auto;
+    }
+}
+
+@media (max-width: 360px) {
+    #languageDropdown {
+        right: -30px;
+        width: calc(100vw - 10px);
+        max-width: 160px;
+        left: auto;
+    }
+}
+
+/* Ensure dropdown appears on the right side */
+#languageDropdown {
+    right: 0;
+    left: auto;
+}
+
+/* RTL/LTR Support */
 [dir="rtl"] #languageDropdown {
     right: auto;
     left: 0;
@@ -160,5 +240,63 @@ document.addEventListener('DOMContentLoaded', function() {
 
 [dir="rtl"] .flex-1.text-right {
     text-align: left;
+}
+
+[dir="ltr"] .flex-1.text-right {
+    text-align: right;
+}
+
+/* Smooth transitions for direction changes */
+body {
+    transition: all 0.3s ease-in-out;
+}
+
+/* RTL specific styles */
+.rtl {
+    direction: rtl;
+    text-align: right;
+}
+
+.rtl .flex {
+    flex-direction: row-reverse;
+}
+
+.rtl .space-x-1 > :not([hidden]) ~ :not([hidden]) {
+    margin-right: 0.25rem;
+    margin-left: 0;
+}
+
+.rtl .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+    margin-right: 0.5rem;
+    margin-left: 0;
+}
+
+/* LTR specific styles */
+.ltr {
+    direction: ltr;
+    text-align: left;
+}
+
+.ltr .flex {
+    flex-direction: row;
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    #languageButton {
+        padding: 0.75rem;
+    }
+    
+    #languageDropdown button {
+        padding: 1rem;
+    }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+    #languageDropdown {
+        backdrop-filter: blur(10px);
+        background: rgba(15, 23, 42, 0.95);
+    }
 }
 </style>

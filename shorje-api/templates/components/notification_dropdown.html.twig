@@ -1,40 +1,40 @@
-<!-- Notification Dropdown Component -->
+<!-- Notification Dropdown Component - Responsive -->
 <div class="relative" id="notificationDropdown">
-    <!-- Notification Bell Button -->
+    <!-- Notification Bell Button - Responsive -->
     <button 
         id="notificationBell" 
-        class="relative p-2 text-gray-600 hover:text-primary-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-lg"
+        class="relative p-1.5 sm:p-2 text-gray-600 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 rounded-lg sm:rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700"
         onclick="toggleNotificationDropdown()"
     >
-        <i class="fas fa-bell text-xl"></i>
+        <i class="fas fa-bell text-lg sm:text-xl"></i>
         <!-- Unread Badge -->
         <span 
             id="notificationBadge" 
-            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden"
+            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center hidden shadow-lg"
         >
-            <span id="notificationCount">0</span>
+            <span id="notificationCount" class="text-xs font-bold">0</span>
         </span>
     </button>
 
-    <!-- Notification Dropdown -->
+    <!-- Notification Dropdown - Responsive -->
     <div 
         id="notificationPanel" 
-        class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 hidden"
+        class="absolute right-0 mt-2 w-72 sm:w-80 bg-white dark:bg-slate-800 rounded-lg sm:rounded-xl shadow-2xl border border-gray-200 dark:border-slate-600 z-50 hidden overflow-hidden"
     >
         <!-- Header -->
-        <div class="p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+        <div class="p-3 sm:p-4 border-b border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 rounded-t-lg sm:rounded-t-xl">
             <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-gray-900">الإشعارات</h3>
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">الإشعارات</h3>
                 <div class="flex items-center space-x-2 space-x-reverse">
                     <button 
                         id="markAllReadBtn" 
-                        class="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                        class="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium"
                         onclick="markAllNotificationsAsRead()"
                     >
                         تعيين الكل كمقروء
                     </button>
                     <button 
-                        class="text-sm text-gray-500 hover:text-gray-700"
+                        class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                         onclick="openNotificationSettings()"
                     >
                         <i class="fas fa-cog"></i>
@@ -44,29 +44,29 @@
         </div>
 
         <!-- Notifications List -->
-        <div id="notificationsList" class="max-h-96 overflow-y-auto">
+        <div id="notificationsList" class="max-h-80 sm:max-h-96 overflow-y-auto">
             <!-- Loading State -->
             <div id="notificationsLoading" class="p-4 text-center">
                 <div class="inline-flex items-center">
-                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
-                    <span class="mr-2 text-gray-600">جاري التحميل...</span>
+                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-600"></div>
+                    <span class="mr-2 text-gray-600 dark:text-gray-400 text-sm">جاري التحميل...</span>
                 </div>
             </div>
 
             <!-- Empty State -->
-            <div id="notificationsEmpty" class="p-8 text-center hidden">
-                <i class="fas fa-bell-slash text-4xl text-gray-300 mb-4"></i>
-                <p class="text-gray-500">لا توجد إشعارات جديدة</p>
+            <div id="notificationsEmpty" class="p-6 sm:p-8 text-center hidden">
+                <i class="fas fa-bell-slash text-3xl sm:text-4xl text-gray-300 dark:text-gray-600 mb-3 sm:mb-4"></i>
+                <p class="text-gray-500 dark:text-gray-400 text-sm sm:text-base">لا توجد إشعارات جديدة</p>
             </div>
 
             <!-- Notifications will be loaded here -->
         </div>
 
         <!-- Footer -->
-        <div class="p-3 border-t border-gray-200 bg-gray-50 rounded-b-lg">
+        <div class="p-3 border-t border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700 rounded-b-lg sm:rounded-b-xl">
             <a 
                 href="/notifications" 
-                class="block text-center text-sm text-primary-600 hover:text-primary-700 font-medium"
+                class="block text-center text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-medium"
             >
                 عرض جميع الإشعارات
             </a>
@@ -108,7 +108,7 @@
 </template>
 
 <style>
-/* Notification Styles */
+/* Notification Styles - Responsive */
 .notification-item.unread {
     background-color: #f8fafc;
     border-left: 3px solid #3b82f6;
@@ -132,6 +132,46 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+/* Responsive Design for Mobile */
+@media (max-width: 640px) {
+    #notificationPanel {
+        right: -10px;
+        width: calc(100vw - 40px);
+        max-width: 320px;
+        left: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    #notificationPanel {
+        right: -20px;
+        width: calc(100vw - 20px);
+        max-width: 300px;
+        left: auto;
+    }
+}
+
+@media (max-width: 360px) {
+    #notificationPanel {
+        right: -30px;
+        width: calc(100vw - 10px);
+        max-width: 280px;
+        left: auto;
+    }
+}
+
+/* Ensure dropdown appears on the right side */
+#notificationPanel {
+    right: 0;
+    left: auto;
+}
+
+/* RTL Support */
+[dir="rtl"] #notificationPanel {
+    right: auto;
+    left: 0;
 }
 
 /* Animation for new notifications */
@@ -159,6 +199,25 @@
 .notification-icon.system { background-color: #6b7280; }
 .notification-icon.security { background-color: #ef4444; }
 .notification-icon.promotion { background-color: #10b981; }
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    #notificationBell {
+        padding: 0.75rem;
+    }
+    
+    .notification-item {
+        padding: 1rem;
+    }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+    #notificationPanel {
+        backdrop-filter: blur(10px);
+        background: rgba(15, 23, 42, 0.95);
+    }
+}
 </style>
 
 <script>
@@ -184,18 +243,26 @@ function toggleNotificationDropdown() {
     notificationDropdownOpen = !notificationDropdownOpen;
 }
 
-// Load notifications
+// Load notifications (session-based API)
 async function loadNotifications() {
     try {
-        const response = await fetch('/api/notifications/unread?limit=10');
-        const data = await response.json();
-        
-        notifications = data.notifications || [];
-        unreadCount = data.unread_count || 0;
-        
+        // Fetch latest notifications (limit 10)
+        const listRes = await fetch('/web/notifications?limit=10&offset=0');
+        const listData = await listRes.json();
+        notifications = listData.notifications || [];
+
+        // Compute unread locally; fallback to endpoint if needed
+        unreadCount = notifications.filter(n => !n.isRead).length;
+
+        // If API didn’t include read status or list is empty, fallback to count endpoint
+        if (!Array.isArray(notifications) || notifications.length === 0) {
+            const countRes = await fetch('/web/notifications/unread-count');
+            const countData = await countRes.json();
+            unreadCount = countData.unread_count || 0;
+        }
+
         updateNotificationBadge();
         renderNotifications();
-        
     } catch (error) {
         console.error('Error loading notifications:', error);
         showNotificationError();
@@ -287,7 +354,7 @@ function handleNotificationClick(notification) {
 // Mark notification as read
 async function markNotificationAsRead(notificationId) {
     try {
-        await fetch(`/api/notifications/${notificationId}/read`, {
+        await fetch(`/web/notifications/${notificationId}/read`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -311,7 +378,7 @@ async function markNotificationAsRead(notificationId) {
 // Mark all notifications as read
 async function markAllNotificationsAsRead() {
     try {
-        await fetch('/api/notifications/mark-all-read', {
+        await fetch('/web/notifications/mark-all-read', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -408,10 +475,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load notification count only
 async function loadNotificationCount() {
     try {
-        const response = await fetch('/api/notifications/unread-count');
-        const data = await response.json();
-        unreadCount = data.unread_count || 0;
-        updateNotificationBadge();
+        // Prefer computing from latest list for consistency
+        await loadNotifications();
     } catch (error) {
         console.error('Error loading notification count:', error);
     }

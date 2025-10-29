@@ -60,16 +60,22 @@ app_messages:
 app_notifications:
     path: /notifications
     controller: App\Controller\NotificationController::index
-
-# Product pages
-app_product_show:
-    path: /products/{id}
-    controller: App\Controller\ProductController::show
     methods: [GET]
 
+# Product pages
 app_products:
     path: /products
     controller: App\Controller\ProductController::index
+    methods: [GET]
+
+app_products_add:
+    path: /products/add
+    controller: App\Controller\ProductController::addProductPage
+    methods: [GET]
+
+app_product_show:
+    path: /products/{id}
+    controller: App\Controller\ProductController::show
     methods: [GET]
 
 # Profile pages

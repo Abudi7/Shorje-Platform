@@ -11,51 +11,38 @@ use Symfony\Component\Mime\Email;
 
 #[AsCommand(
     name: 'app:test-email',
-    description: 'Test SMTP email sending',
+    description: 'Test email sending functionality'
 )]
 class TestEmailCommand extends Command
 {
     public function __construct(
-        private MailerInterface $mailer,
-        private string $fromEmail,
-        private string $fromName
+        private MailerInterface $mailer
     ) {
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('Testing SMTP email configuration...');
-        
         try {
             $email = (new Email())
-                ->from($this->fromEmail)
-                ->to($this->fromEmail) // Send to same email for testing
-                ->subject('Test Email from Shorje Platform')
+                ->from('shorje@abdulrhman-alshalal.com')
+                ->to('shorje@abdulrhman-alshalal.com')
+                ->subject('اختبار البريد الإلكتروني - شورجي')
                 ->html('
-                    <h2>Test Email</h2>
-                    <p>This is a test email to verify SMTP configuration.</p>
-                    <p>If you receive this email, the SMTP setup is working correctly!</p>
-                    <p>Time: ' . date('Y-m-d H:i:s') . '</p>
+                    <h2>اختبار البريد الإلكتروني</h2>
+                    <p>هذا اختبار لإرسال البريد الإلكتروني من منصة شورجي.</p>
+                    <p>إذا وصلتك هذه الرسالة، فالإعدادات تعمل بشكل صحيح.</p>
+                    <hr>
+                    <p><small>تم إرسال هذه الرسالة في: ' . date('Y-m-d H:i:s') . '</small></p>
                 ');
 
             $this->mailer->send($email);
             
-            $output->writeln('<info>✅ Email sent successfully!</info>');
-            $output->writeln('Check your inbox at: ' . $this->fromEmail);
-            
+            $output->writeln('<info>تم إرسال البريد الإلكتروني بنجاح!</info>');
             return Command::SUCCESS;
             
         } catch (\Exception $e) {
-            $output->writeln('<error>❌ Failed to send email:</error>');
-            $output->writeln('<error>' . $e->getMessage() . '</error>');
-            $output->writeln('');
-            $output->writeln('Common issues:');
-            $output->writeln('1. Gmail App Password not set correctly');
-            $output->writeln('2. 2FA not enabled on Gmail account');
-            $output->writeln('3. "Less secure app access" not enabled');
-            $output->writeln('4. Firewall blocking SMTP port 587');
-            
+            $output->writeln('<error>فشل في إرسال البريد الإلكتروني: ' . $e->getMessage() . '</error>');
             return Command::FAILURE;
         }
     }
