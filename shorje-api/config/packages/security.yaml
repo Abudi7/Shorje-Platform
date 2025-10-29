@@ -51,7 +51,9 @@ security:
         - { path: ^/api/products, roles: PUBLIC_ACCESS }
         - { path: ^/api/users/search, roles: PUBLIC_ACCESS }
         - { path: ^/api/messages/unread-count, roles: PUBLIC_ACCESS }
-        - { path: ^/api/notifications/unread-count, roles: PUBLIC_ACCESS }
+        - { path: ^/api/user/notifications/unread-count, roles: PUBLIC_ACCESS }
+        - { path: ^/web/notifications/unread-count, roles: PUBLIC_ACCESS }
+        - { path: ^/api/notifications, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/user/avatar, roles: PUBLIC_ACCESS }
         - { path: ^/api/contact, roles: PUBLIC_ACCESS }
         - { path: ^/api/docs, roles: PUBLIC_ACCESS }
@@ -74,6 +76,8 @@ security:
         - { path: ^/users, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/chat, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/messages, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/notifications, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/products/[0-9]+/edit, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/admin, roles: ROLE_SUPER_ADMIN }
 
 when@test:

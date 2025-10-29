@@ -463,20 +463,21 @@ class SocialController extends AbstractController
         ]);
     }
 
+    #[Route('/api/user/notifications/unread-count', name: 'api_notifications_unread_count', methods: ['GET'])]
     #[Route('/web/notifications/unread-count', name: 'web_notifications_unread_count', methods: ['GET'])]
     public function getUnreadNotificationsCount(MessageRepository $messageRepo): JsonResponse
     {
         $currentUser = $this->getUser();
         if (!$currentUser) {
             // Return 0 for non-authenticated users
-            return new JsonResponse(['count' => 0]);
+            return new JsonResponse(['unread_count' => 0, 'notifications' => []]);
         }
 
         // For now, we'll use messages as notifications
         // You can extend this later to include other types of notifications
         $unreadCount = $messageRepo->getUnreadMessagesCount($currentUser);
 
-        return new JsonResponse(['count' => $unreadCount]);
+        return new JsonResponse(['unread_count' => $unreadCount, 'notifications' => []]);
     }
 
     #[Route('/api/conversation/{userId}/mark-read', name: 'api_mark_conversation_read', methods: ['POST'])]

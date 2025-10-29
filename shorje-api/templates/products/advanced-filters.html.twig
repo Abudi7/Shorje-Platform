@@ -1,39 +1,39 @@
 <!-- Advanced Filter Section -->
-<div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-4 sm:p-6 lg:p-8 mb-8">
+<div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl sm:rounded-2xl md:rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-2 sm:p-3 md:p-4 lg:p-6 xl:p-8 mb-3 sm:mb-4 md:mb-6 lg:mb-8">
     <!-- Filter Header -->
-    <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center">
-            <i class="fas fa-filter ml-2 text-emerald-500"></i>
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 md:mb-6 gap-2 sm:gap-3">
+        <h2 class="text-base sm:text-lg md:text-xl font-bold text-gray-900 dark:text-white flex items-center">
+            <i class="fas fa-filter ml-1 sm:ml-2 text-emerald-500"></i>
             فلاتر البحث المتقدمة
         </h2>
-        <div class="flex items-center space-x-2">
-            <span class="text-sm text-gray-500 dark:text-gray-400">نتائج البحث:</span>
-            <span id="resultsCount" class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">0</span>
+        <div class="flex items-center space-x-1 sm:space-x-2">
+            <span class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">نتائج البحث:</span>
+            <span id="resultsCount" class="text-xs sm:text-sm font-semibold text-emerald-600 dark:text-emerald-400">0</span>
         </div>
     </div>
 
     <!-- Search by Product Name -->
-    <div class="mb-6">
-        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            <i class="fas fa-search ml-2"></i>البحث بالاسم
+    <div class="mb-3 sm:mb-4 md:mb-6">
+        <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
+            <i class="fas fa-search ml-1 sm:ml-2"></i>البحث بالاسم
         </label>
         <div class="relative">
             <input type="text" id="searchInput" placeholder="ابحث عن منتج بالاسم..." 
-                   class="w-full px-4 py-3 pr-12 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300">
-            <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
-                <i class="fas fa-search text-gray-400"></i>
+                   class="w-full px-2 sm:px-3 md:px-4 py-2 sm:py-3 pr-8 sm:pr-10 md:pr-12 border-2 border-gray-200 dark:border-slate-600 rounded-lg sm:rounded-xl md:rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-slate-400 transition-all duration-300 text-xs sm:text-sm md:text-base">
+            <div class="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2">
+                <i class="fas fa-search text-gray-400 text-xs sm:text-sm md:text-base"></i>
             </div>
         </div>
     </div>
 
     <!-- Filter Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4 md:mb-6">
         <!-- Product Category Filter -->
         <div>
-            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                <i class="fas fa-tag ml-2"></i>نوع المنتج
+            <label class="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
+                <i class="fas fa-tag ml-1 sm:ml-2"></i>نوع المنتج
             </label>
-            <select id="categoryFilter" class="w-full px-4 py-3 border-2 border-gray-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300">
+            <select id="categoryFilter" class="w-full px-2 sm:px-3 md:px-4 py-2 sm:py-3 border-2 border-gray-200 dark:border-slate-600 rounded-lg sm:rounded-xl md:rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-all duration-300 text-xs sm:text-sm md:text-base">
                 <option value="">جميع المنتجات</option>
                 <option value="car">🚗 سيارات</option>
                 <option value="home_rental">🏠 إيجار منازل</option>

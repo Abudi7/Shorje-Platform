@@ -45,7 +45,8 @@ class HomeController extends AbstractController
             'user' => $user,
             'conversations' => $conversations,
             'recentProducts' => $recentProducts,
-            'sliderImages' => $sliderImages
+            'sliderImages' => $sliderImages,
+            'currentUserId' => $user ? $user->getId() : null
         ]);
     }
 

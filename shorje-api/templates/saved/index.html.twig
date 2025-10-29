@@ -4,7 +4,10 @@
 
 {% block body %}
 <!-- Include Home Navigation Component -->
-{% include 'components/home-navigation.html.twig' %}
+{% include 'components/home_navigation.html.twig' %}
+
+{# تعريف المتغير قبل استخدامه في أي مكان #}
+{% set favoritesCount = favorites is defined ? favorites|length : 0 %}
 
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
     <!-- Header Section -->
@@ -32,16 +35,19 @@
     <div class="container mx-auto px-4 py-8">
         <!-- Stats Dashboard -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {% set totalSaved = favoritesCount %}
+            {% set productsSaved = favoritesCount %}
+            {% set sellersSaved = 0 %}
             <div class="glass dark:glass-dark rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
-                <div class="text-3xl font-bold text-pink-600 dark:text-pink-400 mb-2" id="totalSaved">0</div>
+                <div class="text-3xl font-bold text-pink-600 dark:text-pink-400 mb-2" id="totalSaved">{{ totalSaved }}</div>
                 <div class="text-gray-600 dark:text-gray-300">إجمالي المحفوظات</div>
             </div>
             <div class="glass dark:glass-dark rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
-                <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2" id="productsSaved">0</div>
+                <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2" id="productsSaved">{{ productsSaved }}</div>
                 <div class="text-gray-600 dark:text-gray-300">منتجات محفوظة</div>
             </div>
             <div class="glass dark:glass-dark rounded-2xl p-6 text-center hover:scale-105 transition-transform duration-300">
-                <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2" id="sellersSaved">0</div>
+                <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2" id="sellersSaved">{{ sellersSaved }}</div>
                 <div class="text-gray-600 dark:text-gray-300">بائعين محفوظين</div>
             </div>
         </div>
@@ -62,26 +68,67 @@
             </button>
         </div>
 
-        <!-- Loading State -->
-        <div id="loadingState" class="text-center py-12">
-            <i class="fas fa-spinner fa-spin text-4xl text-primary-500 mb-4"></i>
-            <p class="text-lg text-gray-600 dark:text-gray-300">جاري تحميل المحفوظات...</p>
-        </div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-12">
-            <i class="fas fa-heart-broken text-6xl text-gray-400 mb-6"></i>
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">لا توجد محفوظات بعد</h2>
-            <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">ابدأ بحفظ المنتجات والبائعين المفضلين لديك!</p>
-            <a href="/products" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-full shadow-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105">
-                <i class="fas fa-search ml-2"></i>
-                تصفح المنتجات
-            </a>
-        </div>
+        {% set favoritesCount = favorites is defined ? favorites|length : 0 %}
+        {% if favoritesCount == 0 %}
+            <!-- Empty State -->
+            <div class="text-center py-12">
+                <i class="fas fa-heart-broken text-6xl text-gray-400 mb-6"></i>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-3">لا توجد محفوظات بعد</h2>
+                <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">ابدأ بحفظ المنتجات والبائعين المفضلين لديك!</p>
+                <a href="/products" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-full shadow-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-search ml-2"></i>
+                    تصفح المنتجات
+                </a>
+            </div>
+        {% endif %}
 
         <!-- Saved Items Grid -->
         <div id="savedItemsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Saved items will be loaded here by JavaScript -->
+            {% if favoritesCount > 0 %}
+                {% for favorite in favorites %}
+                    {% set product = favorite.product %}
+                    <div class="saved-item bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-slate-600 overflow-hidden">
+                        <div class="relative">
+                            {% if product.image1 %}
+                                <img src="/api/products/image/{{ product.id }}/1" alt="{{ product.title }}" class="w-full h-48 object-cover">
+                            {% else %}
+                                <div class="w-full h-48 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center">
+                                    <i class="fas fa-box text-4xl text-gray-400 dark:text-gray-500"></i>
+                                </div>
+                            {% endif %}
+                            <div class="absolute top-4 right-4">
+                                <button data-product-id="{{ product.id }}" class="remove-favorite bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-all duration-300">
+                                    <i class="fas fa-heart-broken"></i>
+                                </button>
+                            </div>
+                            <div class="absolute top-4 left-4">
+                                <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-500 text-white">منتج</span>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">{{ product.title }}</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">{{ product.description }}</p>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                                    {{ product.price }} {{ product.currency }}
+                                </div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                    <i class="fas fa-calendar ml-1"></i>
+                                    {{ favorite.createdAt ? favorite.createdAt|date('Y-m-d') : '' }}
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <a href="/products/{{ product.id }}" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105 text-center">
+                                    <i class="fas fa-eye ml-1"></i>عرض
+                                </a>
+                                <button data-product-id="{{ product.id }}" class="remove-favorite bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg font-medium transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
 </div>
@@ -122,192 +169,30 @@
 </style>
 
 <script>
-let currentSavedItems = [];
-let currentFilter = 'all';
-
-document.addEventListener('DOMContentLoaded', function() {
-    loadSavedItems();
-});
-
-// Load saved items
-async function loadSavedItems() {
-    console.log('Loading saved items...');
-    
+// إزالة منتج من المحفوظات عبر API
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.remove-favorite');
+    if (!btn) return;
+    const productId = btn.getAttribute('data-product-id');
+    if (!productId) return;
+    if (!confirm('هل أنت متأكد من إزالة هذا المنتج من المحفوظات؟')) return;
     try {
-        // For now, we'll simulate saved items since we don't have a backend endpoint yet
-        const mockSavedItems = [
-            {
-                id: 1,
-                type: 'product',
-                title: 'iPhone 13 Pro Max',
-                description: 'جديد تماماً، لم يستخدم',
-                price: 1200,
-                currency: 'USD',
-                image: '/images/iphone.jpg',
-                seller: 'أحمد محمد',
-                savedAt: '2024-01-15'
-            },
-            {
-                id: 2,
-                type: 'seller',
-                title: 'محل الإلكترونيات الحديثة',
-                description: 'متخصص في بيع الأجهزة الإلكترونية',
-                rating: 4.8,
-                productsCount: 45,
-                image: '/images/seller.jpg',
-                savedAt: '2024-01-14'
-            }
-        ];
-        
-        currentSavedItems = mockSavedItems;
-        displaySavedItems(currentSavedItems);
-        updateStats(currentSavedItems);
-
-        // Hide loading state
-        document.getElementById('loadingState').classList.add('hidden');
-        
-        // Show empty state if no items
-        if (currentSavedItems.length === 0) {
-            document.getElementById('emptyState').classList.remove('hidden');
+        const res = await fetch('/web/favorites/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId: parseInt(productId, 10) })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            // إزالة الكرت من الواجهة مباشرة
+            const card = btn.closest('.saved-item');
+            if (card) card.remove();
         } else {
-            document.getElementById('emptyState').classList.add('hidden');
+            alert(data.error || 'تعذر إتمام العملية');
         }
-    } catch (error) {
-        console.error('Error loading saved items:', error);
-        document.getElementById('loadingState').classList.add('hidden');
-        document.getElementById('emptyState').classList.remove('hidden');
+    } catch (err) {
+        alert('حدث خطأ في الاتصال');
     }
-}
-
-// Update stats cards
-function updateStats(items) {
-    const totalSaved = items.length;
-    const productsSaved = items.filter(item => item.type === 'product').length;
-    const sellersSaved = items.filter(item => item.type === 'seller').length;
-    
-    document.getElementById('totalSaved').textContent = totalSaved;
-    document.getElementById('productsSaved').textContent = productsSaved;
-    document.getElementById('sellersSaved').textContent = sellersSaved;
-}
-
-// Display saved items
-function displaySavedItems(items) {
-    const grid = document.getElementById('savedItemsGrid');
-    
-    if (items.length === 0) {
-        grid.innerHTML = '<div class="col-span-full text-center py-12"><p class="text-gray-500 dark:text-gray-400">لا توجد محفوظات</p></div>';
-        return;
-    }
-    
-    grid.innerHTML = items.map(item => `
-        <div class="saved-item bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-xl border border-gray-200 dark:border-slate-600 overflow-hidden">
-            <div class="relative">
-                ${item.image ? 
-                    `<img src="${item.image}" alt="${item.title}" class="w-full h-48 object-cover">` :
-                    `<div class="w-full h-48 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center">
-                        <i class="fas fa-${item.type === 'product' ? 'box' : 'user'} text-4xl text-gray-400 dark:text-gray-500"></i>
-                    </div>`
-                }
-                <div class="absolute top-4 right-4">
-                    <button onclick="removeSavedItem(${item.id})" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-all duration-300">
-                        <i class="fas fa-heart-broken"></i>
-                    </button>
-                </div>
-                <div class="absolute top-4 left-4">
-                    <span class="px-3 py-1 rounded-full text-xs font-bold ${item.type === 'product' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'}">
-                        ${item.type === 'product' ? 'منتج' : 'بائع'}
-                    </span>
-                </div>
-            </div>
-            
-            <div class="p-6">
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">${item.title}</h3>
-                <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">${item.description}</p>
-                
-                ${item.type === 'product' ? `
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                            ${item.price} ${item.currency}
-                        </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">
-                            <i class="fas fa-calendar ml-1"></i>
-                            ${new Date(item.savedAt).toLocaleDateString('ar-SA')}
-                        </div>
-                    </div>
-                ` : `
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-2">
-                            <i class="fas fa-star text-yellow-500"></i>
-                            <span class="text-sm text-gray-600 dark:text-gray-300">${item.rating}</span>
-                        </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400">
-                            <i class="fas fa-box ml-1"></i>
-                            ${item.productsCount} منتج
-                        </div>
-                    </div>
-                `}
-                
-                <div class="flex space-x-2">
-                    <a href="/${item.type === 'product' ? 'products' : 'sellers'}/${item.id}" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105 text-center">
-                        <i class="fas fa-eye ml-1"></i>عرض
-                    </a>
-                    <button onclick="removeSavedItem(${item.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg font-medium transition-all duration-300 text-sm shadow-lg hover:shadow-xl transform hover:scale-105">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-// Filter saved items
-function filterSaved(type) {
-    currentFilter = type;
-    
-    // Update filter tabs
-    document.querySelectorAll('.filter-tab').forEach(tab => {
-        tab.classList.remove('active');
-        tab.classList.add('bg-white', 'dark:bg-slate-800', 'text-gray-700', 'dark:text-gray-300');
-    });
-    
-    event.target.classList.add('active');
-    event.target.classList.remove('bg-white', 'dark:bg-slate-800', 'text-gray-700', 'dark:text-gray-300');
-    
-    // Filter items
-    let filteredItems = currentSavedItems;
-    if (type !== 'all') {
-        filteredItems = currentSavedItems.filter(item => item.type === type);
-    }
-    
-    displaySavedItems(filteredItems);
-}
-
-// Remove saved item
-function removeSavedItem(itemId) {
-    if (confirm('هل أنت متأكد من إزالة هذا العنصر من المحفوظات؟')) {
-        currentSavedItems = currentSavedItems.filter(item => item.id !== itemId);
-        displaySavedItems(currentSavedItems);
-        updateStats(currentSavedItems);
-        showToast('تم إزالة العنصر من المحفوظات', 'success');
-    }
-}
-
-// Show toast notification
-function showToast(message, type = 'info') {
-    // Simple toast implementation
-    const toast = document.createElement('div');
-    toast.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg text-white font-medium shadow-lg transition-all duration-300 ${
-        type === 'success' ? 'bg-green-500' : 
-        type === 'error' ? 'bg-red-500' : 
-        'bg-blue-500'
-    }`;
-    toast.textContent = message;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
-}
+});
 </script>
 {% endblock %}

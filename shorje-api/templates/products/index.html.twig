@@ -6,7 +6,7 @@
 {% include 'components/home_navigation.html.twig' %}
 
 <style>
-    /* Custom animations and styles */
+    /* Custom animations and styles - Responsive */
     .glass {
         background: rgba(255, 255, 255, 0.25);
         backdrop-filter: blur(10px);
@@ -32,6 +32,30 @@
     
     .product-card:hover {
         transform: translateY(-4px) scale(1.02);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 640px) {
+        .product-card:hover {
+            transform: translateY(-2px) scale(1.01);
+        }
+        
+        .product-card {
+            margin-bottom: 1rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .product-card:hover {
+            transform: none;
+        }
+    }
+    
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+        .product-card:hover {
+            transform: none;
+        }
     }
     
     .custom-scrollbar::-webkit-scrollbar {
@@ -69,14 +93,14 @@
 
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-green-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
         <!-- Page Header -->
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                <i class="fas fa-th-large text-emerald-500 ml-3"></i>
+        <div class="text-center mb-4 sm:mb-6 md:mb-8 lg:mb-12">
+            <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3 md:mb-4">
+                <i class="fas fa-th-large text-emerald-500 ml-1 sm:ml-2 md:ml-3"></i>
                 جميع المنتجات
             </h1>
-            <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p class="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto px-2 sm:px-4">
                 اكتشف وابحث عن المنتجات من البائعين في منطقتك
             </p>
         </div>
@@ -85,17 +109,17 @@
         {% include 'products/advanced-filters.html.twig' %}
 
         <!-- Products Grid -->
-        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-8">
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 dark:border-slate-700/20 p-4 sm:p-6 md:p-8">
             <!-- Results Header -->
-            <div class="flex items-center justify-between mb-8">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 md:mb-8 gap-4">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-                        <i class="fas fa-box text-emerald-500 ml-2"></i>المنتجات المتاحة
+                    <h2 class="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+                        <i class="fas fa-box text-emerald-500 ml-1 sm:ml-2"></i>المنتجات المتاحة
                     </h2>
-                    <p class="text-gray-600 dark:text-gray-400 mt-1" id="resultsCount">جاري التحميل...</p>
+                    <p class="text-xs sm:text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1" id="resultsCount">جاري التحميل...</p>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 px-4 py-2 rounded-2xl font-semibold" id="productsCount">
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <div class="bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 px-3 sm:px-4 py-1 sm:py-2 rounded-xl sm:rounded-2xl font-semibold text-sm sm:text-base" id="productsCount">
                         0 منتج
                     </div>
                 </div>
@@ -119,7 +143,7 @@
             </div>
 
             <!-- Products Grid -->
-            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
+            <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
                 <!-- Products will be loaded here -->
             </div>
 

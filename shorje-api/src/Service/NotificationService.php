@@ -3,7 +3,9 @@
 namespace App\Service;
 
 use App\Entity\Notification;
+use App\Entity\Product;
 use App\Entity\User;
+use App\Repository\FollowRepository;
 use App\Repository\NotificationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -13,8 +15,27 @@ class NotificationService
     public function __construct(
         private EntityManagerInterface $entityManager,
         private NotificationRepository $notificationRepository,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private FollowRepository $followRepository
     ) {}
+
+    /**
+     * Notify all followers of a seller about a new product
+     * Returns number of notifications created
+     */
+    public function notifyFollowersAboutNewProduct(User $seller, Product $product): int
+    {
+        $count = 0;
+        // Get followers (Follow entities where following = seller)
+        $follows = $this->followRepository->getFollowers($seller);
+        foreach ($follows as $follow) {
+            $follower = $follow->getFollower();
+            if (!$follower instanceof User) { continue; }
+            $this->createProductNotification($follower, $seller, $product->getTitle() ?? '');
+            $count++;
+        }
+        return $count;
+    }
 
     /**
      * Create a new notification

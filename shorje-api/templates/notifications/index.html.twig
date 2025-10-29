@@ -148,42 +148,43 @@
 <!-- Notification Item Template -->
 <template id="notificationItemTemplate">
     <div class="notification-item p-6 hover:bg-gray-50 transition-colors duration-200 cursor-pointer" data-notification-id="">
-        <div class="flex items-start space-x-4 space-x-reverse">
-            <!-- Icon -->
+        <div class="flex items-start gap-4">
+            <!-- Media (avatar/product) -->
             <div class="flex-shrink-0">
-                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white">
-                    <i class="notification-icon text-lg"></i>
+                <div class="relative">
+                    <!-- Product/Seller image will be injected here -->
+                    <img class="notification-media hidden w-14 h-14 rounded-xl object-cover shadow" alt="media">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-white notification-fallback hidden">
+                        <i class="notification-icon text-lg"></i>
+                    </div>
+                    <img class="notification-avatar hidden absolute -bottom-2 -right-2 w-8 h-8 rounded-full ring-2 ring-white object-cover" alt="avatar">
                 </div>
             </div>
-            
+
             <!-- Content -->
             <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between mb-2">
-                    <h3 class="notification-title text-lg font-medium text-gray-900"></h3>
-                    <div class="flex items-center space-x-3 space-x-reverse">
-                        <span class="notification-time text-sm text-gray-500"></span>
-                        <div class="flex items-center space-x-2 space-x-reverse">
-                            <div class="notification-status">
-                                <span class="unread-dot w-3 h-3 bg-primary-500 rounded-full"></span>
-                            </div>
-                            <button class="notification-delete-btn text-gray-400 hover:text-red-500 p-1">
-                                <i class="fas fa-trash text-sm"></i>
-                            </button>
-                        </div>
+                    <h3 class="notification-title text-base sm:text-lg font-semibold text-gray-900"></h3>
+                    <div class="flex items-center gap-3">
+                        <span class="notification-time text-xs sm:text-sm text-gray-500"></span>
+                        <button class="notification-delete-btn text-gray-400 hover:text-red-500 p-1">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
                     </div>
                 </div>
-                
+
                 <p class="notification-message text-gray-600 mb-3"></p>
-                
-                <!-- Metadata -->
-                <div class="notification-metadata text-sm text-gray-500 mb-3 hidden">
-                    <!-- Metadata will be displayed here -->
-                </div>
-                
+
+                <!-- Metadata / Extra info -->
+                <div class="notification-metadata text-sm text-gray-500 mb-3 hidden"></div>
+
                 <!-- Actions -->
-                <div class="notification-actions flex items-center space-x-3 space-x-reverse">
+                <div class="notification-actions flex items-center gap-3">
                     <button class="notification-action-btn px-4 py-2 bg-primary-600 text-white text-sm rounded-lg hover:bg-primary-700 transition-colors hidden">
                         <span class="action-text"></span>
+                    </button>
+                    <button class="notification-follow-btn px-4 py-2 bg-emerald-600 text-white text-sm rounded-lg hover:bg-emerald-700 transition-colors hidden">
+                        متابعة
                     </button>
                     <button class="notification-mark-read-btn text-sm text-gray-500 hover:text-gray-700">
                         تعيين كمقروء
@@ -192,7 +193,7 @@
             </div>
         </div>
     </div>
-</template>
+    </template>
 
 <style>
 /* Notification Styles */
@@ -263,7 +264,7 @@ async function loadNotifications(reset = false) {
     const typeFilter = document.getElementById('typeFilter').value;
     const statusFilter = document.getElementById('statusFilter').value;
     
-    let url = `/api/notifications?limit=20&offset=${(currentPage - 1) * 20}`;
+    let url = `/web/notifications?limit=20&offset=${(currentPage - 1) * 20}`;
     
     if (typeFilter) {
         url += `&type=${typeFilter}`;
@@ -352,6 +353,11 @@ function createNotificationItem(notification) {
     const time = item.querySelector('.notification-time');
     const actionBtn = item.querySelector('.notification-action-btn');
     const actionText = item.querySelector('.action-text');
+    const followBtn = item.querySelector('.notification-follow-btn');
+    const mediaImg = item.querySelector('.notification-media');
+    const avatarImg = item.querySelector('.notification-avatar');
+    const fallbackIcon = item.querySelector('.notification-fallback');
+    const metadataBox = item.querySelector('.notification-metadata');
     const markReadBtn = item.querySelector('.notification-mark-read-btn');
     const deleteBtn = item.querySelector('.notification-delete-btn');
     
@@ -365,7 +371,53 @@ function createNotificationItem(notification) {
     message.textContent = notification.message;
     time.textContent = formatNotificationTime(notification.createdAt);
     
-    // Set action button
+    // Media rendering based on type/metadata
+    const md = notification.metadata || {};
+    if (notification.type === 'product' && md.product_id) {
+        const productImgUrl = `/api/products/image/${md.product_id}/1`;
+        mediaImg.src = productImgUrl;
+        mediaImg.classList.remove('hidden');
+        if (md.seller_id) {
+            avatarImg.src = `/web/profile/image/${md.seller_id}/avatar`;
+            avatarImg.classList.remove('hidden');
+        }
+        // Rich metadata
+        metadataBox.classList.remove('hidden');
+        metadataBox.innerHTML = `
+            <div class="flex items-center gap-3">
+                <a href="/products/${md.product_id}" class="text-primary-600 hover:text-primary-700 underline">فتح صفحة المنتج</a>
+                ${md.seller_name ? `<span class="text-gray-400">•</span><span>البائع: ${md.seller_name}</span>` : ''}
+            </div>
+        `;
+    } else if (notification.type === 'follow' && md.follower_id) {
+        avatarImg.src = `/web/profile/image/${md.follower_id}/avatar`;
+        avatarImg.classList.remove('hidden');
+        fallbackIcon.classList.add('hidden');
+        metadataBox.classList.remove('hidden');
+        metadataBox.innerHTML = `
+            <div class="flex items-center gap-3">
+                ${md.follower_name ? `<span>الاسم: ${md.follower_name}</span>` : ''}
+                <a href="/profile/${md.follower_id}" class="text-primary-600 hover:text-primary-700 underline">عرض الملف</a>
+            </div>
+        `;
+        // Show follow-back button
+        followBtn.classList.remove('hidden');
+        followBtn.onclick = async (e) => {
+            e.stopPropagation();
+            try {
+                const res = await fetch(`/web/follow/${md.follower_id}`, { method: 'POST' });
+                if (res.ok) {
+                    followBtn.textContent = 'تمت المتابعة';
+                    followBtn.disabled = true;
+                }
+            } catch (err) {}
+        };
+    } else {
+        // Fallback colored icon bubble
+        fallbackIcon.classList.remove('hidden');
+    }
+
+    // Set action button (if provided)
     if (notification.actionUrl && notification.actionText) {
         actionBtn.classList.remove('hidden');
         actionText.textContent = notification.actionText;
@@ -419,7 +471,7 @@ function handleNotificationClick(notification) {
 // Mark notification as read
 async function markNotificationAsRead(notificationId) {
     try {
-        await fetch(`/api/notifications/${notificationId}/read`, {
+        await fetch(`/web/notifications/${notificationId}/read`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -448,7 +500,7 @@ async function deleteNotification(notificationId) {
     }
     
     try {
-        await fetch(`/api/notifications/${notificationId}`, {
+        await fetch(`/web/notifications/${notificationId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -469,7 +521,7 @@ async function deleteNotification(notificationId) {
 // Mark all notifications as read
 async function markAllNotificationsAsRead() {
     try {
-        await fetch('/api/notifications/mark-all-read', {
+        await fetch('/web/notifications/mark-all-read', {
             method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -184,9 +184,9 @@ class AuthController extends AbstractController
     private function sendWelcomeEmail(MailerInterface $mailer, User $user): void
     {
         $email = (new Email())
-            ->from($_ENV['MAILER_FROM_EMAIL'] ?? 'noreply@shorje.com')
+            ->from('shorje@abdulrhman-alshalal.com')
             ->to($user->getEmail())
-            ->subject('Welcome to Shorje!')
+            ->subject('مرحباً بك في شورجي!')
             ->html($this->renderView('emails/welcome.html.twig', [
                 'user' => $user,
                 'verificationUrl' => $this->generateUrl('api_verify_email', ['token' => $user->getEmailVerificationToken()], true)
@@ -200,9 +200,9 @@ class AuthController extends AbstractController
         $resetUrl = $this->generateUrl('app_reset_password', ['token' => $token], true);
         
         $email = (new Email())
-            ->from($_ENV['MAILER_FROM_EMAIL'] ?? 'noreply@shorje.com')
+            ->from('shorje@abdulrhman-alshalal.com')
             ->to($user->getEmail())
-            ->subject('Password Reset Request')
+            ->subject('إعادة تعيين كلمة المرور - شورجي')
             ->html($this->renderView('emails/password_reset.html.twig', [
                 'user' => $user,
                 'resetUrl' => $resetUrl

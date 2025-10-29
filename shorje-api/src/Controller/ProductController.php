@@ -24,6 +24,19 @@ class ProductController extends AbstractController
         ]);
     }
 
+    #[Route('/products/add', name: 'add_product_page', methods: ['GET'])]
+    public function addProductPage(): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+        
+        return $this->render('products/add.html.twig', [
+            'user' => $user
+        ]);
+    }
+
     #[Route('/products/my', name: 'my_products_page', methods: ['GET'])]
     public function myProductsPage(): Response
     {
@@ -33,6 +46,30 @@ class ProductController extends AbstractController
         }
         
         return $this->render('products/my.html.twig', [
+            'user' => $user
+        ]);
+    }
+
+    #[Route('/products/{id}/edit', name: 'edit_product_page', methods: ['GET'])]
+    public function editProductPage(int $id, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+        
+        $product = $em->getRepository(Product::class)->find($id);
+        if (!$product) {
+            throw $this->createNotFoundException('المنتج غير موجود');
+        }
+        
+        // Check if user owns the product
+        if ($product->getSeller() !== $user) {
+            throw new AccessDeniedException('ليس لديك صلاحية لتعديل هذا المنتج');
+        }
+        
+        return $this->render('products/edit.html.twig', [
+            'product' => $product,
             'user' => $user
         ]);
     }
@@ -212,42 +249,84 @@ class ProductController extends AbstractController
             return new JsonResponse(['error' => 'يجب تسجيل الدخول أولاً'], 401);
         }
 
-        $data = json_decode($request->getContent(), true);
+        try {
+            // Detect content type and read data accordingly
+            $isJson = str_contains((string) $request->headers->get('Content-Type'), 'application/json');
+            $data = $isJson ? json_decode($request->getContent(), true) : null;
 
-        $product = new Product();
-        $product->setTitle($data['title'] ?? '');
-        $product->setDescription($data['description'] ?? '');
-        $product->setPrice($data['price'] ?? '0');
-        $product->setCurrency($data['currency'] ?? 'IQD');
-        $product->setCategory($data['category'] ?? '');
-        $product->setCity($data['city'] ?? '');
-        $product->setLocation($data['location'] ?? '');
-        $product->setColor($data['color'] ?? null);
-        $product->setCondition($data['condition'] ?? null);
-        $product->setSeller($user);
+            $product = new Product();
 
-        // Handle images
-        if (isset($data['image1']) && $data['image1']) {
-            $this->handleImageUpload($product, 'image1', $data['image1']);
-        }
-        if (isset($data['image2']) && $data['image2']) {
-            $this->handleImageUpload($product, 'image2', $data['image2']);
-        }
-        if (isset($data['image3']) && $data['image3']) {
-            $this->handleImageUpload($product, 'image3', $data['image3']);
-        }
+            // Basic fields
+            $title = $isJson ? ($data['title'] ?? '') : (string) $request->request->get('title', '');
+            $description = $isJson ? ($data['description'] ?? '') : (string) $request->request->get('description', '');
+            $price = $isJson ? ($data['price'] ?? '0') : (string) $request->request->get('price', '0');
+            $currency = $isJson ? ($data['currency'] ?? 'IQD') : (string) $request->request->get('currency', 'IQD');
+            $category = $isJson ? ($data['category'] ?? '') : (string) $request->request->get('category', '');
+            $city = $isJson ? ($data['city'] ?? '') : (string) $request->request->get('city', '');
+            $location = $isJson ? ($data['location'] ?? '') : (string) $request->request->get('location', '');
+            $color = $isJson ? ($data['color'] ?? null) : $request->request->get('color');
+            $condition = $isJson ? ($data['condition'] ?? null) : $request->request->get('condition');
 
-        $errors = $validator->validate($product);
-        if (count($errors) > 0) {
-            $errorMessages = [];
-            foreach ($errors as $error) {
-                $errorMessages[] = $error->getMessage();
+            // Normalize currency (entity allows only IQD, USD)
+            if (!in_array($currency, ['IQD', 'USD'], true)) {
+                $currency = 'IQD';
             }
-            return new JsonResponse(['error' => implode(', ', $errorMessages)], 400);
-        }
 
-        $em->persist($product);
-        $em->flush();
+            // Sanitize and enforce max lengths to avoid DB exceptions
+            $title = is_string($title) ? mb_substr($title, 0, 255) : '';
+            $city = is_string($city) ? mb_substr($city, 0, 100) : '';
+            $location = is_string($location) ? mb_substr($location, 0, 100) : '';
+            $description = is_string($description) ? $description : '';
+
+            // Normalize price
+            if (!is_numeric($price)) { $price = '0'; }
+            if ((float) $price < 0) { $price = '0'; }
+
+            $product->setTitle($title);
+            $product->setDescription($description);
+            $product->setPrice((string) $price);
+            $product->setCurrency($currency);
+            $product->setCategory((string) $category);
+            $product->setCity($city);
+            $product->setLocation($location);
+            $product->setColor($color ?: null);
+            $product->setCondition($condition ?: null);
+            $product->setSeller($user);
+
+            // Images: support both base64(JSON) and uploaded files (multipart)
+            if ($isJson) {
+                if (!empty($data['image1'])) { $this->handleImageUpload($product, 'image1', $data['image1']); }
+                if (!empty($data['image2'])) { $this->handleImageUpload($product, 'image2', $data['image2']); }
+                if (!empty($data['image3'])) { $this->handleImageUpload($product, 'image3', $data['image3']); }
+            } else {
+                foreach (['image1', 'image2', 'image3'] as $field) {
+                    $file = $request->files->get($field);
+                    if ($file && $file->isValid()) {
+                        $binary = file_get_contents($file->getPathname());
+                        $mimeType = $file->getMimeType();
+                        // Validate mime
+                        if (!in_array($mimeType, ['image/jpeg', 'image/png', 'image/gif', 'image/webp'], true)) {
+                            return new JsonResponse(['error' => 'نوع الصورة غير مدعوم'], 400);
+                        }
+                        $product->{'set' . ucfirst($field)}($binary);
+                        $product->{'set' . ucfirst($field) . 'MimeType'}($mimeType);
+                    }
+                }
+            }
+
+            // Validate
+            $errors = $validator->validate($product);
+            if (count($errors) > 0) {
+                $errorMessages = [];
+                foreach ($errors as $error) { $errorMessages[] = $error->getMessage(); }
+                return new JsonResponse(['error' => implode(', ', $errorMessages)], 400);
+            }
+
+            $em->persist($product);
+            $em->flush();
+        } catch (\Throwable $e) {
+            return new JsonResponse(['error' => 'حدث خطأ أثناء إنشاء المنتج: ' . $e->getMessage()], 500);
+        }
 
         // Send notifications to followers
         $this->notifyFollowers($em, $user, $product);
@@ -819,16 +898,25 @@ class ProductController extends AbstractController
         
         foreach ($followers as $follow) {
             $follower = $follow->getFollower();
-            
-            // Create notification for each follower
+            if (!$follower) { continue; }
+
+            // Create notification for each follower (store product/seller in metadata)
             $notification = new \App\Entity\Notification();
             $notification->setUser($follower);
-            $notification->setSeller($seller);
-            $notification->setProduct($product);
-            $notification->setType('new_product');
+            $notification->setType('product');
             $notification->setTitle('منتج جديد من ' . $seller->getFullName());
-            $notification->setMessage($seller->getFullName() . ' نشر منتج جديد: ' . $product->getTitle());
-            
+            $notification->setMessage($seller->getFullName() . ' نشر منتج جديد: ' . ($product->getTitle() ?? ''));
+            $notification->setIcon('fas fa-box');
+            $notification->setColor(\App\Entity\Notification::COLOR_INFO);
+            $notification->setMetadata([
+                'seller_id' => $seller->getId(),
+                'seller_name' => $seller->getFullName(),
+                'product_id' => $product->getId(),
+                'product_title' => $product->getTitle()
+            ]);
+            $notification->setActionUrl('/products/' . $product->getId());
+            $notification->setActionText('عرض المنتج');
+
             $em->persist($notification);
         }
         
@@ -885,6 +973,17 @@ class ProductController extends AbstractController
         }
         if (isset($data['condition'])) {
             $product->setCondition($data['condition']);
+        }
+
+        // Handle image updates
+        if (isset($data['image1']) && $data['image1']) {
+            $this->handleImageUpload($product, 'image1', $data['image1']);
+        }
+        if (isset($data['image2']) && $data['image2']) {
+            $this->handleImageUpload($product, 'image2', $data['image2']);
+        }
+        if (isset($data['image3']) && $data['image3']) {
+            $this->handleImageUpload($product, 'image3', $data['image3']);
         }
 
         $product->setUpdatedAt(new \DateTime());
