@@ -6,7 +6,16 @@ app:
   hero_title: "سوقك المحلي"
   hero_subtitle: "للبيع والشراء"
   hero_description: "اكتشف المنتجات المحلية من البائعين في منطقتك. تواصل مباشرة، اتفق على السعر، والتقاط من الموقع"
+  platform_name: "شورجي"
+  platform_description: "منصة تسوق عراقية حديثة تجمع بين البائعين والمشترين في جميع أنحاء العراق في مكان واحد آمن وموثوق. نربط بين التجار والمستهلكين في بغداد والبصرة والموصل وأربيل وجميع المحافظات العراقية."
+  copyright: "© %year% شورجي - العراق. جميع الحقوق محفوظة."
   
+language:
+  arabic: "العربية"
+  english: "English"
+  change_language: "تغيير اللغة"
+  current: "اللغة الحالية"
+
 navigation:
   home: "الرئيسية"
   products: "المنتجات"
@@ -70,6 +79,21 @@ notifications:
   new_message: "رسالة جديدة"
   new_follower: "متابع جديد"
   product_sold: "تم بيع منتج"
+  no_notifications: "لا توجد إشعارات جديدة"
+  
+footer:
+  company_info: "معلومات الشركة"
+  quick_links: "روابط سريعة"
+  popular_categories: "الفئات الشائعة"
+  contact_us: "تواصل معنا"
+  cars: "سيارات"
+  electronics: "إلكترونيات"
+  real_estate: "عقارات"
+  jobs: "وظائف"
+  privacy_policy: "سياسة الخصوصية"
+  terms_of_service: "شروط الاستخدام"
+  return_policy: "سياسة الإرجاع"
+  location: "بغداد، العراق"
   
 common:
   save: "حفظ"
@@ -86,3 +110,10 @@ common:
   confirm: "تأكيد"
   yes: "نعم"
   no: "لا"
+  now: "الآن"
+  minute: "دقيقة"
+  minutes: "دقائق"
+  hour: "ساعة"
+  hours: "ساعات"
+  day: "يوم"
+  days: "أيام"

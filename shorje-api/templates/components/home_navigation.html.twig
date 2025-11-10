@@ -7,12 +7,9 @@
         <div class="max-w-7xl mx-auto px-1 sm:px-2 md:px-4 relative">
             <div class="flex items-center justify-center space-x-1 sm:space-x-2 md:space-x-4">
                 <span class="font-bold text-xs sm:text-sm md:text-lg animate-bounce">🎉</span>
-                <span class="font-bold hidden xs:inline sm:hidden text-xs">بيع واشتري</span>
-                <span class="font-bold hidden sm:inline md:hidden">بيع واشتري من جيرانك</span>
-                <span class="font-bold hidden md:inline">بيع واشتري من جيرانك المحليين</span>
-                <span class="mx-1 sm:mx-2 md:mx-4 text-white/80 hidden sm:inline">•</span>
-                <span class="hidden sm:inline md:hidden">💬 تواصل مباشر</span>
-                <span class="hidden md:inline">💬 تواصل مباشر مع البائعين</span>
+                <span class="font-bold hidden md:inline">{{ 'app.hero_description'|trans }}</span>
+                <span class="font-bold hidden sm:inline md:hidden">{{ 'app.hero_subtitle'|trans }}</span>
+                <span class="font-bold sm:hidden">{{ 'app.hero_title'|trans }}</span>
                 <span class="font-bold text-xs sm:text-sm md:text-lg animate-bounce">🎉</span>
             </div>
         </div>
@@ -30,8 +27,8 @@
                             <i class="fas fa-store text-white text-sm sm:text-lg md:text-xl relative z-10"></i>
                         </div>
                         <div>
-                            <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold gradient-text">شورجي</h1>
-                            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hidden sm:block">سوق متعدد البائعين</p>
+                            <h1 class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold gradient-text">{{ 'app.platform_name'|trans }}</h1>
+                            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hidden sm:block">{{ 'app.description'|trans }}</p>
                         </div>
                     </div>
                 </div>
@@ -51,7 +48,7 @@
                             </div>
                             <div class="text-right hidden lg:block">
                                 <p class="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">{{ app.user.firstName }} {{ app.user.lastName }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">مرحباً بك</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ 'app.welcome'|trans }}</p>
                             </div>
                             <i class="fas fa-chevron-down text-gray-400 dark:text-gray-500 text-xs sm:text-sm transition-transform duration-300" id="dropdownArrow"></i>
                         </button>
@@ -81,31 +78,31 @@
                                     <div class="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                                         <i class="fas fa-user text-white text-xs sm:text-sm"></i>
                                     </div>
-                                    <span class="font-medium text-xs sm:text-sm md:text-base">الملف الشخصي</span>
+                                    <span class="font-medium text-xs sm:text-sm md:text-base">{{ 'navigation.profile'|trans }}</span>
                                 </a>
                                 <a href="/products/my" class="flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 dark:hover:from-purple-900/20 dark:hover:to-pink-900/20 rounded-lg sm:rounded-xl transition-all group">
                                     <div class="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                                         <i class="fas fa-box text-white text-xs sm:text-sm"></i>
                                     </div>
-                                    <span class="font-medium text-xs sm:text-sm md:text-base">منتجاتي</span>
+                                    <span class="font-medium text-xs sm:text-sm md:text-base">{{ 'navigation.my_products'|trans }}</span>
                                 </a>
                                 <a href="/saved" class="flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 dark:hover:from-red-900/20 dark:hover:to-pink-900/20 rounded-lg sm:rounded-xl transition-all group">
                                     <div class="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-gradient-to-br from-red-400 to-pink-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                                         <i class="fas fa-heart text-white text-xs sm:text-sm"></i>
                                     </div>
-                                    <span class="font-medium text-xs sm:text-sm md:text-base">المحفوظات</span>
+                                    <span class="font-medium text-xs sm:text-sm md:text-base">{{ 'navigation.saved'|trans }}</span>
                                 </a>
                                 <a href="/help" class="flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 dark:hover:from-orange-900/20 dark:hover:to-yellow-900/20 rounded-lg sm:rounded-xl transition-all group">
                                     <div class="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                                         <i class="fas fa-question-circle text-white text-xs sm:text-sm"></i>
                                     </div>
-                                    <span class="font-medium text-xs sm:text-sm md:text-base">كيف يعمل</span>
+                                    <span class="font-medium text-xs sm:text-sm md:text-base">{{ 'navigation.how_it_works'|trans }}</span>
                                 </a>
                                 <a href="/contact" class="flex items-center space-x-2 sm:space-x-3 px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 dark:hover:from-green-900/20 dark:hover:to-emerald-900/20 rounded-lg sm:rounded-xl transition-all group">
                                     <div class="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                                         <i class="fas fa-envelope text-white text-xs sm:text-sm"></i>
                                     </div>
-                                    <span class="font-medium text-xs sm:text-sm md:text-base">اتصل بنا</span>
+                                    <span class="font-medium text-xs sm:text-sm md:text-base">{{ 'navigation.contact'|trans }}</span>
                                 </a>
                                 
                                 {% if app.user and ('ROLE_ADMIN' in app.user.roles or 'ROLE_SUPER_ADMIN' in app.user.roles) %}
@@ -114,7 +111,7 @@
                                     <div class="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                                         <i class="fas fa-cog text-white text-xs sm:text-sm"></i>
                                     </div>
-                                    <span class="font-medium text-xs sm:text-sm md:text-base">لوحة الإدارة</span>
+                                    <span class="font-medium text-xs sm:text-sm md:text-base">{{ 'navigation.settings'|trans }}</span>
                                 </a>
                                 {% endif %}
                                 
@@ -123,7 +120,7 @@
                                     <div class="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
                                         <i class="fas fa-sign-out-alt text-white text-xs sm:text-sm"></i>
                                     </div>
-                                    <span class="font-medium text-xs sm:text-sm md:text-base">تسجيل الخروج</span>
+                                    <span class="font-medium text-xs sm:text-sm md:text-base">{{ 'navigation.logout'|trans }}</span>
                                 </a>
                             </div>
                         </div>
@@ -132,10 +129,10 @@
                     <!-- Guest Actions -->
                     <div class="flex items-center space-x-3">
                         <a href="/login" class="text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium px-4 py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-300">
-                            <i class="fas fa-sign-in-alt ml-2"></i>تسجيل الدخول
+                            <i class="fas fa-sign-in-alt {{ app.request.locale == 'ar' ? 'ml-2' : 'mr-2' }}"></i>{{ 'navigation.login'|trans }}
                         </a>
                         <a href="/register" class="bg-gradient-to-r from-emerald-500 to-blue-500 text-white px-6 py-2 rounded-xl font-medium hover:from-emerald-600 hover:to-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl">
-                            <i class="fas fa-user-plus ml-2"></i>إنشاء حساب
+                            <i class="fas fa-user-plus {{ app.request.locale == 'ar' ? 'ml-2' : 'mr-2' }}"></i>{{ 'navigation.register'|trans }}
                         </a>
                     </div>
                     {% endif %}
@@ -158,30 +155,37 @@
                     
                     <!-- Language Switcher -->
                     <div class="relative" id="languageSwitcherContainer">
-                        <button onclick="toggleLanguageSwitcher()" class="relative p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-200 rounded-lg group" title="تغيير اللغة">
-                            <i class="fas fa-globe text-xl group-hover:rotate-12 transition-transform duration-300"></i>
+                        <button onclick="toggleLanguageSwitcher()" class="relative p-2.5 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all duration-200 rounded-lg group" title="{{ 'language.change_language'|trans }}">
+                            <i class="fas fa-language text-xl group-hover:rotate-12 transition-transform duration-300"></i>
+                            <span class="ml-1 text-xs font-bold">{{ app.request.locale|upper }}</span>
                         </button>
                         
                         <!-- Language Dropdown -->
-                        <div id="languageDropdown" class="absolute right-0 mt-3 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 z-[9999] hidden overflow-hidden">
+                        <div id="languageDropdown" class="absolute {{ app.request.locale == 'ar' ? 'right-0' : 'left-0' }} mt-3 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700 z-[9999] hidden overflow-hidden">
                             <div class="p-2">
-                                <a href="/language/ar" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-blue-50 dark:hover:from-emerald-900/20 dark:hover:to-blue-900/20 rounded-xl transition-all group">
+                                <a href="{{ path('app_change_language', {'locale': 'ar'}) }}" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-blue-50 dark:hover:from-emerald-900/20 dark:hover:to-blue-900/20 rounded-xl transition-all group {{ app.request.locale == 'ar' ? 'bg-emerald-50 dark:bg-emerald-900/20' : '' }}">
                                     <div class="w-10 h-10 bg-gradient-to-br from-emerald-400 to-green-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform text-2xl">
                                         🇸🇦
                                     </div>
-                                    <div>
-                                        <p class="font-semibold text-sm">العربية</p>
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-sm">{{ 'language.arabic'|trans }}</p>
                                         <p class="text-xs text-gray-500 dark:text-gray-400">Arabic</p>
                                     </div>
+                                    {% if app.request.locale == 'ar' %}
+                                    <i class="fas fa-check text-emerald-500"></i>
+                                    {% endif %}
                                 </a>
-                                <a href="/language/en" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 rounded-xl transition-all group">
+                                <a href="{{ path('app_change_language', {'locale': 'en'}) }}" class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 rounded-xl transition-all group {{ app.request.locale == 'en' ? 'bg-blue-50 dark:bg-blue-900/20' : '' }}">
                                     <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform text-2xl">
                                         🇺🇸
                                     </div>
-                                    <div>
-                                        <p class="font-semibold text-sm">English</p>
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-sm">{{ 'language.english'|trans }}</p>
                                         <p class="text-xs text-gray-500 dark:text-gray-400">الإنجليزية</p>
                                     </div>
+                                    {% if app.request.locale == 'en' %}
+                                    <i class="fas fa-check text-blue-500"></i>
+                                    {% endif %}
                                 </a>
                             </div>
                         </div>
@@ -201,26 +205,26 @@
                 <div class="flex items-center space-x-8">
                     <a href="/home" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
                         <i class="fas fa-home"></i>
-                        <span>الرئيسية</span>
+                        <span>{{ 'navigation.home'|trans }}</span>
                     </a>
                     <a href="/products" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
                         <i class="fas fa-th-large"></i>
-                        <span>المنتجات</span>
+                        <span>{{ 'navigation.products'|trans }}</span>
                     </a>
                     <a href="/users" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
                         <i class="fas fa-users"></i>
-                        <span>البائعين</span>
+                        <span>{{ 'navigation.sellers'|trans }}</span>
                     </a>
                     {% if app.user %}
                     <a href="/products/my" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 font-medium transition-colors">
                         <i class="fas fa-box text-purple-500"></i>
-                        <span>منتجاتي</span>
+                        <span>{{ 'navigation.my_products'|trans }}</span>
                     </a>
                     {% endif %}
                     {% if app.user and 'ROLE_SUPER_ADMIN' in app.user.roles %}
                     <a href="/admin" class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 font-medium transition-colors bg-red-50 dark:bg-red-900/20 px-3 py-2 rounded-lg">
                         <i class="fas fa-crown text-red-500"></i>
-                        <span>لوحة التحكم</span>
+                        <span>{{ 'navigation.settings'|trans }}</span>
                     </a>
                     {% endif %}
                 </div>

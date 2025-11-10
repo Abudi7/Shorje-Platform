@@ -34,7 +34,7 @@ class ProductCrudController extends AbstractCrudController
             ->setPageTitle('edit', 'تعديل المنتج')
             ->setPageTitle('detail', 'تفاصيل المنتج')
             ->setDefaultSort(['createdAt' => 'DESC'])
-            ->setSearchFields(['name', 'description', 'category']);
+            ->setSearchFields(['title', 'description', 'category']);
     }
 
     public function configureActions(Actions $actions): Actions
@@ -57,7 +57,7 @@ class ProductCrudController extends AbstractCrudController
         return [
             IdField::new('id', 'المعرف')->hideOnForm(),
             
-            TextField::new('name', 'اسم المنتج')
+            TextField::new('title', 'اسم المنتج')
                 ->setRequired(true)
                 ->setHelp('اسم المنتج'),
             
@@ -90,12 +90,9 @@ class ProductCrudController extends AbstractCrudController
                 ->setRequired(true)
                 ->setHelp('البائع الذي يملك المنتج'),
             
-            IntegerField::new('viewCount', 'عدد المشاهدات')
-                ->setHelp('عدد مرات مشاهدة المنتج')
-                ->hideOnForm(),
-            
-            BooleanField::new('isFeatured', 'مميز')
-                ->setHelp('هل المنتج مميز؟'),
+            // الحقول التالية غير موجودة في الكيان Product حالياً (تسببت بخطأ):
+            // viewCount, isFeatured
+            // عند إضافتها للكيان يمكن إعادة تفعيلها هنا.
             
             DateTimeField::new('createdAt', 'تاريخ الإنشاء')
                 ->setFormat('yyyy-MM-dd HH:mm')
