@@ -6,7 +6,16 @@ app:
   hero_title: "Your Local Marketplace"
   hero_subtitle: "Buy & Sell"
   hero_description: "Discover local products from sellers in your area. Connect directly, agree on price, and pick up from location"
+  platform_name: "Shorje"
+  platform_description: "A modern Iraqi shopping platform that brings together sellers and buyers from all over Iraq in one safe and reliable place. We connect merchants and consumers in Baghdad, Basra, Mosul, Erbil, and all Iraqi governorates."
+  copyright: "© %year% Shorje - Iraq. All rights reserved."
   
+language:
+  arabic: "العربية"
+  english: "English"
+  change_language: "Change Language"
+  current: "Current Language"
+
 navigation:
   home: "Home"
   products: "Products"
@@ -70,6 +79,21 @@ notifications:
   new_message: "New Message"
   new_follower: "New Follower"
   product_sold: "Product Sold"
+  no_notifications: "No new notifications"
+  
+footer:
+  company_info: "Company Info"
+  quick_links: "Quick Links"
+  popular_categories: "Popular Categories"
+  contact_us: "Contact Us"
+  cars: "Cars"
+  electronics: "Electronics"
+  real_estate: "Real Estate"
+  jobs: "Jobs"
+  privacy_policy: "Privacy Policy"
+  terms_of_service: "Terms of Service"
+  return_policy: "Return Policy"
+  location: "Baghdad, Iraq"
   
 common:
   save: "Save"
@@ -86,3 +110,10 @@ common:
   confirm: "Confirm"
   yes: "Yes"
   no: "No"
+  now: "now"
+  minute: "minute"
+  minutes: "minutes"
+  hour: "hour"
+  hours: "hours"
+  day: "day"
+  days: "days"

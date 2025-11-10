@@ -117,6 +117,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 20, nullable: true)]
     private ?string $gender = null;
 
+    #[ORM\Column(type: 'string', length: 5, nullable: true)]
+    #[Groups(['user:read', 'user:write'])]
+    private ?string $preferredLanguage = 'ar';
+
     #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'seller', cascade: ['persist', 'remove'])]
     private Collection $products;
 
@@ -391,6 +395,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return trim($this->firstName . ' ' . $this->lastName) ?: $this->email;
     }
 
+    public function __toString(): string
+    {
+        return $this->getFullName();
+    }
+
     public function getAvatarUrl(): string
     {
         if ($this->profilePicture && $this->profilePictureMimeType) {
@@ -450,6 +459,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGender(?string $gender): static
     {
         $this->gender = $gender;
+        return $this;
+    }
+
+    public function getPreferredLanguage(): ?string
+    {
+        return $this->preferredLanguage ?? 'ar';
+    }
+
+    public function setPreferredLanguage(?string $preferredLanguage): static
+    {
+        $this->preferredLanguage = $preferredLanguage;
         return $this;
     }
 
